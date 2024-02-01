@@ -2,9 +2,9 @@
 # [A2] Island ca.mcmaster.se2aa4.island.team00.Explorer
 
 - Authors:
-  - [Firstname_1, Lastname_1](macid@mcmaster.ca) 
-  - [Firstname_2, Lastname_2](macid@mcmaster.ca)
-  - [Firstname_3, Lastname_3](macid@mcmaster.ca)
+  - [Colin, Chambachan](chambacc@mcmaster.ca) 
+  - [Jinwoo, Hong](hongj54@mcmaster.ca)
+  - [Gary, Qin](qinz51@mcmaster.ca)
 
 ## Product Description
 
