@@ -9,12 +9,14 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 public class Explorer implements IExplorerRaid {
-    private DecisionMaker decisionMaker = new DecisionMaker();
+    private DecisionMaker decisionMaker;
     private final Logger logger = LogManager.getLogger();
+    private Configuration config;
 
     @Override
     public void initialize(String s) {
-        Configuration.initializeConfiguration(s);
+        config = new Configuration(s);
+        decisionMaker = new DecisionMaker(config.getDirection(), config.getBatteryLevel());
     }
 
     @Override
