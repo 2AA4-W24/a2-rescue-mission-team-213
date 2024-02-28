@@ -21,6 +21,7 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String takeDecision() {
+
         return decisionMaker.makeDecision();
     }
 
