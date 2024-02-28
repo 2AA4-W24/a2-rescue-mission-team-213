@@ -43,20 +43,22 @@ public class AreaScan implements DecisionMakerInterface{
         JSONObject headingDirection = new JSONObject();
 //        while (maxVerticalDistance > 0 || maxHorizontalDistance > 0){
             if (distanceTillVertical <= 0){
-                headingDirection.put("direction", turnRight());
+                direction = direction.rightTurn();
+                headingDirection.put("direction", direction);
                 decision.put("action", "heading");
                 decision.put("parameters", headingDirection);
                 maxVerticalDistance -= 5;
-                direction = rightTurn();
+
                 distanceTillVertical = maxVerticalDistance;
 
             }
             else if (distanceTillHorizontal <= 0){
-                headingDirection.put("direction", turnRight());
+                direction = direction.rightTurn();
+                headingDirection.put("direction", direction);
                 decision.put("action", "heading");
                 decision.put("parameters", headingDirection);
                 maxHorizontalDistance -= 5;
-                direction = rightTurn();
+
                 distanceTillHorizontal = maxHorizontalDistance;
             }
             else{
@@ -71,32 +73,5 @@ public class AreaScan implements DecisionMakerInterface{
 //        }
         return direction.toString();
     }
-    public String turnRight(){
-        switch (direction) {
-            case N -> {
-                return "E";
-            }
-            case E -> {
-                return "S";
-            }
-            case S -> {
-                return "W";
-            }
-            case W -> {
-                return "N";
-            }
-            default -> {
-                return null;
-            }
-        }
 
-    }
-    public Direction rightTurn(){
-        return switch (direction) {
-            case N -> Direction.E;
-            case E -> Direction.S;
-            case S -> Direction.W;
-            case W -> Direction.N;
-        };
-    }
 }
