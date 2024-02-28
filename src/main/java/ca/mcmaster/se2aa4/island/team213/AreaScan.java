@@ -71,7 +71,7 @@ public class AreaScan implements DecisionMakerInterface{
                 decision.put("action", "fly");
             }
 //        }
-        return direction.toString();
+        return decision.toString();
     }
 
 }
