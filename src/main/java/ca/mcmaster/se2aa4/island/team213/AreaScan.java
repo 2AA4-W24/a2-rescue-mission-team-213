@@ -45,7 +45,7 @@ public class AreaScan implements DecisionMakerInterface{
             if (distanceTillVertical <= 0){
                 headingDirection.put("direction", turnRight());
                 decision.put("action", "heading");
-                decision.put("parameters", direction);
+                decision.put("parameters", headingDirection);
                 maxVerticalDistance -= 5;
                 direction = rightTurn();
                 distanceTillVertical = maxVerticalDistance;
@@ -54,7 +54,7 @@ public class AreaScan implements DecisionMakerInterface{
             else if (distanceTillHorizontal <= 0){
                 headingDirection.put("direction", turnRight());
                 decision.put("action", "heading");
-                decision.put("parameters", direction);
+                decision.put("parameters", headingDirection);
                 maxHorizontalDistance -= 5;
                 direction = rightTurn();
                 distanceTillHorizontal = maxHorizontalDistance;
