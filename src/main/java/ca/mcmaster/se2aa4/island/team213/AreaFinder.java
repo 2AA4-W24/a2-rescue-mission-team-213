@@ -7,60 +7,136 @@ import org.json.JSONObject;
 public class AreaFinder {
     private int length, width;
 
-    private boolean a, b, c, d; // major phases
-    private boolean movedForward, scanned, echoedLeft, echoedRight; // minor phases
+    private boolean a, b, c, d; // secondary phases
+    private boolean movedForward, scanned, echoedLeft, echoedRight; // tertiary phases
+    private boolean turnRight;
 
     private String previousDecision;
-    private JSONObject scanInfo, leftEcho, rightEcho;
+    private JSONArray scanInfo; 
+    private JSONObject leftEcho, rightEcho;
     private Direction direction;
 
-    // Assume drone is facing west
+    // Assume drone starting direction is west
     public AreaFinder() {
         this.length = 0;
         this.width = 0;
-        this.a = true;
-        this.b = true;
-        this.c = true;
-        this.d = true;
+        this.turnRight = false;
+
+        resetSecondaryPhases();
+        resetTertiaryPhases();
     }
 
-    private JSONObject createDecision() {
+    private void resetSecondaryPhases() {
+        this.a = false;
+        this.b = false;
+        this.c = false;
+        this.d = false;
+    }
+
+    private void resetTertiaryPhases() {
+        this.movedForward = false;
+        this.scanned = false;
+        this.echoedLeft = false;
+        this.echoedRight = false;
+    }
+
+    public boolean isFinished() { // primary phase interface method
+        if(a && b && c && d) {
+            return true;
+        }
+        return false;
+    }
+
+    public JSONObject createDecision() { // primary phase interface method
         JSONObject decision = new JSONObject();
 
-        if(a) {
-            if(!movedForward) {
+        if(this.turnRight) {
+            JSONObject parameter = new JSONObject();
+            this.direction = this.direction.rightTurn();
+
+            parameter.put("direction", this.direction);
+            decision.put("parameters", parameter);
+            decision.put("action", "heading");
+            this.turnRight = false;
+        }
+        else if(!this.a) 
+        {
+            if(!this.movedForward) {
                 this.previousDecision = "fly";
                 this.movedForward = true;
-            } else if(!scanned) {
+            } else if(!this.scanned) {
                 this.previousDecision = "scan";
                 this.scanned = true;
-            } else if(!echoedLeft) {
-                this.previousDecision = "echo";
+            }
+            decision.put("action", this.previousDecision);
+        } 
+        else if(!this.b) 
+        {
+            if(!this.movedForward) {
+                this.previousDecision = "fly";
+                this.movedForward = true;
+
+                decision.put("action", this.previousDecision);
+            } else if(!this.echoedLeft) {
+                this.previousDecision = "echoLeft";
                 this.echoedLeft = true;
 
                 JSONObject parameter = new JSONObject();
                 parameter.put("direction", this.direction.leftTurn());
                 decision.put("parameters", parameter);
-            } else if(!echoedRight) {
-                this.previousDecision = "echo";
+                decision.put("action", "echo");
+            } else if(!this.echoedRight) {
+                this.previousDecision = "echoRight";
                 this.echoedRight = true;
 
                 JSONObject parameter = new JSONObject();
                 parameter.put("direction", this.direction.rightTurn());
-                decision.put("parameters", parameter);                
+                decision.put("parameters", parameter);
+                decision.put("action", "echo");
             }
-            decision.put("action", this.previousDecision);
         }
 
         return decision;
     }
 
-    private void receiveResult(JSONObject response) {
-        if(previousDecision.equals("scan")) {
-            JSONArray biomes = scanInfo.getJSONObject("extras").getJSONArray("biomes");
+    public void receiveResult(JSONObject response) { // primary phase interface method
+        if(previousDecision.equals("scan")) 
+        {
+            this.scanInfo = response.getJSONObject("extras").getJSONArray("biomes");
+            checkScan();
         }
-        if(previousDecision.equals("echo")) {
-            
+        else if(previousDecision.equals("echoLeft"))
+        {
+            this.leftEcho = response.getJSONObject("extras");
+        }
+        else if(previousDecision.equals("echoRight"))
+        {
+            this.rightEcho = response.getJSONObject("extras");
+            checkEchos();
         }
     }
+
+    private void checkScan() {
+        if(this.scanInfo.getString(0).equals("BEACH")) {
+            this.a = true;
+        } else {
+            this.length += 1;
+            resetTertiaryPhases();
+        }
+        
+    }
+
+    private void checkEchos() {
+        if(!b) {
+            if(this.leftEcho.getString("found").equals("OUT_OF_RANGE") && this.rightEcho.getString("found").equals("OUT_OF_RANGE")) {
+                this.b = true;
+                this.turnRight = true;
+                this.length += 1;
+            } else {
+                resetTertiaryPhases();
+            }
+            this.length += 1;
+        }
+    }
+
 }
