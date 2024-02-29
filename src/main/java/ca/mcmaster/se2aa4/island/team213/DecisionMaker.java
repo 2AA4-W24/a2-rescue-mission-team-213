@@ -22,7 +22,6 @@ public class DecisionMaker {
 
     public String makeDecision(){
         JSONObject decision = new JSONObject();
-<<<<<<< HEAD
 
         if(!movedForwardOnce) {
             decision.put("action", "fly");
@@ -30,11 +29,6 @@ public class DecisionMaker {
         } else {
             decision.put("action", "stop");
         }
-=======
-//        decision.put("action", "stop"); // we stop the exploration immediately
-        decision.put("action", "scan");
-//        decision.put("action", "fly");
->>>>>>> ddcd630 (Fly over area within perimeter (close #4))
 
         logger.info("** Decision: {}",decision.toString());
         return decision.toString();
