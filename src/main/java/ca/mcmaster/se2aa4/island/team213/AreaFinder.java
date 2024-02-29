@@ -6,8 +6,11 @@ import org.json.JSONObject;
 
 public class AreaFinder {
     private int length, width;
+
     private boolean a, b, c, d; // major phases
     private boolean movedForward, scanned, echoedLeft, echoedRight; // minor phases
+
+    private String previousDecision;
     private JSONObject scanInfo, leftEcho, rightEcho;
     private Direction direction;
 
@@ -26,30 +29,38 @@ public class AreaFinder {
 
         if(a) {
             if(!movedForward) {
-                decision.put("action", "fly");
-                movedForward = true;
+                this.previousDecision = "fly";
+                this.movedForward = true;
             } else if(!scanned) {
-                decision.put("action", "scan");
-                scanned = true;
+                this.previousDecision = "scan";
+                this.scanned = true;
             } else if(!echoedLeft) {
-                decision.put("action", "echo");
+                this.previousDecision = "echo";
+                this.echoedLeft = true;
+
                 JSONObject parameter = new JSONObject();
                 parameter.put("direction", this.direction.leftTurn());
                 decision.put("parameters", parameter);
-                echoedLeft = true;
             } else if(!echoedRight) {
-                decision.put("action", "echo");
+                this.previousDecision = "echo";
+                this.echoedRight = true;
+
                 JSONObject parameter = new JSONObject();
                 parameter.put("direction", this.direction.rightTurn());
-                decision.put("parameters", parameter);
-                echoedRight = true;
+                decision.put("parameters", parameter);                
             }
+            decision.put("action", this.previousDecision);
         }
 
         return decision;
     }
 
-    private void receiveResult() {
-        JSONArray biomes = scanInfo.getJSONObject("extras").getJSONArray("biomes");
+    private void receiveResult(JSONObject response) {
+        if(previousDecision.equals("scan")) {
+            JSONArray biomes = scanInfo.getJSONObject("extras").getJSONArray("biomes");
+        }
+        if(previousDecision.equals("echo")) {
+            
+        }
     }
 }
