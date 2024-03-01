@@ -7,9 +7,8 @@ import org.json.JSONObject;
 public class AreaFinder {
     private int length, width;
 
-    private boolean a, b, c, d; // secondary phases
+    private boolean a, b, c, d, turnRight; // secondary phases
     private boolean movedForward, scanned, echoedLeft, echoedRight; // tertiary phases
-    private boolean turnRight;
 
     private String previousDecision;
     private JSONArray scanInfo; 
