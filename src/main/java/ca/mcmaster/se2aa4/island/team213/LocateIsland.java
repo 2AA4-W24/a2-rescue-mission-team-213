@@ -13,6 +13,7 @@ public class LocateIsland implements DecisionMakerInterface {
     @Override
     public String makeDecision(Drone drone) {
         JSONObject decision = new JSONObject();
+        // test
         //        if (drone.getEchoNorth() ==  EchoResult.OUT_OF_RANGE && )
         return null;
     }
