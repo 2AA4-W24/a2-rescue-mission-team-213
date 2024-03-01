@@ -7,7 +7,7 @@ import org.json.JSONObject;
 public class Drone {
     private Integer battery;
     private String direction;
-    private EchoStatus echo;
+    private EchoStatus echo = new EchoStatus();
     private String droneStatus;
     private Direction echoing;
 
@@ -39,9 +39,9 @@ public class Drone {
                 echo.rangeNorth = range;
             }
             case E -> {
-                logger.info("HIHIHIHIHIHIHIHIH");
                 echo.east = EchoResult.valueOf(result);
                 echo.rangeEast = range;
+
             }
             case S -> {
                 echo.south = EchoResult.valueOf(result);
@@ -52,12 +52,25 @@ public class Drone {
                 echo.rangeWest = range;
             }
         }
-        logger.info("Echo result for east: {}", echo.east != null ? echo.east.toString() : "null");
-        System.out.println(echo.east);
+        logger.info(echo.east.toString());
+        logger.info(echo.rangeEast);
 
         // set echoing to null after
         echoing = null;
 
+    }
+
+    public EchoResult getEchoNorth(){
+        return echo.north;
+    }
+    public EchoResult getEchoEast(){
+        return echo.east;
+    }
+    public EchoResult getEchoSouth(){
+        return echo.south;
+    }
+    public EchoResult getEchoWest(){
+        return echo.west;
     }
 
     public void setEcho(Direction echoing) {

@@ -1,10 +1,10 @@
 package ca.mcmaster.se2aa4.island.team213;
 
 public class EchoStatus {
-    EchoResult north;
-    EchoResult east;
-    EchoResult south;
-    EchoResult west;
+    EchoResult north= EchoResult.OUT_OF_RANGE;
+    EchoResult east = EchoResult.OUT_OF_RANGE;
+    EchoResult south = EchoResult.OUT_OF_RANGE;
+    EchoResult west = EchoResult.OUT_OF_RANGE;
 
     Integer rangeNorth = 0;
     Integer rangeEast = 0;

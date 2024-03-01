@@ -11,7 +11,8 @@ import org.json.JSONTokener;
 public class DecisionMaker {
     private final Logger logger = LogManager.getLogger();
     private Drone drone;
-    private boolean landFound;
+    private final DecisionMakerInterface findLand  = new LocateIsland();
+
     private boolean movedForwardOnce = false;
 
     public DecisionMaker(String direction, Integer batteryLevel) {
@@ -20,6 +21,9 @@ public class DecisionMaker {
 
     public String makeDecision(Drone drone){
         JSONObject decision = new JSONObject();
+
+        // Need to check if end condition is met before calling
+//        return findLand.makeDecision(drone);
 
         if(!movedForwardOnce) {
             drone.setEcho(Direction.E);
@@ -33,7 +37,7 @@ public class DecisionMaker {
         }
 
 
-        logger.info("** Decision: {}",decision.toString());
+//        logger.info("** Decision: {}",decision.toString());
         return decision.toString();
     }
 
