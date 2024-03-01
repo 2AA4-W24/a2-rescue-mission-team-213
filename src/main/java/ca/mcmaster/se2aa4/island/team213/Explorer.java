@@ -10,6 +10,8 @@ import org.json.JSONTokener;
 
 public class Explorer implements IExplorerRaid {
     private DecisionMaker decisionMaker;
+
+    private Drone drone;
     private final Logger logger = LogManager.getLogger();
     private Configuration config;
 
@@ -17,24 +19,18 @@ public class Explorer implements IExplorerRaid {
     public void initialize(String s) {
         config = new Configuration(s);
         decisionMaker = new DecisionMaker(config.getDirection(), config.getBatteryLevel());
+        drone = new Drone(config.getDirection(), config.getBatteryLevel());
     }
 
     @Override
     public String takeDecision() {
-
-        return decisionMaker.makeDecision();
+        return decisionMaker.makeDecision(drone);
     }
 
     @Override
     public void acknowledgeResults(String s) {
         JSONObject response = new JSONObject(new JSONTokener(new StringReader(s)));
-        logger.info("** Response received:\n"+response.toString(2));
-        Integer cost = response.getInt("cost");
-        logger.info("The cost of the action was {}", cost);
-        String status = response.getString("status");
-        logger.info("The status of the drone is {}", status);
-        JSONObject extraInfo = response.getJSONObject("extras");
-        logger.info("Additional information received: {}", extraInfo);
+        drone.updateStatus(response);
     }
 
     @Override
