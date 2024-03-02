@@ -2,6 +2,7 @@ package ca.mcmaster.se2aa4.island.team213;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.json.JsonConfiguration;
 import org.json.JSONObject;
 
 public class Drone {
@@ -75,5 +76,9 @@ public class Drone {
 
     public void setEcho(Direction echoing) {
         this.echoing = echoing;
+    }
+
+    public void updatePosition(JSONObject response) {
+        // If the decision we send to the drone is a "fly" or "heading" action, this method will update the drone's attributes.
     }
 }

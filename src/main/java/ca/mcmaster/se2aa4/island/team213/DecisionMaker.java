@@ -19,7 +19,7 @@ public class DecisionMaker {
         drone = new Drone(direction, batteryLevel);
     }
 
-    public String makeDecision(Drone drone){
+    public JSONObject decideDecision(Drone drone){
         JSONObject decision = new JSONObject();
 
 
@@ -40,7 +40,7 @@ public class DecisionMaker {
 
 
 //        logger.info("** Decision: {}",decision.toString());
-        return decision.toString();
+        return decision;
     }
 
 }
