@@ -6,6 +6,7 @@ import org.json.JSONObject;
 public class AreaFinder {
     private int length, width;
 
+    private int edgesFound;
     private boolean firstEdgeFound, subsequentEdgeFound, flyPastDetermined, turnRight; // secondary phases
     private boolean movedForward, scanned, echoedLeft, echoedRight; // tertiary phases
 
@@ -16,6 +17,7 @@ public class AreaFinder {
 
     // Assume drone starting direction is west
     public AreaFinder() {
+        this.edgesFound = 0;
         this.length = 0;
         this.width = 1;
 
@@ -38,7 +40,7 @@ public class AreaFinder {
     }
 
     public boolean isFinished() { // primary phase interface method
-        if(this.firstEdgeFound && this.subsequentEdgeFound && this.flyPastDetermined) {
+        if(this.edgesFound == 4) {
             return true;
         }
         return false;
@@ -105,22 +107,25 @@ public class AreaFinder {
             }
         }
         else if(!this.flyPastDetermined) {
-            
+            decision.put("action", "fly");
         }
 
         return decision;
     }
 
     public void receiveResult(JSONObject response) { // primary phase interface method
-        if(previousDecision.equals("scan")) 
+        if(this.previousDecision.equals("fly")) {
+            
+        }
+        else if (this.previousDecision.equals("scan")) 
         {
             this.scanInfo = response.getJSONObject("extras").getJSONArray("biomes");
         }
-        else if(previousDecision.equals("echoLeft"))
+        else if(this.previousDecision.equals("echoLeft"))
         {
             this.leftEcho = response.getJSONObject("extras");
         }
-        else if(previousDecision.equals("echoRight"))
+        else if(this.previousDecision.equals("echoRight"))
         {
             this.rightEcho = response.getJSONObject("extras");
             checkScanAndEchoes();
@@ -131,6 +136,8 @@ public class AreaFinder {
         if(!this.firstEdgeFound) {
             if(this.scanInfo.length() == 1 && this.scanInfo.getString(0).equals("BEACH") && this.leftEcho.getString("found").equals("OUT_OF_RANGE") && this.rightEcho.getString("found").equals("OUT_OF_RANGE")) {
                 this.firstEdgeFound = true;
+                this.edgesFound += 1;
+
                 this.turnRight = true;
                 this.length += 1;
             } 
@@ -140,6 +147,8 @@ public class AreaFinder {
         else {
             if(this.rightEcho.getString("found").equals("OUT_OF_RANGE")) {
                 this.subsequentEdgeFound = true;
+                this.edgesFound += 1;
+
                 this.turnRight = true;
                 this.width += 1;
             }
