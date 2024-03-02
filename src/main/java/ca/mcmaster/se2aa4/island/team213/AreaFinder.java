@@ -6,7 +6,7 @@ import org.json.JSONObject;
 public class AreaFinder {
     private int length, width;
 
-    private boolean a, b, c, turnRight; // secondary phases
+    private boolean firstEdgeFound, subsequentEdgeFound, flyPastDetermined, turnRight; // secondary phases
     private boolean movedForward, scanned, echoedLeft, echoedRight; // tertiary phases
 
     private String previousDecision;
@@ -24,9 +24,9 @@ public class AreaFinder {
     }
 
     private void resetSecondaryPhases() {
-        this.a = false;
-        this.b = false;
-        this.c = false;
+        this.firstEdgeFound = false;
+        this.subsequentEdgeFound = false;
+        this.flyPastDetermined = false;
         this.turnRight = false;
     }
 
@@ -38,7 +38,7 @@ public class AreaFinder {
     }
 
     public boolean isFinished() { // primary phase interface method
-        if(a && b && c) {
+        if(this.firstEdgeFound && this.subsequentEdgeFound && this.flyPastDetermined) {
             return true;
         }
         return false;
@@ -59,7 +59,7 @@ public class AreaFinder {
 
             this.turnRight = false;
         }
-        else if(!this.a) {
+        else if(!this.firstEdgeFound) {
             if(!this.movedForward) {
                 this.previousDecision = "fly";
                 this.movedForward = true;
@@ -88,7 +88,7 @@ public class AreaFinder {
                 decision.put("action", "echo");
             }
         } 
-        else if(!this.b) {
+        else if(!this.subsequentEdgeFound) {
             if(!this.movedForward) {
                 this.previousDecision = "fly";
                 this.movedForward = true;
@@ -104,7 +104,7 @@ public class AreaFinder {
                 decision.put("action", "echo");
             }
         }
-        else if(!this.c) {
+        else if(!this.flyPastDetermined) {
             
         }
 
@@ -128,13 +128,22 @@ public class AreaFinder {
     }
 
     private void checkScanAndEchoes() {
-        if(!a) {
-            if (this.scanInfo.length() == 1 && this.scanInfo.getString(0).equals("BEACH") && this.leftEcho.getString("found").equals("OUT_OF_RANGE") && this.rightEcho.getString("found").equals("OUT_OF_RANGE")) {
-                this.a = true;
+        if(!this.firstEdgeFound) {
+            if(this.scanInfo.length() == 1 && this.scanInfo.getString(0).equals("BEACH") && this.leftEcho.getString("found").equals("OUT_OF_RANGE") && this.rightEcho.getString("found").equals("OUT_OF_RANGE")) {
+                this.firstEdgeFound = true;
                 this.turnRight = true;
                 this.length += 1;
             } 
             this.length += 1;
+            resetTertiaryPhases();
+        }
+        else {
+            if(this.rightEcho.getString("found").equals("OUT_OF_RANGE")) {
+                this.subsequentEdgeFound = true;
+                this.turnRight = true;
+                this.width += 1;
+            }
+            this.width += 1;
             resetTertiaryPhases();
         }
     }
