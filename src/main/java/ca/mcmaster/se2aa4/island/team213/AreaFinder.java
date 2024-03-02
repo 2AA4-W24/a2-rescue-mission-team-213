@@ -12,6 +12,7 @@ public class AreaFinder {
 
     private String previousDecision;
     private boolean increaseX;
+    private int flyActionsLeft;
 
     private JSONArray scanInfo; 
     private JSONObject leftEcho, rightEcho;
@@ -38,7 +39,9 @@ public class AreaFinder {
     }
 
     private void resetSecondaryPhases() {
-        this.firstEdgeFound = false;
+        if(edgesFound == 0) {
+            this.firstEdgeFound = false;
+        }
         this.subsequentEdgeFound = false;
         this.flyPastDetermined = false;
         this.turnRight = false;
@@ -126,8 +129,8 @@ public class AreaFinder {
     }
 
     public void receiveResult(JSONObject response) { // primary phase interface method
-        if(this.previousDecision.equals("fly")) {
-            
+        if(this.subsequentEdgeFound && this.previousDecision.equals("fly")) {
+            checkFly();
         }
         else if (this.previousDecision.equals("scan")) 
         {
@@ -165,21 +168,34 @@ public class AreaFinder {
                 
                 increaseXorY();
                 swapXorY();
+                setFlyActionsLeft();
             }
             increaseXorY();
             resetTertiaryPhases();
         }
     }
 
+    private void checkFly() {
+        this.flyActionsLeft -= 1;
+        if(this.flyActionsLeft == 0) {
+            resetSecondaryPhases();
+        }
+    }
+
     private void increaseXorY() {
         if(this.increaseX) {
             this.x += 1;
-        } else {
+        } 
+        else {
             this.y += 1;
         }
     }
 
     private void swapXorY() {
         this.increaseX = this.increaseX ? false : true;
+    }
+
+    private void setFlyActionsLeft() {
+        this.flyActionsLeft = this.increaseX ? this.x - 1: this.y - 1;
     }
 }
