@@ -20,4 +20,13 @@ public enum Direction {
             case W -> Direction.S;
         };
     }
+
+    public String toString(){
+        return switch (this) {
+            case N -> "N";
+            case E -> "E";
+            case S -> "S";
+            case W -> "W";
+        };
+    }
 }

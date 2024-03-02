@@ -4,25 +4,37 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class AreaFinder {
-    private int length, width;
-
+    private int x, y;
     private int edgesFound;
+
     private boolean firstEdgeFound, subsequentEdgeFound, flyPastDetermined, turnRight; // secondary phases
     private boolean movedForward, scanned, echoedLeft, echoedRight; // tertiary phases
 
     private String previousDecision;
+    private boolean increaseX;
+
     private JSONArray scanInfo; 
     private JSONObject leftEcho, rightEcho;
     private Direction direction;
 
-    // Assume drone starting direction is west
-    public AreaFinder() {
+    public AreaFinder(Direction direction) {
         this.edgesFound = 0;
-        this.length = 0;
-        this.width = 1;
 
+        parseStartingDirection(direction);
         resetSecondaryPhases();
         resetTertiaryPhases();
+    }
+
+    private void parseStartingDirection(Direction direction) {
+        if(direction.toString().equals("N") || direction.toString().equals("S")) {
+            this.increaseX = false;
+            this.x = 1;
+            this.y = 0;
+        } else {
+            this.increaseX = true;
+            this.x = 0;
+            this.y = 1;
+        }
     }
 
     private void resetSecondaryPhases() {
@@ -136,24 +148,38 @@ public class AreaFinder {
         if(!this.firstEdgeFound) {
             if(this.scanInfo.length() == 1 && this.scanInfo.getString(0).equals("BEACH") && this.leftEcho.getString("found").equals("OUT_OF_RANGE") && this.rightEcho.getString("found").equals("OUT_OF_RANGE")) {
                 this.firstEdgeFound = true;
-                this.edgesFound += 1;
-
                 this.turnRight = true;
-                this.length += 1;
+                this.edgesFound += 1;
+                
+                increaseXorY();
+                swapXorY();
             } 
-            this.length += 1;
+            increaseXorY();
             resetTertiaryPhases();
         }
         else {
             if(this.rightEcho.getString("found").equals("OUT_OF_RANGE")) {
                 this.subsequentEdgeFound = true;
-                this.edgesFound += 1;
-
                 this.turnRight = true;
-                this.width += 1;
+                this.edgesFound += 1;
+                
+                increaseXorY();
+                swapXorY();
             }
-            this.width += 1;
+            increaseXorY();
             resetTertiaryPhases();
         }
+    }
+
+    private void increaseXorY() {
+        if(this.increaseX) {
+            this.x += 1;
+        } else {
+            this.y += 1;
+        }
+    }
+
+    private void swapXorY() {
+        this.increaseX = this.increaseX ? false : true;
     }
 }
