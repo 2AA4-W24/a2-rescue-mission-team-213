@@ -4,14 +4,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class AreaFinder {
-    private int x, y;
-    private int edgesFound;
+    private int x, y; // stays in AreaFinder
+    private int edgesFound; // stays in AreaFinder
 
     private boolean firstEdgeFound, subsequentEdgeFound, flyPastDetermined, turnRight; // secondary phases
     private boolean movedForward, scanned, echoedLeft, echoedRight; // tertiary phases
 
     private String previousDecision;
-    private boolean increaseX;
+    private boolean increaseX; // stays in AreaFinder
     private int flyActionsLeft;
 
     private JSONArray scanInfo; 
@@ -38,7 +38,7 @@ public class AreaFinder {
         }
     }
 
-    private void resetSecondaryPhases() {
+    private void resetSecondaryPhases() { // interface will handle
         if(edgesFound == 0) {
             this.firstEdgeFound = false;
         }
@@ -47,7 +47,7 @@ public class AreaFinder {
         this.turnRight = false;
     }
 
-    private void resetTertiaryPhases() {
+    private void resetTertiaryPhases() { // interface will handle
         this.movedForward = false;
         this.scanned = false;
         this.echoedLeft = false;
@@ -147,7 +147,7 @@ public class AreaFinder {
         }
     }
 
-    private void checkScanAndEchoes() {
+    private void checkScanAndEchoes() { // firstEdgeFound and subsequentEdgeFound method
         if(!this.firstEdgeFound) {
             if(this.scanInfo.length() == 1 && this.scanInfo.getString(0).equals("BEACH") && this.leftEcho.getString("found").equals("OUT_OF_RANGE") && this.rightEcho.getString("found").equals("OUT_OF_RANGE")) {
                 this.firstEdgeFound = true;
@@ -175,14 +175,14 @@ public class AreaFinder {
         }
     }
 
-    private void checkFly() {
+    private void checkFly() { // flyPastDetermined method
         this.flyActionsLeft -= 1;
         if(this.flyActionsLeft == 0) {
             resetSecondaryPhases();
         }
     }
 
-    private void increaseXorY() {
+    private void increaseXorY() { // firstEdgeFound and subsequentEdgeFound method
         if(this.increaseX) {
             this.x += 1;
         } 
@@ -191,11 +191,11 @@ public class AreaFinder {
         }
     }
 
-    private void swapXorY() {
+    private void swapXorY() { // AreaFinder method
         this.increaseX = this.increaseX ? false : true;
     }
 
-    private void setFlyActionsLeft() {
+    private void setFlyActionsLeft() { // subsequentEdgeFound method
         this.flyActionsLeft = this.increaseX ? this.x - 1: this.y - 1;
     }
 }
