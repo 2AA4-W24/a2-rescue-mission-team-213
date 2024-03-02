@@ -4,6 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class Drone {
     private Integer battery;
     private String direction;
