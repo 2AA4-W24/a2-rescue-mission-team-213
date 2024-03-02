@@ -22,8 +22,10 @@ public class DecisionMaker {
     public String makeDecision(Drone drone){
         JSONObject decision = new JSONObject();
 
+
         // Need to check if end condition is met before calling
-//        return findLand.makeDecision(drone);
+        // return findLand.makeDecision(drone);
+
 
         if(!movedForwardOnce) {
             drone.setEcho(Direction.E);
