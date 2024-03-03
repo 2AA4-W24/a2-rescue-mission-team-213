@@ -18,7 +18,7 @@ public class LocateIsland implements DecisionMakerInterface {
     private Queue<JSONObject> taskQueue = new LinkedList<>();
 
     @Override
-    public String makeDecision(Drone drone) {
+    public JSONObject makeDecision(Drone drone) {
 //        logger.info("Items in Queue {}",taskQueue);
         JSONObject decision = new JSONObject();
         // first check if there are tasks to be executed
@@ -198,7 +198,7 @@ public class LocateIsland implements DecisionMakerInterface {
 
         }
 
-        return decision.toString();
+        return decision;
     }
     public boolean isLandFound() {
         return landFound;
