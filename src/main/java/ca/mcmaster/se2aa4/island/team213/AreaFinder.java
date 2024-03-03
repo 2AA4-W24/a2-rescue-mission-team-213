@@ -58,7 +58,7 @@ public class AreaFinder implements Phase {
     }
 
     @Override
-    public JSONObject createDecision() {                                    // primary phase interface method
+    public JSONObject createDecision(Drone drone) {                                    // primary phase interface method
         JSONObject decision = new JSONObject();
 
         if(this.turnRight) {
@@ -115,7 +115,7 @@ public class AreaFinder implements Phase {
     }
 
     @Override
-    public void receiveResult(Drone drone) {                                // primary phase interface method
+    public void checkDrone(Drone drone) {                                // primary phase interface method
         if(this.subsequentEdgeFound && drone.getPreviousDecision().equals("fly")) {
             checkFly();
         }

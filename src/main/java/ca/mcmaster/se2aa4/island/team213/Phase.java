@@ -6,9 +6,9 @@ public interface Phase {
 
     boolean isFinished();
 
-    JSONObject createDecision();
+    JSONObject createDecision(Drone drone);
 
-    void receiveResult(Drone drone);
+    void checkDrone(Drone drone);
 
     Phase nextPhase();
 
