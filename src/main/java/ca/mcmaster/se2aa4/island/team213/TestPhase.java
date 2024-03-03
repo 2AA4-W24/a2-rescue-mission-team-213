@@ -17,9 +17,9 @@ public class TestPhase implements Phase {
     }
 
     @Override
-    public void receiveResult(JSONObject response) {
+    public void checkDrone(Drone drone) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'receiveResult'");
+        throw new UnsupportedOperationException("Unimplemented method 'checkDrone'");
     }
 
     @Override
@@ -27,5 +27,6 @@ public class TestPhase implements Phase {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'nextPhase'");
     }
-    
+
+
 }
