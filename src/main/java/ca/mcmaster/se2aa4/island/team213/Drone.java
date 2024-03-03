@@ -154,7 +154,9 @@ public class Drone {
         return null;
     }
 
-
+    public void setEcho(Direction direction){
+        this.echoing = direction;
+    }
 
     // Section below added by Gary, includes some temporary accessor methods to make other classes work
 
@@ -212,4 +214,6 @@ public class Drone {
     public EchoResult getEchoLeft() {
         return this.echoLeft;
     }
+
+
 }

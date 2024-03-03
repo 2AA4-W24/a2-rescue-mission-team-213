@@ -11,7 +11,7 @@ import org.json.JSONTokener;
 public class DecisionMaker {
     private final Logger logger = LogManager.getLogger();
     private Drone drone;
-    private final DecisionMakerInterface findLand  = new LocateIsland();
+    private final Phase findLand  = new LocateIsland();
 
     private boolean movedForwardOnce = false;
 

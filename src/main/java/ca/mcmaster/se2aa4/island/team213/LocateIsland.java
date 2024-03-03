@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
 
-public class LocateIsland implements DecisionMakerInterface {
+public class LocateIsland implements Phase {
     private final Logger logger = LogManager.getLogger();
     private boolean landFound;
 
@@ -18,7 +18,7 @@ public class LocateIsland implements DecisionMakerInterface {
     private Queue<JSONObject> taskQueue = new LinkedList<>();
 
     @Override
-    public JSONObject makeDecision(Drone drone) {
+    public JSONObject createDecision(Drone drone) {
 //        logger.info("Items in Queue {}",taskQueue);
         JSONObject decision = new JSONObject();
         // first check if there are tasks to be executed
@@ -200,7 +200,19 @@ public class LocateIsland implements DecisionMakerInterface {
 
         return decision;
     }
-    public boolean isLandFound() {
+
+    @Override
+    public void checkDrone(Drone drone) {
+            // temporarily empty until final refactor
+    }
+
+    @Override
+    public Phase nextPhase() {
+        return new TestPhase();
+    }
+
+    @Override
+    public boolean isFinished() {
         return landFound;
     }
 
