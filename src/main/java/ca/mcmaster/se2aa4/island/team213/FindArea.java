@@ -2,8 +2,7 @@ package ca.mcmaster.se2aa4.island.team213;
 
 import org.json.JSONObject;
 
-public class AreaFinder implements Phase {
-    private Drone drone; // stays in AreaFinder
+public class FindArea implements Phase {
     private int x, y; // stays in AreaFinder
     private boolean increaseX; // stays in AreaFinder
     private int edgesFound; // stays in AreaFinder
@@ -12,8 +11,7 @@ public class AreaFinder implements Phase {
     private boolean firstEdgeFound, subsequentEdgeFound, flyPastDetermined, turnRight; // secondary phases
     private boolean movedForward, scanned, echoedLeft, echoedRight; // tertiary phases
 
-    public AreaFinder(Drone drone) {
-        this.drone = drone;
+    public FindArea(Drone drone) {
         this.edgesFound = 0;
 
         parseStartingDirection(drone.getDirection());
