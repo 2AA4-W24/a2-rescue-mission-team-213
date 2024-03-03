@@ -6,6 +6,7 @@ public interface Phase {
 
     boolean isFinished();
 
+    // WILL NOT ACCEPT DRONE IN END PRODUCT
     JSONObject createDecision(Drone drone);
 
     void checkDrone(Drone drone);
