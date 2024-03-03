@@ -15,8 +15,8 @@ public class DecisionMaker {
 
     private boolean movedForwardOnce = false;
 
-    public DecisionMaker(String direction, Integer batteryLevel) {
-        drone = new Drone(direction, batteryLevel);
+    public DecisionMaker() {
+        
     }
 
     public JSONObject decideDecision(Drone drone){

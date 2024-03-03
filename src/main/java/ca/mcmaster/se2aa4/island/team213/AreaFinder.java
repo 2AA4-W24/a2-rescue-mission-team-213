@@ -3,7 +3,7 @@ package ca.mcmaster.se2aa4.island.team213;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class AreaFinder {
+public class AreaFinder implements Phase {
     private int x, y; // stays in AreaFinder
     private int edgesFound; // stays in AreaFinder
 
@@ -18,7 +18,10 @@ public class AreaFinder {
     private JSONObject leftEcho, rightEcho;
     private Direction direction;
 
-    public AreaFinder(Direction direction) {
+    private Drone drone;
+
+    public AreaFinder(Drone drone) {
+        this.drone = drone;
         this.edgesFound = 0;
 
         parseStartingDirection(direction);
@@ -54,14 +57,16 @@ public class AreaFinder {
         this.echoedRight = false;
     }
 
-    public boolean isFinished() { // primary phase interface method
+    @Override
+    public boolean isFinished() {                                           // primary phase interface method
         if(this.edgesFound == 4) {
             return true;
         }
         return false;
     }
 
-    public JSONObject createDecision() { // primary phase interface method
+    @Override
+    public JSONObject createDecision(Drone drone) {                                    // primary phase interface method
         JSONObject decision = new JSONObject();
 
         if(this.turnRight) {
@@ -128,7 +133,8 @@ public class AreaFinder {
         return decision;
     }
 
-    public void receiveResult(JSONObject response) { // primary phase interface method
+    @Override
+    public void receiveResult(JSONObject response) {                        // primary phase interface method
         if(this.subsequentEdgeFound && this.previousDecision.equals("fly")) {
             checkFly();
         }
@@ -145,6 +151,11 @@ public class AreaFinder {
             this.rightEcho = response.getJSONObject("extras");
             checkScanAndEchoes();
         }
+    }
+
+    @Override
+    public Phase nextPhase() {
+        return new TestPhase();
     }
 
     private void checkScanAndEchoes() { // firstEdgeFound and subsequentEdgeFound method

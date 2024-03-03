@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 public class Drone {
     private Integer battery;
-    private String direction;
+    private Direction direction;
     private EchoStatus echo = new EchoStatus();
     private String droneStatus;
     private Direction echoing;
@@ -15,8 +15,17 @@ public class Drone {
     private final Logger logger = LogManager.getLogger();
     
     public Drone(String direction, Integer battery){
-        this.direction = direction;
+        stringToDirection(direction);
         this.battery = battery;
+    }
+
+    private void stringToDirection(String direction) {
+        switch(direction) {
+            case ("N") -> this.direction = Direction.N;
+            case ("E") -> this.direction = Direction.E;
+            case ("S") -> this.direction = Direction.S;
+            case ("W") -> this.direction = Direction.W;
+        }
     }
 
     public void updateStatus(JSONObject response){
@@ -76,6 +85,10 @@ public class Drone {
 
     public void setEcho(Direction echoing) {
         this.echoing = echoing;
+    }
+
+    public Direction getDirection() {
+        return this.direction;
     }
 
     public void updatePosition(JSONObject response) {

@@ -10,15 +10,15 @@ import org.json.JSONTokener;
 
 public class Explorer implements IExplorerRaid {
     private DecisionMaker decisionMaker;
-
     private Drone drone;
+    
     private final Logger logger = LogManager.getLogger();
     private Configuration config;
 
     @Override
     public void initialize(String s) {
         config = new Configuration(s);
-        decisionMaker = new DecisionMaker(config.getDirection(), config.getBatteryLevel());
+        decisionMaker = new DecisionMaker();
         drone = new Drone(config.getDirection(), config.getBatteryLevel());
     }
 
