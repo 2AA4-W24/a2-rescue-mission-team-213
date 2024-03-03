@@ -38,7 +38,7 @@ public class AreaScan implements DecisionMakerInterface{
 
     }
     @Override
-    public String makeDecision(Drone drone) {
+    public JSONObject makeDecision(Drone drone) {
         JSONObject decision = new JSONObject();
         JSONObject headingDirection = new JSONObject();
 //        while (maxVerticalDistance > 0 || maxHorizontalDistance > 0){
@@ -71,7 +71,7 @@ public class AreaScan implements DecisionMakerInterface{
                 decision.put("action", "fly");
             }
 //        }
-        return decision.toString();
+        return decision;
     }
 
 }
