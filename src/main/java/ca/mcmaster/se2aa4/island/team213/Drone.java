@@ -3,6 +3,7 @@ package ca.mcmaster.se2aa4.island.team213;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.json.JsonConfiguration;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Drone {
@@ -10,6 +11,7 @@ public class Drone {
     private Direction direction;
     private EchoStatus echo = new EchoStatus();
     private Direction echoing;
+    private JSONArray scanInfo;
     private String previousDecision;
 
     private final Logger logger = LogManager.getLogger();
@@ -87,10 +89,11 @@ public class Drone {
         this.echoing = echoing;
     }
 
-    public Direction getDirection() {
-        return this.direction;
-    }
 
+
+    // Section below added by Gary, includes some temporary accessor methods to make other classes work
+
+    private EchoResult echoRight, echoLeft;
 
     // determines what the decision being sent to Explorer is
     // also updates direction or position if the decision was a "fly" or "heading" action
@@ -123,5 +126,25 @@ public class Drone {
         else if(decision.getString("action").equals("fly")) {
             this.previousDecision = "fly";
         }
+    }
+
+    public Direction getDirection() {
+        return this.direction;
+    }
+
+    public JSONArray getScanInfo() {
+        return this.scanInfo;
+    }
+
+    public String getPreviousDecision() {
+        return this.previousDecision;
+    }
+
+    public EchoResult getEchoRight() {
+        return this.echoRight;
+    }
+
+    public EchoResult getEchoLeft() {
+        return this.echoLeft;
     }
 }
