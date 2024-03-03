@@ -14,17 +14,13 @@ public class AreaFinder implements Phase {
     private boolean increaseX; // stays in AreaFinder
     private int flyActionsLeft;
 
-    private JSONArray scanInfo; 
-    private JSONObject leftEcho, rightEcho;
-    private Direction direction;
-
     private Drone drone;
 
     public AreaFinder(Drone drone) {
         this.drone = drone;
         this.edgesFound = 0;
 
-        parseStartingDirection(direction);
+        parseStartingDirection(drone.getDirection());
         resetSecondaryPhases();
         resetTertiaryPhases();
     }
@@ -72,10 +68,9 @@ public class AreaFinder implements Phase {
         if(this.turnRight) {
             this.previousDecision = "turnRight";
             this.movedForward = true;
-            this.direction = this.direction.rightTurn();
 
             JSONObject parameter = new JSONObject();
-            parameter.put("direction", this.direction);
+            parameter.put("direction", drone.getDirection().rightTurn());
             decision.put("parameters", parameter);
             decision.put("action", "heading");
 
@@ -97,7 +92,7 @@ public class AreaFinder implements Phase {
                 this.echoedLeft = true;
 
                 JSONObject parameter = new JSONObject();
-                parameter.put("direction", this.direction.leftTurn());
+                parameter.put("direction", drone.getDirection().leftTurn());
                 decision.put("parameters", parameter);
                 decision.put("action", "echo");
             } else if(!this.echoedRight) {
@@ -105,7 +100,7 @@ public class AreaFinder implements Phase {
                 this.echoedRight = true;
 
                 JSONObject parameter = new JSONObject();
-                parameter.put("direction", this.direction.rightTurn());
+                parameter.put("direction", drone.getDirection().rightTurn());
                 decision.put("parameters", parameter);
                 decision.put("action", "echo");
             }
@@ -121,7 +116,7 @@ public class AreaFinder implements Phase {
                 this.echoedRight = true;
 
                 JSONObject parameter = new JSONObject();
-                parameter.put("direction", this.direction.rightTurn());
+                parameter.put("direction", drone.getDirection().rightTurn());
                 decision.put("parameters", parameter);
                 decision.put("action", "echo");
             }
@@ -134,22 +129,13 @@ public class AreaFinder implements Phase {
     }
 
     @Override
-    public void receiveResult(JSONObject response) {                        // primary phase interface method
+    public void receiveResult(Drone drone) {                        // primary phase interface method
         if(this.subsequentEdgeFound && this.previousDecision.equals("fly")) {
             checkFly();
         }
-        else if (this.previousDecision.equals("scan")) 
-        {
-            this.scanInfo = response.getJSONObject("extras").getJSONArray("biomes");
-        }
-        else if(this.previousDecision.equals("echoLeft"))
-        {
-            this.leftEcho = response.getJSONObject("extras");
-        }
         else if(this.previousDecision.equals("echoRight"))
         {
-            this.rightEcho = response.getJSONObject("extras");
-            checkScanAndEchoes();
+            checkScanAndEchoes(drone);
         }
     }
 
@@ -158,7 +144,7 @@ public class AreaFinder implements Phase {
         return new TestPhase();
     }
 
-    private void checkScanAndEchoes() { // firstEdgeFound and subsequentEdgeFound method
+    private void checkScanAndEchoes(Drone drone) { // firstEdgeFound and subsequentEdgeFound method
         if(!this.firstEdgeFound) {
             if(this.scanInfo.length() == 1 && this.scanInfo.getString(0).equals("BEACH") && this.leftEcho.getString("found").equals("OUT_OF_RANGE") && this.rightEcho.getString("found").equals("OUT_OF_RANGE")) {
                 this.firstEdgeFound = true;

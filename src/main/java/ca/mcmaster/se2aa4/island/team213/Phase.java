@@ -8,7 +8,7 @@ public interface Phase {
 
     JSONObject createDecision(Drone drone);
 
-    void receiveResult(JSONObject response);
+    void receiveResult(Drone drone);
 
     Phase nextPhase();
 

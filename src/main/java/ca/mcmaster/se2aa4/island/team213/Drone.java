@@ -9,8 +9,8 @@ public class Drone {
     private Integer battery;
     private Direction direction;
     private EchoStatus echo = new EchoStatus();
-    private String droneStatus;
     private Direction echoing;
+    private String previousDecision;
 
     private final Logger logger = LogManager.getLogger();
     
@@ -34,7 +34,7 @@ public class Drone {
         //        logger.info("The cost of the action was {}", cost);
         battery -= response.getInt("cost");
         //        logger.info("The status of the drone is {}", status);
-        droneStatus = response.getString("status");
+        //        droneStatus = response.getString("status");
 
 
         // TECHNICAL DEBT: currently just assumes content of extra is echo response object, does not consider for scan
@@ -91,7 +91,37 @@ public class Drone {
         return this.direction;
     }
 
-    public void updatePosition(JSONObject response) {
-        // If the decision we send to the drone is a "fly" or "heading" action, this method will update the drone's attributes.
+
+    // determines what the decision being sent to Explorer is
+    // also updates direction or position if the decision was a "fly" or "heading" action
+    public void parseDecision(JSONObject decision) {
+        if(decision.getString("action").equals("heading")) {
+            JSONObject parameter = decision.getJSONObject("parameters");
+
+            if(this.direction.rightTurn().equals(parameter.get("direction"))) {
+                this.direction = this.direction.rightTurn();
+                this.previousDecision = "turnRight";
+            }
+            else if(this.direction.leftTurn().equals(parameter.get("direction"))) {
+                this.direction = this.direction.leftTurn();
+                this.previousDecision = "turnLeft";
+            }
+        }
+        else if(decision.getString("action").equals("echo")) {
+            JSONObject parameter = decision.getJSONObject("parameters");
+
+            if(this.direction.rightTurn().equals(parameter.get("direction"))) {
+                this.previousDecision = "echoRight";
+            }
+            else if(this.direction.leftTurn().equals(parameter.get("direction"))) {
+                this.previousDecision = "echoLeft";
+            }
+        }
+        else if(decision.getString("action").equals("scan")) {
+            this.previousDecision = "scan";
+        }
+        else if(decision.getString("action").equals("fly")) {
+            this.previousDecision = "fly";
+        }
     }
 }
