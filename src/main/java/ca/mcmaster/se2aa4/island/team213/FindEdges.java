@@ -18,7 +18,7 @@ public class FindEdges implements Phase {
 
     private void setupQueue() {
         this.findFirstEdge = new FindFirstEdge();
-        this.findSecondEdge = new FindSecondEdge();
+        this.findSecondEdge = new FindSubsequentEdge();
         this.flyPastDeterminedA = new FlyPastDetermined(0);
         this.findThirdEdge = new FindSubsequentEdge();
         this.flyPastDeterminedB = new FlyPastDetermined(0);

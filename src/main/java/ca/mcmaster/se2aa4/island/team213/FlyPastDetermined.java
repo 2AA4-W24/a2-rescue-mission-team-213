@@ -5,7 +5,6 @@ import org.json.JSONObject;
 public class FlyPastDetermined implements Phase {
     private int flyActionsLeft;
     private boolean isFinished;
-    private boolean turnedRight;
 
     public FlyPastDetermined(int flyActionsLeft) {
         this.flyActionsLeft = flyActionsLeft;
@@ -21,16 +20,7 @@ public class FlyPastDetermined implements Phase {
     public JSONObject createDecision(Drone drone) {
         JSONObject decision = new JSONObject();
 
-        if(!this.turnedRight) {
-            this.turnedRight = true;
-            JSONObject parameter = new JSONObject();
-            parameter.put("direction", drone.getDirection().rightTurn());
-            decision.put("parameters", parameter);
-            decision.put("action", "heading");  
-        }
-        else {
-            decision.put("action", "fly");
-        }
+        decision.put("action", "fly");
         
         return decision;
     }

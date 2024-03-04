@@ -5,9 +5,11 @@ import org.json.JSONObject;
 public class FindFirstEdge implements Phase {
     private boolean isFinished;
     private boolean movedForward, scanned, echoedLeft, echoedRight;
+    private boolean turnRight;
     
     public FindFirstEdge() {
         this.isFinished = false;
+        this.turnRight = false;
         resetTertiaryPhases();
     }
 
@@ -20,7 +22,14 @@ public class FindFirstEdge implements Phase {
     public JSONObject createDecision(Drone drone) {
         JSONObject decision = new JSONObject();
 
-        if(!this.movedForward) {
+        if(this.turnRight) {
+            this.isFinished = true;
+            JSONObject parameter = new JSONObject();
+            parameter.put("direction", drone.getDirection().rightTurn());
+            decision.put("parameters", parameter);
+            decision.put("action", "heading");  
+        }
+        else if(!this.movedForward) {
             this.movedForward = true;
             decision.put("action", "fly");
         } 
@@ -60,7 +69,7 @@ public class FindFirstEdge implements Phase {
     
     private void checkScanAndEchoes(Drone drone) {
         if(drone.getScanInfo().length() == 1 && drone.getScanInfo().getString(0).equals("BEACH") && drone.getEchoLeft().equals(EchoResult.OUT_OF_RANGE) && drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
-            this.isFinished = true;
+            this.turnRight = true;
         }
         resetTertiaryPhases();
     }

@@ -5,9 +5,11 @@ import org.json.JSONObject;
 public class FindSubsequentEdge implements Phase {
     private boolean isFinished;
     private boolean echoedRight, movedForward;
+    private boolean turnRight;
 
     public FindSubsequentEdge() {
         this.isFinished = false;
+        this.turnRight = false;
         resetTertiaryPhases();
     }
 
@@ -20,7 +22,14 @@ public class FindSubsequentEdge implements Phase {
     public JSONObject createDecision(Drone drone) {
         JSONObject decision = new JSONObject();
 
-        if(!this.echoedRight) {
+        if(this.turnRight) {
+            this.isFinished = true;
+            JSONObject parameter = new JSONObject();
+            parameter.put("direction", drone.getDirection().rightTurn());
+            decision.put("parameters", parameter);
+            decision.put("action", "heading");  
+        }
+        else if(!this.echoedRight) {
             this.echoedRight = true;
             JSONObject parameter = new JSONObject();
             parameter.put("direction", drone.getDirection().rightTurn());
@@ -50,7 +59,7 @@ public class FindSubsequentEdge implements Phase {
 
     private void checkEcho(Drone drone) {
         if(drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
-            this.isFinished = true;
+            this.turnRight = true;
         }
         resetTertiaryPhases();
     }
