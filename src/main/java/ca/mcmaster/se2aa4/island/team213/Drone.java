@@ -194,7 +194,7 @@ public class Drone {
     }
 
     public Direction getDirection() {
-        return this.direction;
+        return Direction.S;
     }
 
     public JSONArray getScanInfo() {

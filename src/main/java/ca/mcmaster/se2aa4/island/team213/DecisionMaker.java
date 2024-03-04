@@ -10,40 +10,40 @@ import org.json.JSONTokener;
 
 public class DecisionMaker {
     private final Logger logger = LogManager.getLogger();
-    private Drone drone;
-    private final Phase findLand  = new LocateIsland();
+    private final Phase findLand = new LocateIsland();
 
-    private boolean movedForwardOnce = false;
+    private Phase findEdges;
+    private boolean findEdgesInitialized;
 
     public DecisionMaker() {
-        
+        findEdgesInitialized = false;
     }
 
     public JSONObject decideDecision(Drone drone){
         JSONObject decision = new JSONObject();
+        
 
 
         // Need to check if end condition is met before calling
-        JSONObject hi =  findLand.createDecision(drone);
-        logger.info(hi.toString());
+        if(!findLand.isFinished()) {
+            decision = findLand.createDecision(drone);
+        } else {
+            decision.put("action", "stop");
+            if(!findEdgesInitialized) {
+                findEdges = new FindEdges(drone);
+                findEdgesInitialized = true;
+            }
+            decision = findEdges.createDecision(drone);
+        }
+        logger.info("** DECISION: " + decision.toString());
 
-        return hi;
+        return decision;
+    }
 
-
-//        if(!movedForwardOnce) {
-//            drone.setEcho(Direction.E);
-//            decision.put("action", "echo");
-//            JSONObject parameters = new JSONObject();
-//            parameters.put("direction", "E");
-//            decision.put("parameters", parameters);
-//            movedForwardOnce = true;
-//        } else {
-//            decision.put("action", "scan");
-//        }
-
-
-//        logger.info("** Decision: {}",decision.toString());
-//        return decision;
+    public void sendDroneToPhase(Drone drone) {
+        if(findEdgesInitialized) {
+            findEdges.checkDrone(drone);
+        }
     }
 
 }

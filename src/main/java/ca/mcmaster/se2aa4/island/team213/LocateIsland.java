@@ -95,7 +95,7 @@ public class LocateIsland implements Phase {
         // reached the island
         else if (drone.getRangeHeading() == 0 && Objects.equals(drone.getEchoHeading(), EchoResult.GROUND)){
             landFound = true;
-            decision.put("action", "stop");
+            decision.put("action", "scan");
         }
 
         // Technical Debt: Assumes heading east

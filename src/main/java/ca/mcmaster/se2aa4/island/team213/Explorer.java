@@ -25,14 +25,16 @@ public class Explorer implements IExplorerRaid {
     @Override
     public String takeDecision() {
         JSONObject decision = decisionMaker.decideDecision(drone);
-//        drone.updatePosition(decision);
+        drone.parseDecision(decision);
         return decision.toString();
     }
 
     @Override
     public void acknowledgeResults(String s) {
         JSONObject response = new JSONObject(new JSONTokener(new StringReader(s)));
+        logger.info("** RESPONSE: " + response.toString());
         drone.updateStatus(response);
+        decisionMaker.sendDroneToPhase(drone);
     }
 
     @Override

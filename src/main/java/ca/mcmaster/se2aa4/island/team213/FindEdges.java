@@ -1,7 +1,10 @@
 package ca.mcmaster.se2aa4.island.team213;
 
+import java.util.LinkedList;
 import java.util.Queue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 public class FindEdges implements Phase {
@@ -10,8 +13,11 @@ public class FindEdges implements Phase {
     private Phase findFirstEdge, findSecondEdge, flyPastDeterminedA, findThirdEdge, flyPastDeterminedB, findFourthEdge;
     private Queue<Phase> phases;
 
+    private final Logger logger = LogManager.getLogger();
 
     public FindEdges(Drone drone) {
+        logger.info("**** REACHED FIND EDGES ****");
+        this.phases = new LinkedList<Phase>();
         parseStartingDirection(drone.getDirection());
         setupQueue(); 
     }
