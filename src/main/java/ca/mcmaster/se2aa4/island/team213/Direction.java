@@ -11,4 +11,22 @@ public enum Direction {
             case W -> Direction.N;
         };
     }
+
+    public Direction leftTurn(){
+        return switch (this) {
+            case N -> Direction.W;
+            case E -> Direction.N;
+            case S -> Direction.E;
+            case W -> Direction.S;
+        };
+    }
+
+    public String toString(){
+        return switch (this) {
+            case N -> "N";
+            case E -> "E";
+            case S -> "S";
+            case W -> "W";
+        };
+    }
 }
