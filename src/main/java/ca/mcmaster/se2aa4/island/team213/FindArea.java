@@ -1,22 +1,35 @@
 package ca.mcmaster.se2aa4.island.team213;
 
+import java.util.Queue;
+
 import org.json.JSONObject;
 
 public class FindArea implements Phase {
     private int x, y; // stays in AreaFinder
     private boolean increaseX; // stays in AreaFinder
-    private int edgesFound; // stays in AreaFinder
-    private int flyActionsLeft; // goes in flyPastDetermined
+    private Phase findFirstEdge, findSecondEdge, flyPastDeterminedA, findThirdEdge, flyPastDeterminedB, findFourthEdge;
+    private Queue<Phase> phases;
 
-    private boolean firstEdgeFound, subsequentEdgeFound, flyPastDetermined, turnRight; // secondary phases
-    private boolean movedForward, scanned, echoedLeft, echoedRight; // tertiary phases
 
     public FindArea(Drone drone) {
-        this.edgesFound = 0;
-
         parseStartingDirection(drone.getDirection());
-        resetSecondaryPhases();
-        resetTertiaryPhases();
+        setupQueue(); 
+    }
+
+    private void setupQueue() {
+        this.findFirstEdge = new FindFirstEdge();
+        this.findSecondEdge = new FindSubsequentEdge();
+        this.flyPastDeterminedA = new FlyPastDetermined(0);
+        this.findThirdEdge = new FindSubsequentEdge();
+        this.flyPastDeterminedB = new FlyPastDetermined(0);
+        this.findFourthEdge = new FindFinalEdge();
+
+        phases.add(this.findFirstEdge);
+        phases.add(this.findSecondEdge);
+        phases.add(this.flyPastDeterminedA);
+        phases.add(this.findThirdEdge);
+        phases.add(this.flyPastDeterminedB);
+        phases.add(this.findFourthEdge);
     }
 
     private void parseStartingDirection(Direction direction) {
@@ -31,94 +44,46 @@ public class FindArea implements Phase {
         }
     }
 
-    private void resetSecondaryPhases() { // interface will handle
-        if(edgesFound == 0) {
-            this.firstEdgeFound = false;
-        }
-        this.subsequentEdgeFound = false;
-        this.flyPastDetermined = false;
-        this.turnRight = false;
-    }
-
-    private void resetTertiaryPhases() { // interface will handle
-        this.movedForward = false;
-        this.scanned = false;
-        this.echoedLeft = false;
-        this.echoedRight = false;
-    }
-
     @Override
-    public boolean isFinished() {                                           // primary phase interface method
-        if(this.edgesFound == 4) {
+    public boolean isFinished() {
+        if(this.phases.peek().equals(null)) {
             return true;
         }
+
+        if(this.phases.peek().isFinished()) {
+            if(!this.phases.peek().equals(this.flyPastDeterminedA) || !this.phases.peek().equals(this.flyPastDeterminedB)) {
+                increaseXorY();
+                swapXorY();
+            }
+
+            this.phases.remove();
+
+            if(this.phases.peek().equals(this.flyPastDeterminedA) || this.phases.peek().equals(this.flyPastDeterminedB)) {
+                setFlyActionsLeft();
+            }
+
+            if(this.phases.peek().equals(null)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
     @Override
-    public JSONObject createDecision(Drone drone) {                                    // primary phase interface method
+    public JSONObject createDecision(Drone drone) {
         JSONObject decision = new JSONObject();
-
-        if(this.turnRight) {
-            this.movedForward = true;
-            this.turnRight = false;
-
-            JSONObject parameter = new JSONObject();
-            parameter.put("direction", drone.getDirection().rightTurn());
-            decision.put("parameters", parameter);
-            decision.put("action", "heading");            
-        }
-        else if(!this.firstEdgeFound) {
-            if(!this.movedForward) {
-                this.movedForward = true;
-                decision.put("action", "fly");
-            } 
-            else if(!this.scanned) {
-                this.scanned = true;
-                decision.put("action", "scan");
-            } 
-            else if(!this.echoedLeft) {
-                this.echoedLeft = true;
-                JSONObject parameter = new JSONObject();
-                parameter.put("direction", drone.getDirection().leftTurn());
-                decision.put("parameters", parameter);
-                decision.put("action", "echo");
-            } 
-            else if(!this.echoedRight) {
-                this.echoedRight = true;
-                JSONObject parameter = new JSONObject();
-                parameter.put("direction", drone.getDirection().rightTurn());
-                decision.put("parameters", parameter);
-                decision.put("action", "echo");
-            }
-        } 
-        else if(!this.subsequentEdgeFound) {
-            if(!this.movedForward) {
-                this.movedForward = true;
-                decision.put("action", "fly");
-            } 
-            else if(!this.echoedRight) {
-                this.echoedRight = true;
-                JSONObject parameter = new JSONObject();
-                parameter.put("direction", drone.getDirection().rightTurn());
-                decision.put("parameters", parameter);
-                decision.put("action", "echo");
-            }
-        }
-        else if(!this.flyPastDetermined) {
-            decision.put("action", "fly");
-        }
-
+        decision = this.phases.peek().createDecision(drone);
         return decision;
     }
 
     @Override
-    public void checkDrone(Drone drone) {                                // primary phase interface method
-        if(this.subsequentEdgeFound && drone.getPreviousDecision().equals("fly")) {
-            checkFly();
-        }
-        else if(drone.getPreviousDecision().equals("echoRight")) {
-            checkScanAndEchoes(drone);
+    public void checkDrone(Drone drone) {
+        Phase currentPhase = this.phases.peek();
+        currentPhase.checkDrone(drone);
+
+        if(drone.getPreviousDecision().equals("echoRight")) {
+            increaseXorY();
         }
     }
 
@@ -127,42 +92,7 @@ public class FindArea implements Phase {
         return new TestPhase();
     }
 
-    private void checkScanAndEchoes(Drone drone) { // firstEdgeFound and subsequentEdgeFound method
-        if(!this.firstEdgeFound) {
-            if(drone.getScanInfo().length() == 1 && drone.getScanInfo().getString(0).equals("BEACH") && drone.getEchoLeft().equals(EchoResult.OUT_OF_RANGE) && drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
-                this.firstEdgeFound = true;
-                this.turnRight = true;
-                this.edgesFound += 1;
-                
-                increaseXorY();
-                swapXorY();
-            } 
-            increaseXorY();
-            resetTertiaryPhases();
-        }
-        else {
-            if(drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
-                this.subsequentEdgeFound = true;
-                this.turnRight = true;
-                this.edgesFound += 1;
-                
-                increaseXorY();
-                swapXorY();
-                setFlyActionsLeft();
-            }
-            increaseXorY();
-            resetTertiaryPhases();
-        }
-    }
-
-    private void checkFly() { // flyPastDetermined method
-        this.flyActionsLeft -= 1;
-        if(this.flyActionsLeft == 0) {
-            resetSecondaryPhases();
-        }
-    }
-
-    private void increaseXorY() { // firstEdgeFound and subsequentEdgeFound method
+    private void increaseXorY() { 
         if(this.increaseX) {
             this.x += 1;
         } 
@@ -171,11 +101,16 @@ public class FindArea implements Phase {
         }
     }
 
-    private void swapXorY() { // AreaFinder method
+    private void swapXorY() {
         this.increaseX = this.increaseX ? false : true;
     }
 
-    private void setFlyActionsLeft() { // subsequentEdgeFound method
-        this.flyActionsLeft = this.increaseX ? this.x - 1: this.y - 1;
+    private void setFlyActionsLeft() {
+        if(this.phases.peek().equals(this.flyPastDeterminedA)) {
+            this.flyPastDeterminedA = new FlyPastDetermined(this.increaseX ? this.x: this.y);
+        }
+        else if(this.phases.peek().equals(this.flyPastDeterminedB)) {
+            this.flyPastDeterminedB = new FlyPastDetermined(this.increaseX ? this.x: this.y);
+        }
     }
 }

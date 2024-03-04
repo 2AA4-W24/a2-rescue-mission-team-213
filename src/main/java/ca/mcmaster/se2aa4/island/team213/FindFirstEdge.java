@@ -55,17 +55,14 @@ public class FindFirstEdge implements Phase {
 
     @Override
     public Phase nextPhase() {
-        return new FindSecondEdge();
+        return null;
     }
     
     private void checkScanAndEchoes(Drone drone) {
         if(drone.getScanInfo().length() == 1 && drone.getScanInfo().getString(0).equals("BEACH") && drone.getEchoLeft().equals(EchoResult.OUT_OF_RANGE) && drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
             this.isFinished = true;
-            // increase x or y
-            // swap x or y
         }
         resetTertiaryPhases();
-        // increase x or y
     }
 
     private void resetTertiaryPhases() {

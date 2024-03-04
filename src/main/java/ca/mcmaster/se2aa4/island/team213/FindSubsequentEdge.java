@@ -2,11 +2,11 @@ package ca.mcmaster.se2aa4.island.team213;
 
 import org.json.JSONObject;
 
-public class FindSecondEdge implements Phase {
+public class FindSubsequentEdge implements Phase {
     private boolean isFinished;
     private boolean turnedRight, echoedRight, movedForward;
 
-    public FindSecondEdge() {
+    public FindSubsequentEdge() {
         this.isFinished = false;
         this.turnedRight = false;
         resetTertiaryPhases();
@@ -59,11 +59,8 @@ public class FindSecondEdge implements Phase {
     private void checkEcho(Drone drone) {
         if(drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
             this.isFinished = true;
-            // increase x or y
-            // swap x or y
         }
         resetTertiaryPhases();
-        // increase x or y
     }
 
     private void resetTertiaryPhases() {

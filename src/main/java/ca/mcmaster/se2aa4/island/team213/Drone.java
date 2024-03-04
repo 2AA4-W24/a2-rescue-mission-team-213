@@ -2,7 +2,6 @@ package ca.mcmaster.se2aa4.island.team213;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.json.JsonConfiguration;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -214,6 +213,5 @@ public class Drone {
     public EchoResult getEchoLeft() {
         return this.echoLeft;
     }
-
 
 }
