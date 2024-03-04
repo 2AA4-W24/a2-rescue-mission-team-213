@@ -4,25 +4,25 @@ import java.util.Queue;
 
 import org.json.JSONObject;
 
-public class FindArea implements Phase {
-    private int x, y; // stays in AreaFinder
-    private boolean increaseX; // stays in AreaFinder
+public class FindEdges implements Phase {
+    private int x, y;
+    private boolean increaseX;
     private Phase findFirstEdge, findSecondEdge, flyPastDeterminedA, findThirdEdge, flyPastDeterminedB, findFourthEdge;
     private Queue<Phase> phases;
 
 
-    public FindArea(Drone drone) {
+    public FindEdges(Drone drone) {
         parseStartingDirection(drone.getDirection());
         setupQueue(); 
     }
 
     private void setupQueue() {
         this.findFirstEdge = new FindFirstEdge();
-        this.findSecondEdge = new FindSubsequentEdge();
+        this.findSecondEdge = new FindSecondEdge();
         this.flyPastDeterminedA = new FlyPastDetermined(0);
         this.findThirdEdge = new FindSubsequentEdge();
         this.flyPastDeterminedB = new FlyPastDetermined(0);
-        this.findFourthEdge = new FindFinalEdge();
+        this.findFourthEdge = new FindSubsequentEdge();
 
         phases.add(this.findFirstEdge);
         phases.add(this.findSecondEdge);
