@@ -2,12 +2,12 @@ package ca.mcmaster.se2aa4.island.team213;
 
 import org.json.JSONObject;
 
-public class FindFirstEdge implements Phase {
+public class FindSubsequentEdge implements Phase {
     private boolean isFinished;
-    private boolean movedForward, scanned, echoedLeft, echoedRight;
+    private boolean echoedRight, movedForward;
     private boolean turnRight;
-    
-    public FindFirstEdge() {
+
+    public FindSubsequentEdge() {
         this.isFinished = false;
         this.turnRight = false;
         resetTertiaryPhases();
@@ -29,27 +29,16 @@ public class FindFirstEdge implements Phase {
             decision.put("parameters", parameter);
             decision.put("action", "heading");  
         }
-        else if(!this.movedForward) {
-            this.movedForward = true;
-            decision.put("action", "fly");
-        } 
-        else if(!this.scanned) {
-            this.scanned = true;
-            decision.put("action", "scan");
-        } 
-        else if(!this.echoedLeft) {
-            this.echoedLeft = true;
-            JSONObject parameter = new JSONObject();
-            parameter.put("direction", drone.getDirection().leftTurn());
-            decision.put("parameters", parameter);
-            decision.put("action", "echo");
-        } 
         else if(!this.echoedRight) {
             this.echoedRight = true;
             JSONObject parameter = new JSONObject();
             parameter.put("direction", drone.getDirection().rightTurn());
             decision.put("parameters", parameter);
             decision.put("action", "echo");
+        }
+        else if(!this.movedForward) {
+            this.movedForward = true;
+            decision.put("action", "fly");
         }
 
         return decision;
@@ -58,26 +47,26 @@ public class FindFirstEdge implements Phase {
     @Override
     public void checkDrone(Drone drone) {
         if(drone.getPreviousDecision().equals("echoRight")) {
-            checkScanAndEchoes(drone);
+            checkEcho(drone);
         }
     }
 
     @Override
     public Phase nextPhase() {
-        return null;
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'nextPhase'");
     }
-    
-    private void checkScanAndEchoes(Drone drone) {
-        if(drone.getScanInfo().length() == 1 && drone.getScanInfo().getString(0).equals("BEACH") && drone.getEchoLeft().equals(EchoResult.OUT_OF_RANGE) && drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
+
+    private void checkEcho(Drone drone) {
+        if(drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
             this.turnRight = true;
         }
         resetTertiaryPhases();
     }
 
+
     private void resetTertiaryPhases() {
-        this.movedForward = false;
-        this.scanned = false;
-        this.echoedLeft = false;
         this.echoedRight = false;
+        this.movedForward = false;
     }
 }
