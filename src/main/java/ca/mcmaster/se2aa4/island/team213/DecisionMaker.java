@@ -24,23 +24,26 @@ public class DecisionMaker {
 
 
         // Need to check if end condition is met before calling
-        // return findLand.makeDecision(drone);
+        JSONObject hi =  findLand.createDecision(drone);
+        logger.info(hi.toString());
+
+        return hi;
 
 
-        if(!movedForwardOnce) {
-            drone.setEcho(Direction.E);
-            decision.put("action", "echo");
-            JSONObject parameters = new JSONObject();
-            parameters.put("direction", "E");
-            decision.put("parameters", parameters);
-            movedForwardOnce = true;
-        } else {
-            decision.put("action", "scan");
-        }
+//        if(!movedForwardOnce) {
+//            drone.setEcho(Direction.E);
+//            decision.put("action", "echo");
+//            JSONObject parameters = new JSONObject();
+//            parameters.put("direction", "E");
+//            decision.put("parameters", parameters);
+//            movedForwardOnce = true;
+//        } else {
+//            decision.put("action", "scan");
+//        }
 
 
 //        logger.info("** Decision: {}",decision.toString());
-        return decision;
+//        return decision;
     }
 
 }

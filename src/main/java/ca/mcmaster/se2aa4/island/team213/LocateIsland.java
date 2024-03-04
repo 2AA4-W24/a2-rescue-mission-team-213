@@ -130,7 +130,7 @@ public class LocateIsland implements Phase {
 
         // ground found change heading if need be and queue fly commands
         else if (Objects.equals(drone.getEchoEast(), EchoResult.GROUND) || Objects.equals(drone.getEchoSouth(), EchoResult.GROUND) || Objects.equals(drone.getEchoWest(), EchoResult.GROUND) || Objects.equals(drone.getEchoNorth(), EchoResult.GROUND)){
-//            logger.info("!!!!!!!!!!! LAND FOUND LAND FOUND LAND FOUND !!!!!!!!!!!!!!!!!!!!!! ");
+//           logger.info("!!!!!!!!!!! LAND FOUND LAND FOUND LAND FOUND !!!!!!!!!!!!!!!!!!!!!! ");
             // Keep heading in direction
             if (Objects.equals(drone.getEchoHeading(), EchoResult.GROUND)){
                 decision.put("action", "fly");

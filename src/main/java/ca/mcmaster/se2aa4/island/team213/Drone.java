@@ -16,7 +16,7 @@ public class Drone {
     private String previousDecision;
 
     private final Logger logger = LogManager.getLogger();
-    private Direction directionHeading;
+    private Direction directionHeading = Direction.E;
 
     public Drone(String direction, Integer battery){
         stringToDirection(direction);
@@ -46,36 +46,35 @@ public class Drone {
         //        logger.info("Additional information received: {}", extraInfo);
 
         JSONObject extraInfo = response.getJSONObject("extras");
-        if (!extraInfo.isEmpty()){
+        if (!extraInfo.isEmpty() && echoing != null){
             String result = extraInfo.getString("found");
             Integer range = extraInfo.getInt("range");
 
-            if (echoing != null){
-                switch (echoing) {
-                    case N -> {
-                        echo.north = EchoResult.valueOf(result);
-                        echo.rangeNorth = range;
-                    }
-                    case E -> {
-                        echo.east = EchoResult.valueOf(result);
-                        echo.rangeEast = range;
-
-                    }
-                    case S -> {
-                        echo.south = EchoResult.valueOf(result);
-                        echo.rangeSouth = range;
-                    }
-                    case W -> {
-                        echo.west = EchoResult.valueOf(result);
-                        echo.rangeWest = range;
-                    }
+            switch (echoing) {
+                case N -> {
+                    echo.north = EchoResult.valueOf(result);
+                    echo.rangeNorth = range;
                 }
+                case E -> {
+                    echo.east = EchoResult.valueOf(result);
+                    echo.rangeEast = range;
+
+                }
+                case S -> {
+                    echo.south = EchoResult.valueOf(result);
+                    echo.rangeSouth = range;
+                }
+                case W -> {
+                    echo.west = EchoResult.valueOf(result);
+                    echo.rangeWest = range;
+                }
+            }
 //            logger.info(echo.east.toString());
 //            logger.info(echo.rangeEast);
 
-                // set echoing to null after
-                echoing = null;
-            }
+            // set echoing to null after
+            echoing = null;
+
         }
 
 
@@ -95,7 +94,7 @@ public class Drone {
     }
 
     public Integer getRangeHeading(){
-        switch (directionHeading){
+        switch (direction){
             case N ->{
                 return echo.rangeNorth;
             }
@@ -114,10 +113,10 @@ public class Drone {
         return null;
     }
     public void setDirectionHeading(Direction newDirection){
-        this.directionHeading = newDirection;
+        this.direction = newDirection;
     }
     public void subtractRangeHeading(){
-        switch (directionHeading){
+        switch (direction){
             case N ->{
                 echo.rangeNorth--;
             }
@@ -135,7 +134,7 @@ public class Drone {
     }
 
     public EchoResult getEchoHeading(){
-        switch (directionHeading){
+        switch (direction){
             case N ->{
                 return echo.north;
             }
