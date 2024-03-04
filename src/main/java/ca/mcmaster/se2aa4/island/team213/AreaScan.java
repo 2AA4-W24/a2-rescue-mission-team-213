@@ -6,17 +6,17 @@ import org.json.JSONObject;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class AreaScan implements DecisionMakerInterface{
+public class AreaScan{
     private Perimeter perimeter;
     private Direction direction;
-    private int distanceTillHorizontal;
-    private int distanceTillVertical;
+    public int distanceTillHorizontal; //MAKE PRIVATE AFTER TEST
+    public int distanceTillVertical; //MAKE PRIVATE
 
-    private int maxHorizontalDistance;
-    private int maxVerticalDistance;
+    public int maxHorizontalDistance;
+    public int maxVerticalDistance;
 
-    int x;
-    int y;
+    public int x;
+    public int y;
 
     private ArrayList<PointsOfInterest> creeks;
     private ArrayList<PointsOfInterest> sites;
@@ -48,39 +48,47 @@ public class AreaScan implements DecisionMakerInterface{
                 distanceTillVertical = perimeter.width;
             }
         }
+        maxHorizontalDistance = perimeter.height;
+        maxVerticalDistance = perimeter.width;
+        this.x = 0;
+        this.y = 0;
 
 
     }
-    @Override
-    public String makeDecision(Drone drone) {
+//    @Override
+    public JSONObject makeDecision(Drone drone) {
         JSONObject decision = new JSONObject();
         JSONObject headingDirection = new JSONObject();
 
-        if (distanceTillVertical <= 0){
+        if (distanceTillVertical <= 1 && maxVerticalDistance > 0){
+            rightTurnCoord();
             direction = direction.rightTurn();
+
             headingDirection.put("direction", direction);
             decision.put("action", "heading");
             decision.put("parameters", headingDirection);
-            maxVerticalDistance -= 5;
+            maxVerticalDistance -= 1;
 
-            distanceTillVertical = maxVerticalDistance;
+            distanceTillVertical = Math.max(0,maxVerticalDistance);
 
         }
-        else if (distanceTillHorizontal <= 0){
+        else if (distanceTillHorizontal <= 1 && maxHorizontalDistance > 0){
+            rightTurnCoord();
             direction = direction.rightTurn();
+
             headingDirection.put("direction", direction);
             decision.put("action", "heading");
             decision.put("parameters", headingDirection);
-            maxHorizontalDistance -= 5;
+            maxHorizontalDistance -= 1;
 
-            distanceTillHorizontal = maxHorizontalDistance;
+            distanceTillHorizontal = Math.max(0,maxHorizontalDistance);
         }
         else{
             if (direction.equals(Direction.N) || direction.equals(Direction.S)){
-                distanceTillHorizontal -= 1;
+                distanceTillHorizontal = Math.max(--distanceTillHorizontal, 0);
             }
             else{
-                distanceTillVertical -= 1;
+                distanceTillVertical = Math.max(--distanceTillVertical,0);
             }
             decision.put("action", "fly");
 
@@ -101,7 +109,7 @@ public class AreaScan implements DecisionMakerInterface{
             }
         }
         decision.put("action", "scan");
-        return decision.toString();
+        return decision;
     }
 
     public void receiveResult(JSONObject response){
@@ -123,7 +131,28 @@ public class AreaScan implements DecisionMakerInterface{
     }
 
     boolean isFinished(){
-        return maxVerticalDistance < 0 && maxHorizontalDistance < 0;
+        return maxVerticalDistance <= 0 || maxHorizontalDistance <= 0;
+    }
+
+    void rightTurnCoord(){
+        switch(direction){
+            case N -> {
+                y++;
+                x++;
+            }
+            case E -> {
+                x++;
+                y--;
+            }
+            case S -> {
+                y--;
+                x--;
+            }
+            case W -> {
+                x--;
+                y++;
+            }
+        }
     }
 
 }
