@@ -11,8 +11,9 @@ public class Drone {
     private EchoStatus echo = new EchoStatus();
     private Direction echoing;
     private String droneStatus;
-    private JSONArray scanInfo;
+    private JSONObject scanInfo;
     private String previousDecision;
+    private String echoRight, echoLeft;
 
     private final Logger logger = LogManager.getLogger();
     private Direction directionHeading = Direction.E;
@@ -20,6 +21,7 @@ public class Drone {
     public Drone(String direction, Integer battery){
         stringToDirection(direction);
         this.battery = battery;
+        this.previousDecision = "";
     }
 
     private void stringToDirection(String direction) {
@@ -36,7 +38,7 @@ public class Drone {
         //        logger.info("** Response received:\n"+response.toString(2));
 
         battery -= response.getInt("cost");
-//                logger.info("New battery: {}", battery);
+        // logger.info("New battery: {}", battery);
         droneStatus = response.getString("status");
 //                logger.info("The status of the drone is {}", droneStatus);
 
@@ -45,6 +47,7 @@ public class Drone {
         //        logger.info("Additional information received: {}", extraInfo);
 
         JSONObject extraInfo = response.getJSONObject("extras");
+        logger.info("Additional information received: {}", extraInfo);
         if (!extraInfo.isEmpty() && echoing != null){
             String result = extraInfo.getString("found");
             Integer range = extraInfo.getInt("range");
@@ -77,7 +80,17 @@ public class Drone {
         }
 
 
-
+        if(previousDecision.equals("echoRight")) {
+            logger.info("STORING ECHO RIGHT INFO: " + extraInfo.getString("found"));
+            this.echoRight = extraInfo.getString("found");
+        } 
+        else if(previousDecision.equals("echoLeft")) {
+            logger.info("STORING ECHO LEFT INFO: " + extraInfo.getString("found"));
+            this.echoLeft = extraInfo.getString("found");
+        } else if(previousDecision.equals("scan")) {
+            logger.info("STORING SCAN INFO:");
+            this.scanInfo = extraInfo;
+        }
 
     }
 
@@ -158,19 +171,20 @@ public class Drone {
 
     // Section below added by Gary, includes some temporary accessor methods to make other classes work
 
-    private EchoResult echoRight, echoLeft;
-
     // determines what the decision being sent to Explorer is
     // also updates direction or position if the decision was a "fly" or "heading" action
     public void parseDecision(JSONObject decision) {
         if(decision.getString("action").equals("heading")) {
             JSONObject parameter = decision.getJSONObject("parameters");
+            logger.info("DRONE RECEIVED COMMAND FOR HEADING");
+            logger.info("DRONE DIRECTION: " + this.direction);
+            logger.info("RECEIVED DIRECTION: " + parameter.get("direction"));
 
-            if(this.direction.rightTurn().equals(parameter.get("direction"))) {
+            if(this.direction.rightTurn().toString().equals(parameter.get("direction").toString())) {
                 this.direction = this.direction.rightTurn();
                 this.previousDecision = "turnRight";
             }
-            else if(this.direction.leftTurn().equals(parameter.get("direction"))) {
+            else if(this.direction.leftTurn().toString().equals(parameter.get("direction").toString())) {
                 this.direction = this.direction.leftTurn();
                 this.previousDecision = "turnLeft";
             }
@@ -179,9 +193,11 @@ public class Drone {
             JSONObject parameter = decision.getJSONObject("parameters");
 
             if(this.direction.rightTurn().equals(parameter.get("direction"))) {
+                logger.info("DRONE RECEIVED COMMAND FOR ECHO RIGHT");
                 this.previousDecision = "echoRight";
             }
             else if(this.direction.leftTurn().equals(parameter.get("direction"))) {
+                logger.info("DRONE RECEIVED COMMAND FOR ECHO LEFT");
                 this.previousDecision = "echoLeft";
             }
         }
@@ -194,10 +210,10 @@ public class Drone {
     }
 
     public Direction getDirection() {
-        return Direction.S;
+        return this.direction;
     }
 
-    public JSONArray getScanInfo() {
+    public JSONObject getScanInfo() {
         return this.scanInfo;
     }
 
@@ -205,11 +221,11 @@ public class Drone {
         return this.previousDecision;
     }
 
-    public EchoResult getEchoRight() {
+    public String getEchoRight() {
         return this.echoRight;
     }
 
-    public EchoResult getEchoLeft() {
+    public String getEchoLeft() {
         return this.echoLeft;
     }
 

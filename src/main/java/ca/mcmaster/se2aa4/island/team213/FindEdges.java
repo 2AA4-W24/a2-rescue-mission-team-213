@@ -16,7 +16,11 @@ public class FindEdges implements Phase {
     private final Logger logger = LogManager.getLogger();
 
     public FindEdges(Drone drone) {
+        logger.info("**");
+        logger.info("**");
         logger.info("**** REACHED FIND EDGES ****");
+        logger.info("**");
+        logger.info("**");
         this.phases = new LinkedList<Phase>();
         parseStartingDirection(drone.getDirection());
         setupQueue(); 
@@ -30,12 +34,9 @@ public class FindEdges implements Phase {
         this.flyPastDeterminedB = new FlyPastDetermined(0);
         this.findFourthEdge = new FindSubsequentEdge();
 
-        phases.add(this.findFirstEdge);
-        phases.add(this.findSecondEdge);
-        phases.add(this.flyPastDeterminedA);
-        phases.add(this.findThirdEdge);
-        phases.add(this.flyPastDeterminedB);
-        phases.add(this.findFourthEdge);
+        this.phases.add(this.findFirstEdge);
+        this.phases.add(this.findSecondEdge);
+        this.phases.add(this.flyPastDeterminedA);
     }
 
     private void parseStartingDirection(Direction direction) {
@@ -51,15 +52,17 @@ public class FindEdges implements Phase {
     }
 
     @Override
-    public boolean isFinished() {
+    public boolean isFinished() {        
         if(this.phases.peek().equals(null)) {
             return true;
         }
 
         if(this.phases.peek().isFinished()) {
-            if(!this.phases.peek().equals(this.flyPastDeterminedA) || !this.phases.peek().equals(this.flyPastDeterminedB)) {
+            logger.info("!!!!!! CURRENT PHASE DONE !!!!!!");
+            if(this.phases.peek().equals(this.findFirstEdge) || this.phases.peek().equals(this.findSecondEdge) || this.phases.peek().equals(this.findThirdEdge) ||this.phases.peek().equals(this.findFourthEdge)) {
                 increaseXorY();
                 swapXorY();
+                logger.info("!!!!!! X AND Y SWAPPED !!!!!!");
             }
 
             this.phases.remove();
@@ -91,6 +94,8 @@ public class FindEdges implements Phase {
         if(drone.getPreviousDecision().equals("echoRight")) {
             increaseXorY();
         }
+        logger.info("** CURRENT X: " + this.x);
+        logger.info("** CURRENT Y: " + this.y);
     }
 
     @Override
@@ -113,10 +118,21 @@ public class FindEdges implements Phase {
 
     private void setFlyActionsLeft() {
         if(this.phases.peek().equals(this.flyPastDeterminedA)) {
+            logger.info("SETTING FLY A TO: " + Integer.toString(this.increaseX ? this.x: this.y));
+            phases.remove();
+
             this.flyPastDeterminedA = new FlyPastDetermined(this.increaseX ? this.x: this.y);
+            phases.add(this.flyPastDeterminedA);
+            phases.add(this.findThirdEdge);
+            phases.add(this.flyPastDeterminedB);
         }
         else if(this.phases.peek().equals(this.flyPastDeterminedB)) {
+            logger.info("SETTING FLY B TO: " + Integer.toString(this.increaseX ? this.x: this.y));
+            phases.remove();
+
             this.flyPastDeterminedB = new FlyPastDetermined(this.increaseX ? this.x: this.y);
+            phases.add(this.flyPastDeterminedB);
+            phases.add(this.findFourthEdge);
         }
     }
 }
