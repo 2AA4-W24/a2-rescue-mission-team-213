@@ -2,6 +2,7 @@ package ca.mcmaster.se2aa4.island.team213;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class FindFirstEdge implements Phase {
@@ -62,6 +63,8 @@ public class FindFirstEdge implements Phase {
     @Override
     public void checkDrone(Drone drone) {
         logger.info("** PREVIOUS DECISION: " + drone.getPreviousDecision());
+        logger.info("**");
+        logger.info("**");
         if(drone.getPreviousDecision().equals("echoRight")) {
             checkScanAndEchoes(drone);
         }
@@ -73,7 +76,8 @@ public class FindFirstEdge implements Phase {
     }
     
     private void checkScanAndEchoes(Drone drone) {
-        if(drone.getScanInfo().length() == 1 && drone.getScanInfo().getString(0).equals("BEACH") && drone.getEchoLeft().equals(EchoResult.OUT_OF_RANGE) && drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
+        JSONArray biomes = drone.getScanInfo().getJSONArray("biomes");
+        if(biomes.length() == 1 && biomes.getString(0).equals("OCEAN") && drone.getEchoLeft().equals("OUT_OF_RANGE") && drone.getEchoRight().equals("OUT_OF_RANGE")) {
             this.turnRight = true;
         }
         resetTertiaryPhases();
