@@ -1,9 +1,9 @@
 package ca.mcmaster.se2aa4.island.team213;
 
-class PointsOfInterest {
-    private final int x;
-    private final int y;
-    private final String id;
+public class PointsOfInterest {
+    public final int x;
+    public final int y;
+    public final String id;
 
     public PointsOfInterest(int x, int y, String id){
         this.x = x;

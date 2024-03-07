@@ -7,7 +7,7 @@ public class AreaScanNew implements Phase{
     public int maxY;
     public int x, y;
     public int xSteps, ySteps;
-    Direction direction;
+    public Direction direction;
     public AreaScanNew(Perimeter perimeter){
         maxX = perimeter.width;
         maxY = perimeter.height;

@@ -18,14 +18,15 @@ public class AreaScan{
     public int x;
     public int y;
 
-    private ArrayList<PointsOfInterest> creeks;
-    private ArrayList<PointsOfInterest> sites;
+    public ArrayList<PointsOfInterest> creeks;
+    public ArrayList<PointsOfInterest> sites;
 
+    private GetShortestPath shortestPath;
 
     public AreaScan(Perimeter perimeter) {
+        shortestPath = new GetShortestPath();
         this.perimeter = perimeter;
-        this.x = 0;
-        this.y = 0;
+
         switch (perimeter.cornerPosition) {
             case TOPRIGHT -> {
                 direction = Direction.E;
@@ -117,14 +118,16 @@ public class AreaScan{
         JSONArray creeksJSON = extraInfo.getJSONArray("creeks");
         if (!creeksJSON.isEmpty()){
             for (int i=0; i<creeksJSON.length(); ++i){
-                creeks.add(new PointsOfInterest(x,y, creeksJSON.getString(i)));
+//                creeks.add(new PointsOfInterest(x,y, creeksJSON.getString(i)));
+                shortestPath.addCreek(new PointsOfInterest(x,y, creeksJSON.getString(i)));
             }
         }
 
         JSONArray sitesJSON = extraInfo.getJSONArray("sites");
         if (!sitesJSON.isEmpty()){
             for (int i=0; i<sitesJSON.length(); ++i){
-                sites.add(new PointsOfInterest(x,y, sitesJSON.getString(i)));
+//                sites.add(new PointsOfInterest(x,y, sitesJSON.getString(i)));
+                shortestPath.addSite(new PointsOfInterest(x,y, sitesJSON.getString(i)));
             }
         }
 
