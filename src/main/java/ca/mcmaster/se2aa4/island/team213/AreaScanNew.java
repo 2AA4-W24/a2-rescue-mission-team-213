@@ -59,21 +59,30 @@ public class AreaScanNew implements Phase{
             decision.put("action", "heading");
             decision.put("parameters", headingDirection);
         }
+        //Move forward if drone doesn't have to turn
         else if (direction == Direction.N){
             ySteps++;
             y++;
+
+            decision.put("action", "fly");
         }
         else if (direction == Direction.S){
             ySteps++;
             y--;
+
+            decision.put("action", "fly");
         }
         else if (direction == Direction.E){
             xSteps++;
             x++;
+
+            decision.put("action", "fly");
         }
         else if (direction == Direction.W){
             xSteps++;
             x--;
+
+            decision.put("action", "fly");
         }
 
 
