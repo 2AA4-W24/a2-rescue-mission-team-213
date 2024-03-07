@@ -53,22 +53,22 @@ public class LocateIsland implements Phase {
         else if (Objects.equals(drone.getEchoNorth(), null) &&  Objects.equals(drone.getEchoEast(), null) && Objects.equals(drone.getEchoSouth(), null) && Objects.equals(drone.getEchoWest(), null)){
             decision.put("action", "echo");
             JSONObject parameters = new JSONObject();
-            parameters.put("direction", "E");
+            parameters.put("direction", drone.getDirection().toString());
             decision.put("parameters", parameters);
-            drone.setEcho(Direction.E);
+            drone.setEcho(drone.getDirection());
 
 
             JSONObject enqueueEcho = new JSONObject();
             enqueueEcho.put("action", "echo");
             parameters = new JSONObject();
-            parameters.put("direction", "S");
+            parameters.put("direction", drone.getDirection().rightTurn().toString());
             enqueueEcho.put("parameters", parameters);
             taskQueue.add(enqueueEcho);
 
             enqueueEcho = new JSONObject();
             enqueueEcho.put("action", "echo");
             parameters = new JSONObject();
-            parameters.put("direction", "N");
+            parameters.put("direction", drone.getDirection().leftTurn().toString());
             enqueueEcho.put("parameters", parameters);
             taskQueue.add(enqueueEcho);
 
@@ -79,7 +79,8 @@ public class LocateIsland implements Phase {
         else if (Objects.equals(drone.getEchoHeading(), EchoResult.OUT_OF_RANGE) && Objects.equals(drone.getRangeHeading(), 0)){
             decision.put("action", "heading");
             JSONObject parameters = new JSONObject();
-            parameters.put("direction", "S");
+            // TODO: violates law of demeter
+            parameters.put("direction", drone.getDirection().rightTurn().toString());
             decision.put("parameters", parameters);
 
 
@@ -87,7 +88,8 @@ public class LocateIsland implements Phase {
             JSONObject secondTurn = new JSONObject();
             secondTurn.put("action", "heading");
             JSONObject secondParameters = new JSONObject();
-            secondParameters.put("direction", "W");
+            // TODO: violates law of demeter
+            secondParameters.put("direction", drone.getDirection().rightTurn().rightTurn().toString());
             decision.put("parameters", secondParameters);
             taskQueue.add(secondTurn);
         }
@@ -98,7 +100,6 @@ public class LocateIsland implements Phase {
             decision.put("action", "scan");
         }
 
-        // Technical Debt: Assumes heading east
         // no ground in each direction, need to fly forward and check again
         else if (!(Objects.equals(drone.getEchoEast(), EchoResult.GROUND) || Objects.equals(drone.getEchoSouth(), EchoResult.GROUND) || Objects.equals(drone.getEchoWest(), EchoResult.GROUND) || Objects.equals(drone.getEchoNorth(), EchoResult.GROUND))){
             decision.put("action", "fly");
@@ -106,14 +107,14 @@ public class LocateIsland implements Phase {
             JSONObject enqueueEcho = new JSONObject();
             enqueueEcho.put("action", "echo");
             JSONObject parameters = new JSONObject();
-            parameters.put("direction", "E");
+            parameters.put("direction", drone.getDirection().toString());
             enqueueEcho.put("parameters", parameters);
             taskQueue.add(enqueueEcho);
 
             enqueueEcho = new JSONObject();
             enqueueEcho.put("action", "echo");
             parameters = new JSONObject();
-            parameters.put("direction", "S");
+            parameters.put("direction", drone.getDirection().rightTurn().toString());
             enqueueEcho.put("parameters", parameters);
             taskQueue.add(enqueueEcho);
 
@@ -121,7 +122,7 @@ public class LocateIsland implements Phase {
             enqueueEcho = new JSONObject();
             enqueueEcho.put("action", "echo");
             parameters = new JSONObject();
-            parameters.put("direction", "N");
+            parameters.put("direction", drone.getDirection().leftTurn().toString());
             enqueueEcho.put("parameters", parameters);
             taskQueue.add(enqueueEcho);
 

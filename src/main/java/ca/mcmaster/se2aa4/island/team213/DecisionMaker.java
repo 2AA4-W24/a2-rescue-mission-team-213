@@ -27,7 +27,8 @@ public class DecisionMaker {
         // Need to check if end condition is met before calling
         if(!findLand.isFinished()) {
             decision = findLand.createDecision(drone);
-        } else if(!findEdgesInitialized) {
+        }
+        else if(!findEdgesInitialized) {
             findEdges = new FindEdges(drone);
             findEdgesInitialized = true;
             decision = findEdges.createDecision(drone);
