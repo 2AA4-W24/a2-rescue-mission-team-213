@@ -135,4 +135,29 @@ public class FindEdges implements Phase {
             phases.add(this.findFourthEdge);
         }
     }
+
+    // following methods are temporary abstraction leaks for unit testing
+    public boolean getIncreaseX() {
+        return this.increaseX;
+    }
+
+    public Queue<Phase> getPhases() {
+        return this.phases;
+    }
+
+    public Phase getFindFirstEdge() {
+        return this.findFirstEdge;
+    }
+
+    public Phase getFindSecondEdge() {
+        return this.findSecondEdge;
+    }
+
+    public Phase getFlyPastDeterminedA() {
+        return this.flyPastDeterminedA;
+    }
+
+    public void removeFromPhases() {
+        this.phases.remove();
+    }
 }

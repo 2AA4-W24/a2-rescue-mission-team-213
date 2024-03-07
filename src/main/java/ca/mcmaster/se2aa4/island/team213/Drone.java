@@ -229,4 +229,12 @@ public class Drone {
         return this.echoLeft;
     }
 
+    // following methods are temporary abstraction leaks for unit testing
+    public void setPreviousDecision(String decision) {
+        this.previousDecision = decision;
+    }
+
+    public void setEchoRight(String echoInfo) {
+        this.echoRight = echoInfo;
+    }
 }
