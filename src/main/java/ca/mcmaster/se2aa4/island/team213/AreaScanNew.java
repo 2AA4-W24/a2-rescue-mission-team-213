@@ -2,12 +2,18 @@ package ca.mcmaster.se2aa4.island.team213;
 
 import org.json.JSONObject;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class AreaScanNew implements Phase{
     public int maxX; //fix
     public int maxY;
     public int x, y;
     public int xSteps, ySteps;
     public Direction direction;
+
+
+    private Queue<JSONObject> taskQueue = new LinkedList<>();
     public AreaScanNew(Perimeter perimeter){
         maxX = perimeter.width;
         maxY = perimeter.height;
@@ -33,6 +39,12 @@ public class AreaScanNew implements Phase{
     public JSONObject createDecision(Drone drone){
         JSONObject decision = new JSONObject();
         JSONObject headingDirection = new JSONObject();
+        // check if tasks are queued
+        if (!taskQueue.isEmpty()){
+            decision = taskQueue.remove();
+            return decision;
+        }
+
         /*
          * Checks if steps taken in certain direction has reached threshold. The row/column occupied
          * from previous pass through as well as drone turning radius is taken in account, giving a
@@ -85,8 +97,11 @@ public class AreaScanNew implements Phase{
             decision.put("action", "fly");
         }
 
+        // Enqueue scan for next iteration
+        JSONObject enqueueScan = new JSONObject();
+        enqueueScan.put("action", "scan");
+        taskQueue.add(enqueueScan);
 
-        decision.put("action", "scan");
         return decision;
     }
     @Override
