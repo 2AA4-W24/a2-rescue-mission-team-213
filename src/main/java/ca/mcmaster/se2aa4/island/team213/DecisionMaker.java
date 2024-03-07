@@ -27,17 +27,20 @@ public class DecisionMaker {
         // Need to check if end condition is met before calling
         if(!findLand.isFinished()) {
             decision = findLand.createDecision(drone);
-        } else if(!findEdgesInitialized) {
-            findEdges = new FindEdges(drone);
-            findEdgesInitialized = true;
-            decision = findEdges.createDecision(drone);
-        } else if(findEdgesInitialized) {
-            if(!findEdges.isFinished()) {
-                decision = findEdges.createDecision(drone);
-            } else {
-                decision.put("action", "stop");
-            }
+            logger.info(findLand.isFinished());
         }
+//        else if(!findEdgesInitialized) {
+//            logger.info("!!!!!!!!!!!!!!!!!! FINISHED PHASE 1 !!!!!!!!!!!!!!!!!!");
+//            findEdges = new FindEdges(drone);
+//            findEdgesInitialized = true;
+//            decision = findEdges.createDecision(drone);
+//        } else if(findEdgesInitialized) {
+//            if(!findEdges.isFinished()) {
+//                decision = findEdges.createDecision(drone);
+//            } else {
+//                decision.put("action", "stop");
+//            }
+//        }
 
         logger.info("** DECISION: " + decision.toString());
         return decision;
