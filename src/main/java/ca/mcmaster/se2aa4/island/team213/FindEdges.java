@@ -10,7 +10,7 @@ import org.json.JSONObject;
 public class FindEdges implements Phase {
     private int x, y;
     private boolean increaseX;
-    private Phase findFirstEdge, findSecondEdge, flyPastDeterminedA, findThirdEdge, flyPastDeterminedB, findFourthEdge;
+    private Phase findFirstEdge, findSecondEdge, flyPastDeterminedA, findThirdEdge, flyPastDeterminedB, findFourthEdge, endPhase;
     private Queue<Phase> phases;
 
     private final Logger logger = LogManager.getLogger();
@@ -33,10 +33,12 @@ public class FindEdges implements Phase {
         this.findThirdEdge = new FindSubsequentEdge();
         this.flyPastDeterminedB = new FlyPastDetermined(0);
         this.findFourthEdge = new FindSubsequentEdge();
+        this.endPhase = new EndPhase();
 
         this.phases.add(this.findFirstEdge);
         this.phases.add(this.findSecondEdge);
         this.phases.add(this.flyPastDeterminedA);
+        this.phases.add(this.endPhase);
     }
 
     private void parseStartingDirection(Direction direction) {
@@ -53,7 +55,7 @@ public class FindEdges implements Phase {
 
     @Override
     public boolean isFinished() {        
-        if(this.phases.peek().equals(null)) {
+        if(this.phases.peek().equals(this.endPhase)) {
             return true;
         }
 
@@ -71,7 +73,7 @@ public class FindEdges implements Phase {
                 setFlyActionsLeft();
             }
 
-            if(this.phases.peek().equals(null)) {
+            if(this.phases.peek().equals(this.endPhase)) {
                 return true;
             }
         }
@@ -120,6 +122,7 @@ public class FindEdges implements Phase {
         if(this.phases.peek().equals(this.flyPastDeterminedA)) {
             logger.info("SETTING FLY A TO: " + Integer.toString(this.increaseX ? this.x: this.y));
             phases.remove();
+            phases.remove();
 
             this.flyPastDeterminedA = new FlyPastDetermined(this.increaseX ? this.x: this.y);
             phases.add(this.flyPastDeterminedA);
@@ -129,11 +132,13 @@ public class FindEdges implements Phase {
         else if(this.phases.peek().equals(this.flyPastDeterminedB)) {
             logger.info("SETTING FLY B TO: " + Integer.toString(this.increaseX ? this.x: this.y));
             phases.remove();
+            phases.remove();
 
             this.flyPastDeterminedB = new FlyPastDetermined(this.increaseX ? this.x: this.y);
             phases.add(this.flyPastDeterminedB);
             phases.add(this.findFourthEdge);
         }
+        phases.add(this.endPhase);
     }
 
     // following methods are temporary abstraction leaks for unit testing

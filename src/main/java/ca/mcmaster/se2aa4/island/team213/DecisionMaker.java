@@ -32,8 +32,11 @@ public class DecisionMaker {
             findEdgesInitialized = true;
             decision = findEdges.createDecision(drone);
         } else if(findEdgesInitialized) {
-            findEdges.isFinished();
-            decision = findEdges.createDecision(drone);
+            if(!findEdges.isFinished()) {
+                decision = findEdges.createDecision(drone);
+            } else {
+                decision.put("action", "stop");
+            }
         }
 
         logger.info("** DECISION: " + decision.toString());

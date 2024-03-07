@@ -62,7 +62,8 @@ public class FindEdgesTest {
         feA.removeFromPhases();
         feA.removeFromPhases();
 
-        assertFalse(feA.isFinished());
+        assertTrue(feA.isFinished());
+        
     }
 
 }
