@@ -1,5 +1,7 @@
 package ca.mcmaster.se2aa4.island.team213;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -7,11 +9,18 @@ public class FindFirstEdge implements Phase {
     private boolean isFinished;
     private boolean movedForward, scanned, echoedLeft, echoedRight;
     private boolean turnRight;
-    
+
+    private final Logger logger = LogManager.getLogger();
+
+
     public FindFirstEdge() {
         this.isFinished = false;
         this.turnRight = false;
         resetTertiaryPhases();
+    }
+    @Override
+    public boolean lastPhase(){
+        return false;
     }
 
     @Override
@@ -58,6 +67,9 @@ public class FindFirstEdge implements Phase {
 
     @Override
     public void checkDrone(Drone drone) {
+        logger.info("** PREVIOUS DECISION: " + drone.getPreviousDecision());
+        logger.info("**");
+        logger.info("**");
         if(drone.getPreviousDecision().equals("echoRight")) {
             checkScanAndEchoes(drone);
         }

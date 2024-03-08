@@ -48,6 +48,11 @@ public class FindEdges implements Phase {
         }
     }
 
+
+    @Override
+    public boolean lastPhase(){
+        return false;
+    }
     @Override
     public boolean isFinished() {        
         if(this.phases.peek().equals(this.endPhase)) {

@@ -18,6 +18,11 @@ public class LocateIsland implements Phase {
     private Queue<JSONObject> taskQueue = new LinkedList<>();
 
     @Override
+    public boolean lastPhase(){
+        return false;
+    }
+
+    @Override
     public JSONObject createDecision(Drone drone) {
 //        logger.info("Items in Queue {}",taskQueue);
         JSONObject decision = new JSONObject();

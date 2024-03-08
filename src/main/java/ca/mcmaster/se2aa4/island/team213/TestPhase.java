@@ -5,6 +5,11 @@ import org.json.JSONObject;
 public class TestPhase implements Phase {
 
     @Override
+    public boolean lastPhase(){
+        return false;
+    }
+
+    @Override
     public boolean isFinished() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'isFinished'");

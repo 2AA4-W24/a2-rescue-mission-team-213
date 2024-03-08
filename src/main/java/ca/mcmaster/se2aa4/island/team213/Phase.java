@@ -4,6 +4,8 @@ import org.json.JSONObject;
 
 public interface Phase {
 
+    boolean lastPhase();
+
     boolean isFinished();
 
     // WILL NOT ACCEPT DRONE IN END PRODUCT

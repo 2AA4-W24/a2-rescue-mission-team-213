@@ -9,6 +9,11 @@ public class EndPhase implements Phase {
     }
 
     @Override
+    public boolean lastPhase(){
+        return false;
+    }
+
+    @Override
     public boolean isFinished() {
         return true;
     }
