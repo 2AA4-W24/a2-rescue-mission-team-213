@@ -14,6 +14,10 @@ public class FindSubsequentEdge implements Phase {
         this.movedForward = true;
         this.echoedRight = false;
     }
+    @Override
+    public boolean lastPhase(){
+        return false;
+    }
 
     @Override
     public boolean isFinished() {

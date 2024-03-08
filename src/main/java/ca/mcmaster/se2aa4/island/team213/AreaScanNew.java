@@ -1,5 +1,6 @@
 package ca.mcmaster.se2aa4.island.team213;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.LinkedList;
@@ -11,9 +12,15 @@ public class AreaScanNew implements Phase{
     public int x, y;
     public int xSteps, ySteps;
     public Direction direction;
+    private GetShortestPath shortestPath;
 
 
     private Queue<JSONObject> taskQueue = new LinkedList<>();
+
+    @Override
+    public boolean lastPhase(){
+        return true;
+    }
     public AreaScanNew(Perimeter perimeter){
         maxX = perimeter.width;
         maxY = perimeter.height;
@@ -110,7 +117,24 @@ public class AreaScanNew implements Phase{
     }
     @Override
     public void checkDrone(Drone drone){
-        System.out.println("hi");
+        JSONObject scanInfo = drone.getScanInfo();
+        JSONObject extraInfo = scanInfo.getJSONObject("extras");
+        JSONArray creeksJSON = extraInfo.getJSONArray("creeks");
+        if (!creeksJSON.isEmpty()){
+            for (int i=0; i<creeksJSON.length(); ++i){
+                shortestPath.addCreek(new PointsOfInterest(x,y, creeksJSON.getString(i)));
+            }
+        }
+
+        JSONArray sitesJSON = extraInfo.getJSONArray("sites");
+        if (!sitesJSON.isEmpty()){
+            for (int i=0; i<sitesJSON.length(); ++i){
+                shortestPath.addSite(new PointsOfInterest(x,y, sitesJSON.getString(i)));
+            }
+        }
+
+
+
     }
     @Override
     public Phase nextPhase(){

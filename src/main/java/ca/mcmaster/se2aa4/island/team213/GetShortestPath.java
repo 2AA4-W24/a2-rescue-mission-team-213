@@ -2,9 +2,6 @@ package ca.mcmaster.se2aa4.island.team213;
 import java.util.ArrayList;
 import java.util.Optional;
 public class GetShortestPath {
-//
-//    private String closestSite;
-//    private double closestSiteDistance;
 
     public SiteCandidate closestSite;
     public ArrayList<PointsOfInterest> creeks;
@@ -12,7 +9,6 @@ public class GetShortestPath {
 
 
     public GetShortestPath(){
-//        this.closestSiteDistance = Float.MAX_VALUE;
     }
     public void addCreek(PointsOfInterest creek){
         creeks.add(creek);

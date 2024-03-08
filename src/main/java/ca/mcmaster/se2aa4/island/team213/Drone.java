@@ -12,9 +12,11 @@ public class Drone {
     private Direction direction;
     private EchoStatus echo = new EchoStatus();
     private Direction echoing;
+    private String droneStatus;
     private JSONObject scanInfo;
     private String previousDecision;
-    private String echoRight, echoLeft, echoForward;
+    private String echoRight, echoLeft;
+    private String siteID;
 
     private final Logger logger = LogManager.getLogger();
     private Direction directionHeading = Direction.E;
@@ -40,6 +42,7 @@ public class Drone {
 
         battery -= response.getInt("cost");
         // logger.info("New battery: {}", battery);
+        droneStatus = response.getString("status");
 //                logger.info("The status of the drone is {}", droneStatus);
 
 
@@ -93,7 +96,9 @@ public class Drone {
         }
 
     }
-
+    public String getSiteID(){
+        return this.siteID;
+    }
     public EchoResult getEchoNorth(){
         return echo.north;
     }
@@ -227,5 +232,14 @@ public class Drone {
 
     public String getEchoLeft() {
         return this.echoLeft;
+    }
+
+    // following methods are temporary abstraction leaks for unit testing
+    public void setPreviousDecision(String decision) {
+        this.previousDecision = decision;
+    }
+
+    public void setEchoRight(String echoInfo) {
+        this.echoRight = echoInfo;
     }
 }
