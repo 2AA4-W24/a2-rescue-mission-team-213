@@ -1,15 +1,11 @@
 package ca.mcmaster.se2aa4.island.team213;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 public class FindSubsequentEdge implements Phase {
     private boolean isFinished;
     private boolean echoedRight, movedForward;
     private boolean turnRight;
-
-    private final Logger logger = LogManager.getLogger();
 
     public FindSubsequentEdge() {
         this.isFinished = false;
@@ -41,7 +37,6 @@ public class FindSubsequentEdge implements Phase {
             decision.put("action", "fly");
         }
         else if(!this.echoedRight) {
-            // logger.info("!!!!!! FIND SUB. EDGE REACHED !!!!!!");
             this.echoedRight = true;
             JSONObject parameter = new JSONObject();
             parameter.put("direction", drone.getDirection().rightTurn());
@@ -67,9 +62,6 @@ public class FindSubsequentEdge implements Phase {
     }
 
     private void checkEcho(Drone drone) {
-        logger.info("** PREVIOUS DECISION: " + drone.getPreviousDecision());
-        logger.info("**");
-        logger.info("**");
         if(drone.getEchoRight().equals("OUT_OF_RANGE")) {
             // logger.info("turnRight set to true !!!!!!!!!!!!");
             this.turnRight = true;
