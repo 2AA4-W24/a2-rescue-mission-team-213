@@ -12,14 +12,12 @@ public class Drone {
     private Direction direction;
     private EchoStatus echo = new EchoStatus();
     private Direction echoing;
-    private String droneStatus;
-    private JSONObject scanInfo;
+    private ScanStatus scanInfo;
     private String previousDecision;
     private String echoRight, echoLeft;
     private String siteID;
 
     private final Logger logger = LogManager.getLogger();
-    private Direction directionHeading = Direction.E;
 
     public Drone(String direction, Integer battery){
         stringToDirection(direction);
@@ -42,8 +40,7 @@ public class Drone {
 
         battery -= response.getInt("cost");
         // logger.info("New battery: {}", battery);
-        droneStatus = response.getString("status");
-//                logger.info("The status of the drone is {}", droneStatus);
+        // logger.info("The status of the drone is {}", droneStatus);
 
 
         // TECHNICAL DEBT: currently just assumes content of extra is echo response object, does not consider for scan
@@ -92,7 +89,7 @@ public class Drone {
             this.echoLeft = extraInfo.getString("found");
         } else if(previousDecision.equals("scan")) {
             logger.info("STORING SCAN INFO:");
-            this.scanInfo = extraInfo;
+            this.scanInfo = new ScanStatus(extraInfo);
         }
 
     }
@@ -218,8 +215,16 @@ public class Drone {
         return this.direction;
     }
 
-    public JSONObject getScanInfo() {
-        return this.scanInfo;
+    public JSONArray getScanInfoBiome() {
+        return this.scanInfo.scanBiomes;
+    }
+
+    public JSONArray getScanInfoCreeks() {
+        return this.scanInfo.scanCreeks;
+    }
+
+    public JSONArray getScanInfoSites() {
+        return this.scanInfo.scanSites;
     }
 
     public String getPreviousDecision() {

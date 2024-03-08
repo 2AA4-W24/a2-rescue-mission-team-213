@@ -117,16 +117,14 @@ public class AreaScanNew implements Phase{
     }
     @Override
     public void checkDrone(Drone drone){
-        JSONObject scanInfo = drone.getScanInfo();
-        JSONObject extraInfo = scanInfo.getJSONObject("extras");
-        JSONArray creeksJSON = extraInfo.getJSONArray("creeks");
+        JSONArray creeksJSON = drone.getScanInfoCreeks();
         if (!creeksJSON.isEmpty()){
             for (int i=0; i<creeksJSON.length(); ++i){
                 shortestPath.addCreek(new PointsOfInterest(x,y, creeksJSON.getString(i)));
             }
         }
 
-        JSONArray sitesJSON = extraInfo.getJSONArray("sites");
+        JSONArray sitesJSON = drone.getScanInfoSites();
         if (!sitesJSON.isEmpty()){
             for (int i=0; i<sitesJSON.length(); ++i){
                 shortestPath.addSite(new PointsOfInterest(x,y, sitesJSON.getString(i)));
