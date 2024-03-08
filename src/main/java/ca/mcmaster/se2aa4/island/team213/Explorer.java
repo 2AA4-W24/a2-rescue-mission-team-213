@@ -44,6 +44,8 @@ public class Explorer implements IExplorerRaid {
         else{
             decision = phase.createDecision(drone);
         }
+        // decision = decisionMaker.decideDecision(drone);
+        // drone.parseDecision(decision);
         return decision.toString();
     }
 
