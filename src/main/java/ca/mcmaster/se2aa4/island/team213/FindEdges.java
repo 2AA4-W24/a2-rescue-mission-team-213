@@ -16,11 +16,6 @@ public class FindEdges implements Phase {
     private final Logger logger = LogManager.getLogger();
 
     public FindEdges(Drone drone) {
-        logger.info("**");
-        logger.info("**");
-        logger.info("**** REACHED FIND EDGES ****");
-        logger.info("**");
-        logger.info("**");
         this.phases = new LinkedList<Phase>();
         parseStartingDirection(drone.getDirection());
         setupQueue(); 
@@ -64,7 +59,6 @@ public class FindEdges implements Phase {
             if(this.phases.peek().equals(this.findFirstEdge) || this.phases.peek().equals(this.findSecondEdge) || this.phases.peek().equals(this.findThirdEdge) ||this.phases.peek().equals(this.findFourthEdge)) {
                 increaseXorY();
                 swapXorY();
-                logger.info("!!!!!! X AND Y SWAPPED !!!!!!");
             }
 
             this.phases.remove();
@@ -90,6 +84,10 @@ public class FindEdges implements Phase {
 
     @Override
     public void checkDrone(Drone drone) {
+        logger.info("** PREVIOUS DECISION: " + drone.getPreviousDecision());
+        logger.info("**");
+        logger.info("**");
+        
         Phase currentPhase = this.phases.peek();
         currentPhase.checkDrone(drone);
 
@@ -142,6 +140,7 @@ public class FindEdges implements Phase {
     }
 
     // following methods are temporary abstraction leaks for unit testing
+    // make copy unless return value is immutable
     public boolean getIncreaseX() {
         return this.increaseX;
     }
@@ -156,6 +155,10 @@ public class FindEdges implements Phase {
 
     public Phase getFindSecondEdge() {
         return this.findSecondEdge;
+    }
+
+    public Phase getFindThirdEdge() {
+        return this.findThirdEdge;
     }
 
     public Phase getFlyPastDeterminedA() {
