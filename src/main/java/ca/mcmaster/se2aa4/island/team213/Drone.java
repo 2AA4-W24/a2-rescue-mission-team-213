@@ -64,8 +64,6 @@ public class Drone {
                 echo.rangeAhead = range;
             }
 
-//            logger.info(echo.east.toString());
-//            logger.info(echo.rangeEast);
 
             // set echoing to null after
             echoRequested = null;
@@ -102,18 +100,10 @@ public class Drone {
     public Integer getRangeHeading(){
         return echo.rangeAhead;
     }
-    public void setDirectionHeading(Direction newDirection){
-        this.direction = newDirection;
-    }
+
     public void subtractRangeHeading(){
         echo.rangeAhead--;
 
-    }
-
-
-
-    public void setEcho(Direction direction){
-        this.echoRequested = direction;
     }
 
     // Section below added by Gary, includes some temporary accessor methods to make other classes work
@@ -139,12 +129,19 @@ public class Drone {
         else if(decision.getString("action").equals("echo")) {
             JSONObject parameter = decision.getJSONObject("parameters");
 
-            if(this.direction.rightTurn().equals(parameter.get("direction"))) {
+            if(this.direction.equals(parameter.get("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO RIGHT");
+                echoRequested = direction;
+                this.previousDecision = "echoRight";
+            }
+            else if(this.direction.rightTurn().equals(parameter.get("direction"))) {
+                logger.info("DRONE RECEIVED COMMAND FOR ECHO RIGHT");
+                echoRequested = direction.rightTurn();
                 this.previousDecision = "echoRight";
             }
             else if(this.direction.leftTurn().equals(parameter.get("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO LEFT");
+                echoRequested = direction.leftTurn();
                 this.previousDecision = "echoLeft";
             }
         }
