@@ -56,8 +56,9 @@ public class ExampleTest {
     public void areaScanNewTest(){
         int width = 467;
         int height = 246;
-        Perimeter perimeterTest = new Perimeter(width, height, CornerPosition.BOTTOMLEFT);
-        AreaScanNew areaScanNew = new AreaScanNew(perimeterTest);
+//        Perimeter perimeterTest = new Perimeter(width, height, CornerPosition.BOTTOMLEFT);
+        Drone droneTest = new Drone(Direction.N.toString(), 10000);
+        AreaScanNew areaScanNew = new AreaScanNew(width, height, droneTest);
         while (!areaScanNew.isFinished()){
             areaScanNew.createDecision(null);
             System.out.printf("x: %d, y: %d, maxX: %d, maxY: %d, xSteps: %d, ySteps: %d\n", areaScanNew.x, areaScanNew.y, areaScanNew.maxX, areaScanNew.maxY, areaScanNew.xSteps, areaScanNew.ySteps);

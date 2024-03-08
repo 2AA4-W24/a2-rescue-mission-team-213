@@ -21,22 +21,22 @@ public class AreaScanNew implements Phase{
     public boolean lastPhase(){
         return true;
     }
-    public AreaScanNew(Perimeter perimeter){
-        maxX = perimeter.width;
-        maxY = perimeter.height;
+    public AreaScanNew(int islandx, int islandy, Drone drone){
+        maxX = islandx;
+        maxY = islandy;
         x = 0;
         y = 0;
-        switch (perimeter.cornerPosition){
-            case TOPLEFT -> {
+        switch (drone.getDirection()){
+            case E -> {
                 direction = Direction.E;
             }
-            case TOPRIGHT -> {
+            case S -> {
                 direction = Direction.S;
             }
-            case BOTTOMRIGHT -> {
+            case W -> {
                 direction = Direction.W;
             }
-            case BOTTOMLEFT -> {
+            case N -> {
                 direction = Direction.N;
             }
         }
