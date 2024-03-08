@@ -215,7 +215,7 @@ public class Drone {
     }
 
     public Direction getDirection() {
-        return this.direction;
+        return direction;
     }
 
     public JSONObject getScanInfo() {

@@ -24,7 +24,7 @@ public class LocateIsland implements Phase {
 
     @Override
     public JSONObject createDecision(Drone drone) {
-//        logger.info("Items in Queue {}",taskQueue);
+        logger.info("Items in Queue {}",taskQueue);
         JSONObject decision = new JSONObject();
         // first check if there are tasks to be executed
         if (!taskQueue.isEmpty()){
@@ -48,6 +48,25 @@ public class LocateIsland implements Phase {
                     }
                 }
 
+            }
+            else if (Objects.equals(decision.get("action"), "heading")){
+                // get which direction is echoing and set drone.echoing accordingly
+                JSONObject parameters = decision.getJSONObject("parameters");
+                String direction = parameters.getString("direction");
+                switch (direction){
+                    case "N" ->{
+                        drone.setDirectionHeading(Direction.N);
+                    }
+                    case "E" ->{
+                        drone.setDirectionHeading(Direction.E);
+                    }
+                    case "S" ->{
+                        drone.setDirectionHeading(Direction.S);
+                    }
+                    case "W" ->{
+                        drone.setDirectionHeading(Direction.W);
+                    }
+                }
             }
             else if(Objects.equals(decision.get("action"), "fly") ){
                 drone.subtractRangeHeading();
@@ -81,22 +100,28 @@ public class LocateIsland implements Phase {
 
 
         // check if reached the border of the map -> need to turn around
-        else if (Objects.equals(drone.getEchoHeading(), EchoResult.OUT_OF_RANGE) && Objects.equals(drone.getRangeHeading(), 0)){
+        else if (Objects.equals(drone.getEchoHeading(), EchoResult.OUT_OF_RANGE) && Objects.equals(drone.getRangeHeading(), 1)){
             decision.put("action", "heading");
             JSONObject parameters = new JSONObject();
             // TODO: violates law of demeter
+            logger.info(drone.getDirection());
+            logger.info("!!!! NEED TO TURN: Direction set to {}", drone.getDirection().rightTurn().toString());
             parameters.put("direction", drone.getDirection().rightTurn().toString());
             decision.put("parameters", parameters);
 
+            logger.info(drone.getDirection());
 
             // set decision to turn right once and queue another one
             JSONObject secondTurn = new JSONObject();
             secondTurn.put("action", "heading");
             JSONObject secondParameters = new JSONObject();
             // TODO: violates law of demeter
+            logger.info("!!!! NEED TO TURN: Direction set to {}", drone.getDirection().rightTurn().rightTurn().toString());
             secondParameters.put("direction", drone.getDirection().rightTurn().rightTurn().toString());
-            decision.put("parameters", secondParameters);
+            secondTurn.put("parameters", secondParameters);
             taskQueue.add(secondTurn);
+
+            drone.setDirectionHeading(drone.getDirection().rightTurn());
         }
 
         // reached the island
