@@ -14,7 +14,6 @@ public class DecisionMaker {
 
     private Phase findEdges;
     private boolean findEdgesInitialized;
-    private boolean scanned;
 
     public DecisionMaker() {
         findEdgesInitialized = false;
@@ -24,44 +23,24 @@ public class DecisionMaker {
         JSONObject decision = new JSONObject();
         
 
-
+        logger.info(findLand.isFinished());
         // Need to check if end condition is met before calling
-
-        // if(scanned) {
-        //     if(!findLand.isFinished()) {
-        //         decision = findLand.createDecision(drone);
-        //     }
-        //     else if(!findEdgesInitialized) {
-        //         findEdges = new FindEdges(drone);
-        //         findEdgesInitialized = true;
-        //         decision = findEdges.createDecision(drone);
-        //     } else if(findEdgesInitialized) {
-        //         if(!findEdges.isFinished()) {
-        //             decision = findEdges.createDecision(drone);
-        //         } else {
-        //             decision.put("action", "stop");
-        //         }
-        //     }
-        //     scanned = false;
-        // } else {
-        //     decision.put("action", "scan");
-        //     scanned = true;
-        // }
-
         if(!findLand.isFinished()) {
             decision = findLand.createDecision(drone);
+
         }
-        else if(!findEdgesInitialized) {
-            findEdges = new FindEdges(drone);
-            findEdgesInitialized = true;
-            decision = findEdges.createDecision(drone);
-        } else if(findEdgesInitialized) {
-            if(!findEdges.isFinished()) {
-                decision = findEdges.createDecision(drone);
-            } else {
-                decision.put("action", "stop");
-            }
-        }
+//        else if(!findEdgesInitialized) {
+//            findEdges = new FindEdges(drone);
+//            findEdgesInitialized = true;
+//            decision = findEdges.createDecision(drone);
+//        } else if(findEdgesInitialized) {
+//            if(!findEdges.isFinished()) {
+//                decision = findEdges.createDecision(drone);
+//            } else {
+//                decision.put("action", "stop");
+//            }
+//        }
+
         logger.info("** DECISION: " + decision.toString());
         return decision;
     }

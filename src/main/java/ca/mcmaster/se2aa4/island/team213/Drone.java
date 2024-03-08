@@ -6,20 +6,19 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Drone {
     private Integer battery;
     private Direction direction;
     private EchoStatus echo = new EchoStatus();
-    private Direction echoing;
-    private String droneStatus;
+    private Direction echoRequested;
     private JSONObject scanInfo;
     private String previousDecision;
     private String echoRight, echoLeft;
     private String siteID;
 
     private final Logger logger = LogManager.getLogger();
-    private Direction directionHeading = Direction.E;
 
     public Drone(String direction, Integer battery){
         stringToDirection(direction);
@@ -41,44 +40,33 @@ public class Drone {
         //        logger.info("** Response received:\n"+response.toString(2));
 
         battery -= response.getInt("cost");
-        // logger.info("New battery: {}", battery);
-        droneStatus = response.getString("status");
-//                logger.info("The status of the drone is {}", droneStatus);
-
 
         // TECHNICAL DEBT: currently just assumes content of extra is echo response object, does not consider for scan
         //        logger.info("Additional information received: {}", extraInfo);
 
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
-        if (!extraInfo.isEmpty() && echoing != null){
+        if (!extraInfo.isEmpty() && echoRequested != null){
             String result = extraInfo.getString("found");
             Integer range = extraInfo.getInt("range");
 
-            switch (echoing) {
-                case N -> {
-                    echo.north = EchoResult.valueOf(result);
-                    echo.rangeNorth = range;
-                }
-                case E -> {
-                    echo.east = EchoResult.valueOf(result);
-                    echo.rangeEast = range;
 
-                }
-                case S -> {
-                    echo.south = EchoResult.valueOf(result);
-                    echo.rangeSouth = range;
-                }
-                case W -> {
-                    echo.west = EchoResult.valueOf(result);
-                    echo.rangeWest = range;
-                }
+            if (Objects.equals(echoRequested, direction.rightTurn())){
+                echo.echoRight = EchoResult.valueOf(result);
+                echo.rangeRight = range;
             }
-//            logger.info(echo.east.toString());
-//            logger.info(echo.rangeEast);
+            else if (Objects.equals(echoRequested, direction.leftTurn())){
+                echo.echoLeft = EchoResult.valueOf(result);
+                echo.rangeLeft = range;
+            }
+            else if (Objects.equals(echoRequested, direction)){
+                echo.echoAhead = EchoResult.valueOf(result);
+                echo.rangeAhead = range;
+            }
+
 
             // set echoing to null after
-            echoing = null;
+            echoRequested = null;
 
         }
 
@@ -99,79 +87,23 @@ public class Drone {
     public String getSiteID(){
         return this.siteID;
     }
-    public EchoResult getEchoNorth(){
-        return echo.north;
+
+    public EchoResult getEchoAhead(){
+        return echo.echoAhead;
     }
-    public EchoResult getEchoEast(){return echo.east;}
-    public EchoResult getEchoSouth(){
-        return echo.south;
+    public EchoResult getEchoRight(){
+        return echo.echoRight;
     }
-    public EchoResult getEchoWest(){
-        return echo.west;
-    }
+    public EchoResult getEchoLeft(){return echo.echoLeft;}
+
 
     public Integer getRangeHeading(){
-        switch (direction){
-            case N ->{
-                return echo.rangeNorth;
-            }
-            case E ->{
-                return echo.rangeEast;
-            }
-            case S ->{
-                return echo.rangeSouth;
-            }
-            case W ->{
-                return echo.rangeWest;
-            }
-        }
+        return echo.rangeAhead;
+    }
 
-        // Should not arrive at this case
-        return null;
-    }
-    public void setDirectionHeading(Direction newDirection){
-        this.direction = newDirection;
-    }
     public void subtractRangeHeading(){
-        switch (direction){
-            case N ->{
-                echo.rangeNorth--;
-            }
-            case E ->{
-                echo.rangeEast--;
-            }
-            case S ->{
-                echo.rangeSouth--;
-            }
-            case W ->{
-                echo.rangeWest--;
-            }
-        }
+        echo.rangeAhead--;
 
-    }
-
-    public EchoResult getEchoHeading(){
-        switch (direction){
-            case N ->{
-                return echo.north;
-            }
-            case E ->{
-                return echo.east;
-            }
-            case S ->{
-                return echo.south;
-            }
-            case W ->{
-                return echo.west;
-            }
-        }
-
-        // Should not arrive at this case
-        return null;
-    }
-
-    public void setEcho(Direction direction){
-        this.echoing = direction;
     }
 
     // Section below added by Gary, includes some temporary accessor methods to make other classes work
@@ -197,12 +129,19 @@ public class Drone {
         else if(decision.getString("action").equals("echo")) {
             JSONObject parameter = decision.getJSONObject("parameters");
 
-            if(this.direction.rightTurn().equals(parameter.get("direction"))) {
+            if(this.direction.equals(parameter.get("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO RIGHT");
+                echoRequested = direction;
+                this.previousDecision = "echoRight";
+            }
+            else if(this.direction.rightTurn().equals(parameter.get("direction"))) {
+                logger.info("DRONE RECEIVED COMMAND FOR ECHO RIGHT");
+                echoRequested = direction.rightTurn();
                 this.previousDecision = "echoRight";
             }
             else if(this.direction.leftTurn().equals(parameter.get("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO LEFT");
+                echoRequested = direction.leftTurn();
                 this.previousDecision = "echoLeft";
             }
         }
@@ -215,7 +154,7 @@ public class Drone {
     }
 
     public Direction getDirection() {
-        return this.direction;
+        return direction;
     }
 
     public JSONObject getScanInfo() {
@@ -226,13 +165,7 @@ public class Drone {
         return this.previousDecision;
     }
 
-    public String getEchoRight() {
-        return this.echoRight;
-    }
 
-    public String getEchoLeft() {
-        return this.echoLeft;
-    }
 
     // following methods are temporary abstraction leaks for unit testing
     public void setPreviousDecision(String decision) {
