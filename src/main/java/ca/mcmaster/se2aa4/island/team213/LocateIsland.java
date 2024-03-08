@@ -74,7 +74,7 @@ public class LocateIsland implements Phase {
         }
 
         // check if we are on iteration one, where the echo every direction would be null
-        else if (Objects.equals(drone.getEchoNorth(), null) &&  Objects.equals(drone.getEchoEast(), null) && Objects.equals(drone.getEchoSouth(), null) && Objects.equals(drone.getEchoWest(), null)){
+        else if (Objects.equals(drone.getEchoAhead(), null) &&  Objects.equals(drone.getEchoRight(), null) && Objects.equals(drone.getEchoLeft(), null)){
             decision.put("action", "echo");
             JSONObject parameters = new JSONObject();
             parameters.put("direction", drone.getDirection().toString());
@@ -100,7 +100,7 @@ public class LocateIsland implements Phase {
 
 
         // check if reached the border of the map -> need to turn around
-        else if (Objects.equals(drone.getEchoHeading(), EchoResult.OUT_OF_RANGE) && Objects.equals(drone.getRangeHeading(), 1)){
+        else if (Objects.equals(drone.getEchoAhead(), EchoResult.OUT_OF_RANGE) && Objects.equals(drone.getRangeHeading(), 1)){
             decision.put("action", "heading");
             JSONObject parameters = new JSONObject();
             // TODO: violates law of demeter
@@ -125,13 +125,13 @@ public class LocateIsland implements Phase {
         }
 
         // reached the island
-        else if (drone.getRangeHeading() == 0 && Objects.equals(drone.getEchoHeading(), EchoResult.GROUND)){
+        else if (drone.getRangeHeading() == 0 && Objects.equals(drone.getEchoAhead(), EchoResult.GROUND)){
             landFound = true;
             decision.put("action", "scan");
         }
 
         // no ground in each direction, need to fly forward and check again
-        else if (!(Objects.equals(drone.getEchoEast(), EchoResult.GROUND) || Objects.equals(drone.getEchoSouth(), EchoResult.GROUND) || Objects.equals(drone.getEchoWest(), EchoResult.GROUND) || Objects.equals(drone.getEchoNorth(), EchoResult.GROUND))){
+        else if (!(Objects.equals(drone.getEchoAhead(), EchoResult.GROUND) || Objects.equals(drone.getEchoRight(), EchoResult.GROUND) || Objects.equals(drone.getEchoLeft(), EchoResult.GROUND))){
             decision.put("action", "fly");
 
             JSONObject enqueueEcho = new JSONObject();
@@ -160,18 +160,18 @@ public class LocateIsland implements Phase {
         }
 
         // ground found change heading if need be and queue fly commands
-        else if (Objects.equals(drone.getEchoEast(), EchoResult.GROUND) || Objects.equals(drone.getEchoSouth(), EchoResult.GROUND) || Objects.equals(drone.getEchoWest(), EchoResult.GROUND) || Objects.equals(drone.getEchoNorth(), EchoResult.GROUND)){
+        else if (Objects.equals(drone.getEchoAhead(), EchoResult.GROUND) || Objects.equals(drone.getEchoRight(), EchoResult.GROUND) || Objects.equals(drone.getEchoLeft(), EchoResult.GROUND)){
 //           logger.info("!!!!!!!!!!! LAND FOUND LAND FOUND LAND FOUND !!!!!!!!!!!!!!!!!!!!!! ");
             // Keep heading in direction
-            if (Objects.equals(drone.getEchoHeading(), EchoResult.GROUND)){
+            if (Objects.equals(drone.getEchoAhead(), EchoResult.GROUND)){
                 decision.put("action", "fly");
                 // need to keep heading i - 1 times in that direction
                 for (int i = 0; i < drone.getRangeHeading(); i++){
                     taskQueue.add(decision);
                 }
             }
-            // Ground is north
-            else if (Objects.equals(drone.getEchoNorth(), EchoResult.GROUND)){
+            // Ground is right
+            else if (Objects.equals(drone.getEchoRight(), EchoResult.GROUND)){
                 decision.put("action", "heading");
                 JSONObject parameters = new JSONObject();
                 parameters.put("direction", "N");
@@ -184,8 +184,8 @@ public class LocateIsland implements Phase {
                     taskQueue.add((flyCommand));
                 }
             }
-            // Ground is east
-            else if (Objects.equals(drone.getEchoEast(), EchoResult.GROUND)){
+            // Ground is left
+            else if (Objects.equals(drone.getEchoLeft(), EchoResult.GROUND)){
                 decision.put("action", "heading");
                 JSONObject parameters = new JSONObject();
                 parameters.put("direction", "E");
@@ -198,35 +198,7 @@ public class LocateIsland implements Phase {
                     taskQueue.add((flyCommand));
                 }
             }
-            // Ground is south
-            else if (Objects.equals(drone.getEchoSouth(), EchoResult.GROUND)){
-                decision.put("action", "heading");
-                JSONObject parameters = new JSONObject();
-                parameters.put("direction", "S");
-                drone.setDirectionHeading(Direction.S);
-                decision.put("parameters", parameters);
-                // need to keep heading i - 1 times in that direction
-                for (int i = 0; i < drone.getRangeHeading(); i++){
-                    JSONObject flyCommand = new JSONObject();
-                    flyCommand.put("action", "fly");
-                    taskQueue.add((flyCommand));
-                }
-            }
-            // Ground is West
-            else if (Objects.equals(drone.getEchoSouth(), EchoResult.GROUND)){
-                decision.put("action", "heading");
-                JSONObject parameters = new JSONObject();
-                parameters.put("direction", "W");
-                drone.setDirectionHeading(Direction.W);
-                decision.put("parameters", parameters);
-                // need to keep heading i - 1 times in that direction
-                for (int i = 0; i < drone.getRangeHeading(); i++){
-                    JSONObject flyCommand = new JSONObject();
-                    flyCommand.put("action", "fly");
-                    taskQueue.add(flyCommand);
-                }
-            }
-
+            
         }
 
         return decision;

@@ -1,20 +1,11 @@
 package ca.mcmaster.se2aa4.island.team213;
 
 public class EchoStatus {
-    EchoResult north;
-    EchoResult east;
-    EchoResult south;
-    EchoResult west;
+    EchoResult echoRight;
+    EchoResult echoLeft;
+    EchoResult echoAhead;
+    Integer rangeRight;
+    Integer rangeLeft;
+    Integer rangeAhead;
 
-    Integer rangeNorth;
-    Integer rangeEast;
-    Integer rangeSouth;
-    Integer rangeWest;
-
-//    public EchoStatus(EchoResult north, EchoResult east, EchoResult south, EchoResult west){
-//        this.north = north;
-//        this.east = east;
-//        this.south = south;
-//        this.west = west;
-//    }
 }
