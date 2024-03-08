@@ -18,6 +18,7 @@ public class FindFirstEdge implements Phase {
         this.turnRight = false;
         resetTertiaryPhases();
     }
+    
     @Override
     public boolean lastPhase(){
         return false;
