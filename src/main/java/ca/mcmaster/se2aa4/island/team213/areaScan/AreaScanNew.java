@@ -23,6 +23,7 @@ public class AreaScanNew implements Phase {
         return true;
     }
     public AreaScanNew(int islandx, int islandy, Drone drone){
+        shortestPath = new GetShortestPath(drone);
         maxX = islandx;
         maxY = islandy;
         x = 0;
@@ -114,7 +115,14 @@ public class AreaScanNew implements Phase {
     }
     @Override
     public boolean isFinished(){
-        return (maxX - 2 <= 0 || maxY - 2 <= 0);
+        if (maxX - 2 <= 0 || maxY - 2 <= 0){
+            //Computes shortest path out between all sites and creeks
+            shortestPath.computeClosestSite();
+
+
+            return true;
+        }
+        return false;
     }
     @Override
     public void checkDrone(Drone drone){
@@ -134,10 +142,11 @@ public class AreaScanNew implements Phase {
 
 
 
+
     }
     @Override
     public Phase nextPhase(){
-        return new AreaScanNew(0, 0, null);
+        return null;
     }
 
     private void rightTurnPos(){

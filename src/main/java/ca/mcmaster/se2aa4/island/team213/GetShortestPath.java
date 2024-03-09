@@ -8,7 +8,8 @@ public class GetShortestPath {
     public ArrayList<PointsOfInterest> sites;
 
 
-    public GetShortestPath(){
+    public GetShortestPath(Drone drone){
+
     }
     public void addCreek(PointsOfInterest creek){
         creeks.add(creek);
@@ -30,6 +31,11 @@ public class GetShortestPath {
                 }
             }
         }
+
+
+    }
+    public void updateSiteID(Drone drone){
+        drone.setSiteID(closestSite.id);
     }
 
     public Optional<SiteCandidate> getClosestSite(){
