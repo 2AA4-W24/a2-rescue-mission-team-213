@@ -47,7 +47,9 @@ public class Explorer implements IExplorerRaid {
         // }
 
         decision = decisionMaker.decideDecision(drone);
+        logger.info("reached before");
         drone.parseDecision(decision);
+        logger.info("reached after");
         return decision.toString();
     }
 

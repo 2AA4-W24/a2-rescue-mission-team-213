@@ -29,13 +29,13 @@ public class FindEdgesTest {
         droneA = new Drone("N", 1000);   
         droneB = new Drone("E", 1000);
 
-        phaseA = new FindFirstEdge(droneA);
-        phaseB = new FindFirstEdge(droneB);
+        phaseA = new FindFirstEdge(droneA.getDirection());
+        phaseB = new FindFirstEdge(droneB.getDirection());
         phaseC = new FindSubsequentEdge(0, 0, false, 0);
         phaseD = new FindSubsequentEdge(0, 0, false, 3);
         flyActionsLeft = 10;
         phaseE = new FlyPastDetermined(0, 0, false, 0, flyActionsLeft);
-        phaseZ = new FindFirstEdge(droneA);
+        phaseZ = new FindFirstEdge(droneA.getDirection());
 
         decision = new JSONObject();
         parameter = new JSONObject();

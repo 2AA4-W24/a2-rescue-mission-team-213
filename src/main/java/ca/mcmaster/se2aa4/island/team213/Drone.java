@@ -36,7 +36,7 @@ public class Drone {
     public void updateStatus(JSONObject response){
         logger.info("updating status...");
         logger.info("** Response received:\n"+response.toString(2));
-
+        logger.info(this.previousDecision);
         battery -= response.getInt("cost");
 
         // TECHNICAL DEBT: currently just assumes content of extra is echo response object, does not consider for scan
@@ -44,29 +44,7 @@ public class Drone {
 
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
-        if (!extraInfo.isEmpty() && echoRequested != null){
-            String result = extraInfo.getString("found");
-            Integer range = extraInfo.getInt("range");
 
-
-            if (Objects.equals(echoRequested, direction.rightTurn())){
-                echo.echoRight = EchoResult.valueOf(result);
-                echo.rangeRight = range;
-            }
-            else if (Objects.equals(echoRequested, direction.leftTurn())){
-                echo.echoLeft = EchoResult.valueOf(result);
-                echo.rangeLeft = range;
-            }
-            else if (Objects.equals(echoRequested, direction)){
-                echo.echoAhead = EchoResult.valueOf(result);
-                echo.rangeAhead = range;
-            }
-
-
-            // set echoing to null after
-            echoRequested = null;
-
-        }
 
 
         if(previousDecision.equals(Action.echoRight)) {
@@ -89,6 +67,8 @@ public class Drone {
             this.scanInfo = new ScanStatus(extraInfo);
         }
 
+
+
     }
     public String getSiteID(){
         return this.siteID;
@@ -106,6 +86,9 @@ public class Drone {
         return echo.echoLeft;
     }
 
+    public Integer getRangeRight(){return echo.rangeRight;}
+    public Integer getRangeLeft(){return echo.rangeLeft;}
+
     public Integer getRangeHeading(){
         return echo.rangeAhead;
     }
@@ -121,6 +104,7 @@ public class Drone {
     // also updates direction or position if the decision was a "fly" or "heading" action
     public void parseDecision(JSONObject decision) {
         if(decision.getString("action").equals("heading")) {
+            this.echo = new EchoStatus();
             JSONObject parameter = decision.getJSONObject("parameters");
             logger.info("DRONE RECEIVED COMMAND FOR HEADING");
             if(this.direction.rightTurn().toString().equals(parameter.get("direction").toString())) {
@@ -134,18 +118,15 @@ public class Drone {
         }
         else if(decision.getString("action").equals("echo")) {
             JSONObject parameter = decision.getJSONObject("parameters");
-
-            if(this.direction.equals(parameter.get("direction"))) {
+            if(this.direction.toString().equals(parameter.getString("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO AHEAD");
-                echoRequested = direction;
                 this.previousDecision = Action.echoAhead;
             }
-            else if(this.direction.rightTurn().equals(parameter.get("direction"))) {
+            else if(this.direction.rightTurn().toString().equals(parameter.get("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO RIGHT");
-                echoRequested = direction.rightTurn();
                 this.previousDecision = Action.echoRight;
             }
-            else if(this.direction.leftTurn().equals(parameter.get("direction"))) {
+            else if(this.direction.leftTurn().toString().equals(parameter.get("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO LEFT");
                 echoRequested = direction.leftTurn();
                 this.previousDecision = Action.echoLeft;
@@ -155,7 +136,12 @@ public class Drone {
             this.previousDecision = Action.scan;
         }
         else if(decision.getString("action").equals("fly")) {
+            if (!Objects.equals(echo.echoAhead,null)){
+                this.subtractRangeHeading();
+            }
             this.previousDecision = Action.fly;
+        } else if (decision.getString("action").equals("stop"))  {
+            logger.info("DRONE RECEIVED COMMAND FOR STOP");
         }
     }
 
