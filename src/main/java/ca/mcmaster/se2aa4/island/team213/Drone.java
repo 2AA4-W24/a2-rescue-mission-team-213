@@ -15,7 +15,6 @@ public class Drone {
     private Direction echoRequested;
     private JSONObject scanInfo;
     private String previousDecision;
-    private String echoRight, echoLeft;
     private String siteID;
 
     private final Logger logger = LogManager.getLogger();
@@ -73,12 +72,20 @@ public class Drone {
 
         if(previousDecision.equals("echoRight")) {
             logger.info("STORING ECHO RIGHT INFO: " + extraInfo.getString("found"));
-            this.echoRight = extraInfo.getString("found");
+            this.echo.echoRight = EchoResult.valueOf(extraInfo.getString("found"));
+            this.echo.rangeRight = extraInfo.getInt("range");
         } 
         else if(previousDecision.equals("echoLeft")) {
             logger.info("STORING ECHO LEFT INFO: " + extraInfo.getString("found"));
-            this.echoLeft = extraInfo.getString("found");
-        } else if(previousDecision.equals("scan")) {
+            this.echo.echoLeft = EchoResult.valueOf(extraInfo.getString("found"));
+            this.echo.rangeLeft = extraInfo.getInt("range");
+        } 
+        else if(previousDecision.equals("echoAhead")) {
+            logger.info("STORING ECHO AHEAD INFO: " + extraInfo.getString("found"));
+            this.echo.echoAhead = EchoResult.valueOf(extraInfo.getString("found"));
+            this.echo.rangeAhead = extraInfo.getInt("range");
+        }
+        else if(previousDecision.equals("scan")) {
             logger.info("STORING SCAN INFO:");
             this.scanInfo = extraInfo;
         }
@@ -88,14 +95,17 @@ public class Drone {
         return this.siteID;
     }
 
-    public EchoResult getEchoAhead(){
+    public EchoResult getEchoAhead() {
         return echo.echoAhead;
     }
-    public EchoResult getEchoRight(){
+
+    public EchoResult getEchoRight() {
         return echo.echoRight;
     }
-    public EchoResult getEchoLeft(){return echo.echoLeft;}
 
+    public EchoResult getEchoLeft() {
+        return echo.echoLeft;
+    }
 
     public Integer getRangeHeading(){
         return echo.rangeAhead;
@@ -114,9 +124,6 @@ public class Drone {
         if(decision.getString("action").equals("heading")) {
             JSONObject parameter = decision.getJSONObject("parameters");
             logger.info("DRONE RECEIVED COMMAND FOR HEADING");
-            logger.info("DRONE DIRECTION: " + this.direction);
-            logger.info("RECEIVED DIRECTION: " + parameter.get("direction"));
-
             if(this.direction.rightTurn().toString().equals(parameter.get("direction").toString())) {
                 this.direction = this.direction.rightTurn();
                 this.previousDecision = "turnRight";
@@ -130,9 +137,9 @@ public class Drone {
             JSONObject parameter = decision.getJSONObject("parameters");
 
             if(this.direction.equals(parameter.get("direction"))) {
-                logger.info("DRONE RECEIVED COMMAND FOR ECHO RIGHT");
+                logger.info("DRONE RECEIVED COMMAND FOR ECHO AHEAD");
                 echoRequested = direction;
-                this.previousDecision = "echoRight";
+                this.previousDecision = "echoAhead";
             }
             else if(this.direction.rightTurn().equals(parameter.get("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO RIGHT");
@@ -165,14 +172,4 @@ public class Drone {
         return this.previousDecision;
     }
 
-
-
-    // following methods are temporary abstraction leaks for unit testing
-    public void setPreviousDecision(String decision) {
-        this.previousDecision = decision;
-    }
-
-    public void setEchoRight(String echoInfo) {
-        this.echoRight = echoInfo;
-    }
 }
