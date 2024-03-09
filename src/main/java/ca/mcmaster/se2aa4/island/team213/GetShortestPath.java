@@ -8,7 +8,7 @@ public class GetShortestPath {
     public ArrayList<PointsOfInterest> sites;
 
 
-    public GetShortestPath(Drone drone){
+    public GetShortestPath(){
 
     }
     public void addCreek(PointsOfInterest creek){
@@ -23,13 +23,12 @@ public class GetShortestPath {
             for (PointsOfInterest site: sites){
                 for (PointsOfInterest creek: creeks){
                     double distance = Math.sqrt(Math.pow((site.getX()-creek.getX()),2)+Math.pow((site.getY()- creek.getY()),2));
-                    if (getClosestSite().isEmpty() || distance < closestSite.distanceFromCreek){ //turn into getter
-                        //TODO: ^^^ make sure closesSite isn't null in the beginning
-//                        closestSite.distanceFromCreek = distance;
+                    if (getClosestSite().isEmpty() || distance < closestSite.distanceFromCreek){ //TODO turn into getter
                         closestSite = new SiteCandidate(site.getID(), distance);
                     }
                 }
             }
+
         }
 
 
