@@ -29,48 +29,7 @@ public class LocateIsland implements Phase {
         // first check if there are tasks to be executed
         if (!taskQueue.isEmpty()){
             decision = taskQueue.remove();
-            if (Objects.equals(decision.get("action"), "echo") ){
-                // get which direction is echoing and set drone.echoing accordingly
-                JSONObject parameters = decision.getJSONObject("parameters");
-                String direction = parameters.getString("direction");
-                switch (direction){
-                    case "N" ->{
-                        drone.setEcho(Direction.N);
-                    }
-                    case "E" ->{
-                        drone.setEcho(Direction.E);
-                    }
-                    case "S" ->{
-                        drone.setEcho(Direction.S);
-                    }
-                    case "W" ->{
-                        drone.setEcho(Direction.W);
-                    }
-                }
 
-            }
-            else if (Objects.equals(decision.get("action"), "heading")){
-                // get which direction is echoing and set drone.echoing accordingly
-                JSONObject parameters = decision.getJSONObject("parameters");
-                String direction = parameters.getString("direction");
-                switch (direction){
-                    case "N" ->{
-                        drone.setDirectionHeading(Direction.N);
-                    }
-                    case "E" ->{
-                        drone.setDirectionHeading(Direction.E);
-                    }
-                    case "S" ->{
-                        drone.setDirectionHeading(Direction.S);
-                    }
-                    case "W" ->{
-                        drone.setDirectionHeading(Direction.W);
-                    }
-                }
-            }
-            else if(Objects.equals(decision.get("action"), "fly") ){
-                drone.subtractRangeHeading();
-            }
         }
 
         // check if we are on iteration one, where the echo every direction would be null
@@ -79,7 +38,6 @@ public class LocateIsland implements Phase {
             JSONObject parameters = new JSONObject();
             parameters.put("direction", drone.getDirection().toString());
             decision.put("parameters", parameters);
-            drone.setEcho(drone.getDirection());
 
 
             JSONObject enqueueEcho = new JSONObject();
@@ -121,7 +79,6 @@ public class LocateIsland implements Phase {
             secondTurn.put("parameters", secondParameters);
             taskQueue.add(secondTurn);
 
-            drone.setDirectionHeading(drone.getDirection().rightTurn());
         }
 
         // reached the island
@@ -174,8 +131,7 @@ public class LocateIsland implements Phase {
             else if (Objects.equals(drone.getEchoRight(), EchoResult.GROUND)){
                 decision.put("action", "heading");
                 JSONObject parameters = new JSONObject();
-                parameters.put("direction", "N");
-                drone.setDirectionHeading(Direction.N);
+                parameters.put("direction", drone.getEchoRight().toString());
                 decision.put("parameters", parameters);
                 // need to keep heading i - 1 times in that direction
                 for (int i = 0; i < drone.getRangeHeading(); i++){
@@ -188,8 +144,8 @@ public class LocateIsland implements Phase {
             else if (Objects.equals(drone.getEchoLeft(), EchoResult.GROUND)){
                 decision.put("action", "heading");
                 JSONObject parameters = new JSONObject();
-                parameters.put("direction", "E");
-                drone.setDirectionHeading(Direction.E);
+                parameters.put("direction", drone.getEchoLeft().toString());
+
                 decision.put("parameters", parameters);
                 // need to keep heading i - 1 times in that direction
                 for (int i = 0; i < drone.getRangeHeading(); i++){
