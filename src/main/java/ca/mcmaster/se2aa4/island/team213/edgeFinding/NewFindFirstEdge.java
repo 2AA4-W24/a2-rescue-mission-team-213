@@ -79,7 +79,7 @@ public class NewFindFirstEdge implements Phase {
 
     @Override
     public Phase nextPhase() {
-        return new FindSubsequentEdge(this.islandX, this.islandY, !this.increaseX, 1);
+        return new NewFindSubsequentEdge(this.islandX, this.islandY, !this.increaseX, 1);
     }
 
     private void checkScanAndEchoes(Drone drone) {

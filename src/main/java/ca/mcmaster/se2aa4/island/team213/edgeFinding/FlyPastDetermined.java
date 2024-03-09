@@ -55,7 +55,7 @@ public class FlyPastDetermined implements Phase{
 
     @Override
     public Phase nextPhase() {
-        return new FindSubsequentEdge(this.islandX, this.islandY, this.increaseX, this.edgesFound);
+        return new NewFindSubsequentEdge(this.islandX, this.islandY, this.increaseX, this.edgesFound);
     }
     
 }
