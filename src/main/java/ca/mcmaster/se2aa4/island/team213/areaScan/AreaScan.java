@@ -1,5 +1,6 @@
-package ca.mcmaster.se2aa4.island.team213;
+package ca.mcmaster.se2aa4.island.team213.areaScan;
 
+import ca.mcmaster.se2aa4.island.team213.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

@@ -1,12 +1,13 @@
-package ca.mcmaster.se2aa4.island.team213;
+package ca.mcmaster.se2aa4.island.team213.areaScan;
 
+import ca.mcmaster.se2aa4.island.team213.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class AreaScanNew implements Phase{
+public class AreaScanNew implements Phase {
     public int maxX; //fix
     public int maxY;
     public int x, y;
@@ -21,22 +22,22 @@ public class AreaScanNew implements Phase{
     public boolean lastPhase(){
         return true;
     }
-    public AreaScanNew(Perimeter perimeter){
-        maxX = perimeter.width;
-        maxY = perimeter.height;
+    public AreaScanNew(int islandx, int islandy, Drone drone){
+        maxX = islandx;
+        maxY = islandy;
         x = 0;
         y = 0;
-        switch (perimeter.cornerPosition){
-            case TOPLEFT -> {
+        switch (drone.getDirection()){
+            case E -> {
                 direction = Direction.E;
             }
-            case TOPRIGHT -> {
+            case S -> {
                 direction = Direction.S;
             }
-            case BOTTOMRIGHT -> {
+            case W -> {
                 direction = Direction.W;
             }
-            case BOTTOMLEFT -> {
+            case N -> {
                 direction = Direction.N;
             }
         }
@@ -136,8 +137,7 @@ public class AreaScanNew implements Phase{
     }
     @Override
     public Phase nextPhase(){
-        System.out.println("hello");
-        return null;
+        return new AreaScanNew(0, 0, null);
     }
 
     private void rightTurnPos(){
