@@ -26,7 +26,7 @@ public class LocateIsland implements Phase {
 
     @Override
     public JSONObject createDecision(Drone drone) {
-        logger.info("Items in Queue {}",taskQueue);
+//        logger.info("Items in Queue {}",taskQueue);
         JSONObject decision = new JSONObject();
         // first check if there are tasks to be executed
         if (!taskQueue.isEmpty()){
@@ -73,8 +73,8 @@ public class LocateIsland implements Phase {
             decision.put("action", "heading");
             JSONObject parameters = new JSONObject();
             // TODO: violates law of demeter
-            logger.info(drone.getDirection());
-            logger.info("!!!! NEED TO TURN: Direction set to {}", drone.getDirection().rightTurn().toString());
+//            logger.info(drone.getDirection());
+//            logger.info("!!!! NEED TO TURN: Direction set to {}", drone.getDirection().rightTurn().toString());
             parameters.put("direction", drone.getDirection().rightTurn().toString());
             decision.put("parameters", parameters);
 
@@ -85,7 +85,7 @@ public class LocateIsland implements Phase {
             secondTurn.put("action", "heading");
             JSONObject secondParameters = new JSONObject();
             // TODO: violates law of demeter
-            logger.info("!!!! NEED TO TURN: Direction set to {}", drone.getDirection().rightTurn().rightTurn().toString());
+//            logger.info("!!!! NEED TO TURN: Direction set to {}", drone.getDirection().rightTurn().rightTurn().toString());
             secondParameters.put("direction", drone.getDirection().rightTurn().rightTurn().toString());
             secondTurn.put("parameters", secondParameters);
             taskQueue.add(secondTurn);
@@ -122,31 +122,27 @@ public class LocateIsland implements Phase {
         }
         // ground found change heading if need be and queue fly commands
         else if (Objects.equals(drone.getEchoAhead(), EchoResult.GROUND) || Objects.equals(drone.getEchoRight(), EchoResult.GROUND) || Objects.equals(drone.getEchoLeft(), EchoResult.GROUND)){
-           logger.info("!!!!!!!!!!! LAND FOUND LAND FOUND LAND FOUND !!!!!!!!!!!!!!!!!!!!!! ");
-           logger.info(drone.getEchoAhead());
-           logger.info(drone.getEchoRight());
-           logger.info(drone.getEchoLeft());
+//           logger.info("!!!!!!!!!!! LAND FOUND LAND FOUND LAND FOUND !!!!!!!!!!!!!!!!!!!!!! ");
+//           logger.info(drone.getEchoAhead());
+//           logger.info(drone.getEchoRight());
+//           logger.info(drone.getEchoLeft());
            traversingToLand = true;
             // Keep heading in direction
             if (Objects.equals(drone.getEchoAhead(), EchoResult.GROUND)){
                 decision.put("action", "fly");
                 // need to keep heading i - 1 times in that direction
                 for (int i = 0; i < drone.getRangeHeading(); i++){
-                    logger.info("in the for loop");
                     taskQueue.add(decision);
                 }
             }
             // Ground is right
             else if (Objects.equals(drone.getEchoRight(), EchoResult.GROUND)){
-                logger.info("in the right if statement");
-                logger.info(drone.getRangeHeading());
                 decision.put("action", "heading");
                 JSONObject parameters = new JSONObject();
                 parameters.put("direction", drone.getDirection().rightTurn().toString());
                 decision.put("parameters", parameters);
                 // need to keep heading i - 1 times in that direction
                 for (int i = 0; i < drone.getRangeRight(); i++){
-                    logger.info("in the for loop");
                     JSONObject flyCommand = new JSONObject();
                     flyCommand.put("action", "fly");
                     taskQueue.add((flyCommand));

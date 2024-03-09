@@ -104,7 +104,6 @@ public class Drone {
     // also updates direction or position if the decision was a "fly" or "heading" action
     public void parseDecision(JSONObject decision) {
         if(decision.getString("action").equals("heading")) {
-//            // TODO: fix saved echos if heading changes, for now just sets all to null again but causes some redundant scans
             this.echo = new EchoStatus();
             JSONObject parameter = decision.getJSONObject("parameters");
             logger.info("DRONE RECEIVED COMMAND FOR HEADING");
