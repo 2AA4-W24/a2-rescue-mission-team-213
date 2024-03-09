@@ -54,7 +54,7 @@ public class FindSubsequentEdge implements Phase {
 
     @Override
     public void checkDrone(Drone drone) {
-        if(drone.getPreviousDecision().equals("echoRight")) {
+        if(drone.getPreviousDecision().equals(Action.echoRight)) {
             checkEcho(drone);
         }
     }
@@ -66,7 +66,7 @@ public class FindSubsequentEdge implements Phase {
     }
 
     private void checkEcho(Drone drone) {
-        if(drone.getEchoRight().equals("OUT_OF_RANGE")) {
+        if(drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
             // logger.info("turnRight set to true !!!!!!!!!!!!");
             this.turnRight = true;
         }

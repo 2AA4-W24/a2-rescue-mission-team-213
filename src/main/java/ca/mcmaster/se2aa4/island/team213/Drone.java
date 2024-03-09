@@ -14,7 +14,7 @@ public class Drone {
     private EchoStatus echo = new EchoStatus();
     private ScanStatus scanInfo;
     private Direction echoRequested;
-    private String previousDecision;
+    private Action previousDecision;
     private String siteID;
 
     private final Logger logger = LogManager.getLogger();
@@ -22,7 +22,6 @@ public class Drone {
     public Drone(String direction, Integer battery){
         stringToDirection(direction);
         this.battery = battery;
-        this.previousDecision = "";
     }
 
     private void stringToDirection(String direction) {
@@ -70,22 +69,22 @@ public class Drone {
         }
 
 
-        if(previousDecision.equals("echoRight")) {
+        if(previousDecision.equals(Action.echoRight)) {
             logger.info("STORING ECHO RIGHT INFO: " + extraInfo.getString("found"));
             this.echo.echoRight = EchoResult.valueOf(extraInfo.getString("found"));
             this.echo.rangeRight = extraInfo.getInt("range");
         } 
-        else if(previousDecision.equals("echoLeft")) {
+        else if(previousDecision.equals(Action.echoLeft)) {
             logger.info("STORING ECHO LEFT INFO: " + extraInfo.getString("found"));
             this.echo.echoLeft = EchoResult.valueOf(extraInfo.getString("found"));
             this.echo.rangeLeft = extraInfo.getInt("range");
         } 
-        else if(previousDecision.equals("echoAhead")) {
+        else if(previousDecision.equals(Action.echoAhead)) {
             logger.info("STORING ECHO AHEAD INFO: " + extraInfo.getString("found"));
             this.echo.echoAhead = EchoResult.valueOf(extraInfo.getString("found"));
             this.echo.rangeAhead = extraInfo.getInt("range");
         }
-        else if(previousDecision.equals("scan")) {
+        else if(previousDecision.equals(Action.scan)) {
             logger.info("STORING SCAN INFO:");
             this.scanInfo = new ScanStatus(extraInfo);
         }
@@ -126,11 +125,11 @@ public class Drone {
             logger.info("DRONE RECEIVED COMMAND FOR HEADING");
             if(this.direction.rightTurn().toString().equals(parameter.get("direction").toString())) {
                 this.direction = this.direction.rightTurn();
-                this.previousDecision = "turnRight";
+                this.previousDecision = Action.turnRight;
             }
             else if(this.direction.leftTurn().toString().equals(parameter.get("direction").toString())) {
                 this.direction = this.direction.leftTurn();
-                this.previousDecision = "turnLeft";
+                this.previousDecision = Action.turnLeft;
             }
         }
         else if(decision.getString("action").equals("echo")) {
@@ -139,24 +138,24 @@ public class Drone {
             if(this.direction.equals(parameter.get("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO AHEAD");
                 echoRequested = direction;
-                this.previousDecision = "echoAhead";
+                this.previousDecision = Action.echoAhead;
             }
             else if(this.direction.rightTurn().equals(parameter.get("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO RIGHT");
                 echoRequested = direction.rightTurn();
-                this.previousDecision = "echoRight";
+                this.previousDecision = Action.echoRight;
             }
             else if(this.direction.leftTurn().equals(parameter.get("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO LEFT");
                 echoRequested = direction.leftTurn();
-                this.previousDecision = "echoLeft";
+                this.previousDecision = Action.echoLeft;
             }
         }
         else if(decision.getString("action").equals("scan")) {
-            this.previousDecision = "scan";
+            this.previousDecision = Action.scan;
         }
         else if(decision.getString("action").equals("fly")) {
-            this.previousDecision = "fly";
+            this.previousDecision = Action.fly;
         }
     }
 
@@ -176,7 +175,7 @@ public class Drone {
         return this.scanInfo.scanSites;
     }
 
-    public String getPreviousDecision() {
+    public Action getPreviousDecision() {
         return this.previousDecision;
     }
 

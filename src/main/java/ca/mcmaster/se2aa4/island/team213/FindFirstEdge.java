@@ -71,7 +71,7 @@ public class FindFirstEdge implements Phase {
         logger.info("** PREVIOUS DECISION: " + drone.getPreviousDecision());
         logger.info("**");
         logger.info("**");
-        if(drone.getPreviousDecision().equals("echoRight")) {
+        if(drone.getPreviousDecision().equals(Action.echoRight)) {
             checkScanAndEchoes(drone);
         }
     }
