@@ -131,4 +131,7 @@ public class FindFirstEdge implements Phase {
         }
     }
 
+    public boolean getIncreaseX() {
+        return this.increaseX;
+    }
 }
