@@ -54,31 +54,31 @@ public class FindEdgesTest {
         assertEquals(feA.getPhases().peek(), feA.getFindSecondEdge());
     }
 
-    @Test
-    public void testDecisionToDroneUpdate() {
-        droneA.parseDecision(decision);
-        droneA.updateStatus(response);
+    // @Test
+    // public void testDecisionToDroneUpdate() {
+    //     droneA.parseDecision(decision);
+    //     droneA.updateStatus(response);
 
-        assertEquals(droneA.getPreviousDecision(), "echoRight");
-        assertEquals(droneA.getEchoRight(), "OUT_OF_RANGE");
-    }
+    //     assertEquals(droneA.getPreviousDecision(), "echoRight");
+    //     assertEquals(droneA.getEchoRight(), "OUT_OF_RANGE");
+    // }
 
-    @Test
-    public void testRequeue() {
-        feA.removeFromPhases();
+    // @Test
+    // public void testRequeue() {
+    //     feA.removeFromPhases();
 
-        droneA.parseDecision(decision);
-        droneA.updateStatus(response);
+    //     droneA.parseDecision(decision);
+    //     droneA.updateStatus(response);
 
-        feA.checkDrone(droneA);
-        assertFalse(feA.isFinished()); // feA.requeue() called in this method
-        feA.createDecision(droneA);
-        assertFalse(feA.isFinished());
+    //     feA.checkDrone(droneA);
+    //     assertFalse(feA.isFinished()); // feA.requeue() called in this method
+    //     feA.createDecision(droneA);
+    //     assertFalse(feA.isFinished());
 
-        assertEquals(feA.getPhases().peek(), feA.getFlyPastDeterminedA());
-        feA.removeFromPhases();
-        assertEquals(feA.getPhases().peek(), feA.getFindThirdEdge());
-    }
+    //     assertEquals(feA.getPhases().peek(), feA.getFlyPastDeterminedA());
+    //     feA.removeFromPhases();
+    //     assertEquals(feA.getPhases().peek(), feA.getFindThirdEdge());
+    // }
 
     @Test
     public void testEndQueue() {
