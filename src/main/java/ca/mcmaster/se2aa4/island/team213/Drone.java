@@ -36,7 +36,7 @@ public class Drone {
 
     public void updateStatus(JSONObject response){
         logger.info("updating status...");
-        //        logger.info("** Response received:\n"+response.toString(2));
+        logger.info("** Response received:\n"+response.toString(2));
 
         battery -= response.getInt("cost");
 

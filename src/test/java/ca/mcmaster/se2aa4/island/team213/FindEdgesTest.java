@@ -30,6 +30,7 @@ public class FindEdgesTest {
         response = new JSONObject();
         extras = new JSONObject();
         extras.put("found", "OUT_OF_RANGE");
+        extras.put("range", 3); 
         response.put("extras", extras);
         response.put("cost", 1);
         response.put("status", "OK");
@@ -54,14 +55,14 @@ public class FindEdgesTest {
         assertEquals(feA.getPhases().peek(), feA.getFindSecondEdge());
     }
 
-    // @Test
-    // public void testDecisionToDroneUpdate() {
-    //     droneA.parseDecision(decision);
-    //     droneA.updateStatus(response);
+    @Test
+    public void testDecisionToDroneUpdate() {
+        droneA.parseDecision(decision);
+        droneA.updateStatus(response);
 
-    //     assertEquals(droneA.getPreviousDecision(), "echoRight");
-    //     assertEquals(droneA.getEchoRight(), "OUT_OF_RANGE");
-    // }
+        assertEquals(droneA.getPreviousDecision(), "echoRight");
+        assertEquals(droneA.getEchoRight(), EchoResult.OUT_OF_RANGE);
+    }
 
     // @Test
     // public void testRequeue() {
