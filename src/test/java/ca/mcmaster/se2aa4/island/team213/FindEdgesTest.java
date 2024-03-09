@@ -9,8 +9,6 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.mcmaster.se2aa4.island.team213.edgeFinding.DecisionJSONs;
-import ca.mcmaster.se2aa4.island.team213.edgeFinding.FindFirstEdge;
 import ca.mcmaster.se2aa4.island.team213.edgeFinding.FindSubsequentEdge;
 import ca.mcmaster.se2aa4.island.team213.edgeFinding.FlyPastDetermined;
 import ca.mcmaster.se2aa4.island.team213.edgeFinding.NewFindFirstEdge;
@@ -162,13 +160,13 @@ public class FindEdgesTest {
     //     assertEquals(phaseZ.createDecision(droneA).toString(), "{\"action\":\"stop\"}");
     // }
 
-    // @Test
-    // public void testFlyPastDetermined() {
-    //     for(int i = 0; i < flyActionsLeft; i++) {
-    //         phaseE.checkDrone(droneA);
-    //     }
+    @Test
+    public void testFlyPastDetermined() {
+        for(int i = 0; i < flyActionsLeft; i++) {
+            phaseE.checkDrone(droneA);
+        }
 
-    //     assertTrue(phaseE.isFinished());
-    // }
+        assertTrue(phaseE.isFinished());
+    }
 
 }

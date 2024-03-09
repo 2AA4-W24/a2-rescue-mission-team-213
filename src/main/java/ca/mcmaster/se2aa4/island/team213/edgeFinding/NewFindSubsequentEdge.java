@@ -5,44 +5,36 @@ import java.util.Queue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import ca.mcmaster.se2aa4.island.team213.Action;
-import ca.mcmaster.se2aa4.island.team213.Biome;
 import ca.mcmaster.se2aa4.island.team213.Direction;
 import ca.mcmaster.se2aa4.island.team213.Drone;
 import ca.mcmaster.se2aa4.island.team213.EchoResult;
 import ca.mcmaster.se2aa4.island.team213.Phase;
+import ca.mcmaster.se2aa4.island.team213.areaScan.AreaScanNew;
 
-public class NewFindFirstEdge implements Phase {
+public class NewFindSubsequentEdge implements Phase {
     private boolean isFinished;
     private boolean increaseX;
     private int islandX, islandY;
+    private int edgesFound;
+    private Direction droneDirection;
     private Queue<Action> decisionQueue;
-
+   
     private final Logger logger = LogManager.getLogger();
 
-    public NewFindFirstEdge(Direction direction) {
+    public NewFindSubsequentEdge(int islandX, int islandY, boolean increaseX, int edgesFound) {
         this.isFinished = false;
         this.decisionQueue = new LinkedList<Action>();
+        this.decisionQueue.add(Action.ECHO_RIGHT);
 
-        parseStartingDirection(direction);
-        loadDecisionQueue();
+        this.islandX = islandX;
+        this.islandY = islandY;
+        this.increaseX = increaseX;
+        this.edgesFound = edgesFound;
     }
 
-    private void parseStartingDirection(Direction direction) {
-        if(direction.equals(Direction.N) || direction.equals(Direction.S)) {
-            this.increaseX = false;
-            this.islandX = 1;
-            this.islandY = 0;
-        } else {
-            this.increaseX = true;
-            this.islandX = 0;
-            this.islandY = 1;
-        }
-    }
-    
     @Override
     public boolean lastPhase() {
         return false;
@@ -60,6 +52,7 @@ public class NewFindFirstEdge implements Phase {
         decision = DecisionJSONs.actionToJSONObject(this.decisionQueue.peek(), drone.getDirection());
         if(this.decisionQueue.peek().equals(Action.TURN_RIGHT)) {
             this.isFinished = true;
+            this.droneDirection = drone.getDirection().rightTurn();
         }
         this.decisionQueue.remove();
 
@@ -73,29 +66,30 @@ public class NewFindFirstEdge implements Phase {
         logger.info("**");
         if(drone.getPreviousDecision().equals(Action.ECHO_RIGHT)) {
             increaseXorY();
-            checkScanAndEchoes(drone);
+            checkEcho(drone);
         }
     }
 
     @Override
     public Phase nextPhase() {
-        return new FindSubsequentEdge(this.islandX, this.islandY, !this.increaseX, 1);
+        if(this.edgesFound == 3) {
+            return new AreaScanNew(this.islandX, this.islandY, this.droneDirection);
+        }
+
+        int flyActionsLeft = !this.increaseX ? this.islandX : this.islandY;
+        return new FlyPastDetermined(this.islandX, this.islandY, !this.increaseX, this.edgesFound + 1, flyActionsLeft);
     }
 
-    private void checkScanAndEchoes(Drone drone) {
-        JSONArray biomes = drone.getScanInfoBiome();
-        Biome firstBiome = Biome.valueOf(biomes.getString(0));
-        if(biomes.length() == 1 && firstBiome.equals(Biome.OCEAN) && drone.getEchoLeft().equals(EchoResult.OUT_OF_RANGE) && drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
+    private void checkEcho(Drone drone) {
+        if(drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
             increaseXorY();
             this.decisionQueue.add(Action.TURN_RIGHT);
         }
         loadDecisionQueue();
     }
-    
+
     private void loadDecisionQueue() {
         this.decisionQueue.add(Action.FLY);
-        this.decisionQueue.add(Action.SCAN);
-        this.decisionQueue.add(Action.ECHO_LEFT);
         this.decisionQueue.add(Action.ECHO_RIGHT);
     }
 
@@ -106,13 +100,6 @@ public class NewFindFirstEdge implements Phase {
         else {
             this.islandY += 1;
         }
-    }
-
-    public boolean getIncreaseX() {
-        return this.increaseX;
-    }
+    }    
     
-    public Action getNextDecision() {
-        return this.decisionQueue.peek();
-    }
 }
