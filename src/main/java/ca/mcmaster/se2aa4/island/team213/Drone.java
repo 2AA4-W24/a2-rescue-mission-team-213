@@ -145,6 +145,9 @@ public class Drone {
         }
     }
 
+    public void setSiteID(String siteID){
+        this.siteID = siteID;
+    }
     public Direction getDirection() {
         return direction;
     }

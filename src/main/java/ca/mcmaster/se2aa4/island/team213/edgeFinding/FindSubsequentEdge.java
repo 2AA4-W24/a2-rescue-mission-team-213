@@ -1,5 +1,6 @@
 package ca.mcmaster.se2aa4.island.team213.edgeFinding;
 
+import ca.mcmaster.se2aa4.island.team213.areaScan.AreaScanNew;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -84,7 +85,7 @@ public class FindSubsequentEdge implements Phase {
     @Override
     public Phase nextPhase() {
         if(this.edgesFound == 3) {
-            return new EndPhase();
+            return new AreaScanNew(islandX, islandY, droneDirection );
         }
 
         int flyActionsLeft = !this.increaseX ? this.islandX : this.islandY;
