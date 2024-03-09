@@ -21,7 +21,7 @@ public class EndPhase implements Phase {
     @Override
     public JSONObject createDecision(Drone drone) {
         JSONObject decision = new JSONObject();
-        decision.put("action", "scan");
+        decision.put("action", "stop");
         return decision;
     }
 

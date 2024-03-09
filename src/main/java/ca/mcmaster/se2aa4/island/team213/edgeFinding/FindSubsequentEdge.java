@@ -83,18 +83,17 @@ public class FindSubsequentEdge implements Phase {
 
     @Override
     public Phase nextPhase() {
-        if(this.edgesFound == 4) {
+        if(this.edgesFound == 3) {
             return new EndPhase();
         }
 
         int flyActionsLeft = !this.increaseX ? this.islandX : this.islandY;
-        return new FlyPastDetermined(this.islandX, this.islandY, !this.increaseX, this.edgesFound, flyActionsLeft);
+        return new FlyPastDetermined(this.islandX, this.islandY, !this.increaseX, this.edgesFound + 1, flyActionsLeft);
     }
 
     private void checkEcho(Drone drone) {
         if(drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
             increaseXorY();
-            this.edgesFound += 1;
             this.turnRight = true;
         }
         resetTertiaryPhases();
