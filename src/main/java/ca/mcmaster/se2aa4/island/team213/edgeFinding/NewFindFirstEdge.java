@@ -54,6 +54,9 @@ public class NewFindFirstEdge implements Phase {
     public JSONObject createDecision(Drone drone) {
         JSONObject decision = new JSONObject();
         
+        decision = DecisionJSONs.actionToJSONObject(this.decisionQueue.peek(), drone.getDirection());
+        this.decisionQueue.remove();
+
         return decision;
     }
 
@@ -67,8 +70,7 @@ public class NewFindFirstEdge implements Phase {
 
     @Override
     public Phase nextPhase() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'nextPhase'");
+        return new FindSubsequentEdge(this.islandX, this.islandY, !this.increaseX, 1);
     }
 
     private void checkScanAndEchoes(Drone drone) {

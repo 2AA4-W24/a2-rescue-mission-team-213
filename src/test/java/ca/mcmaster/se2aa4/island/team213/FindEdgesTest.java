@@ -11,11 +11,12 @@ import org.junit.jupiter.api.Test;
 import ca.mcmaster.se2aa4.island.team213.edgeFinding.FindFirstEdge;
 import ca.mcmaster.se2aa4.island.team213.edgeFinding.FindSubsequentEdge;
 import ca.mcmaster.se2aa4.island.team213.edgeFinding.FlyPastDetermined;
+import ca.mcmaster.se2aa4.island.team213.edgeFinding.NewFindFirstEdge;
 
 
 public class FindEdgesTest {
     private Drone droneA, droneB;
-    private FindFirstEdge phaseA, phaseB;
+    private NewFindFirstEdge phaseA, phaseB;
     private FindSubsequentEdge phaseC, phaseD;
     private FlyPastDetermined phaseE;
     private Phase phaseZ;
@@ -29,13 +30,13 @@ public class FindEdgesTest {
         droneA = new Drone("N", 1000);   
         droneB = new Drone("E", 1000);
 
-        phaseA = new FindFirstEdge(droneA.getDirection());
-        phaseB = new FindFirstEdge(droneB.getDirection());
+        phaseA = new NewFindFirstEdge(droneA.getDirection());
+        phaseB = new NewFindFirstEdge(droneB.getDirection());
         phaseC = new FindSubsequentEdge(0, 0, false, 0);
         phaseD = new FindSubsequentEdge(0, 0, false, 3);
         flyActionsLeft = 10;
         phaseE = new FlyPastDetermined(0, 0, false, 0, flyActionsLeft);
-        phaseZ = new FindFirstEdge(droneA.getDirection());
+        phaseZ = new NewFindFirstEdge(droneA.getDirection());
 
         decision = new JSONObject();
         parameter = new JSONObject();
