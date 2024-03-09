@@ -12,8 +12,8 @@ public class Drone {
     private Integer battery;
     private Direction direction;
     private EchoStatus echo = new EchoStatus();
+    private ScanStatus scanInfo;
     private Direction echoRequested;
-    private JSONObject scanInfo;
     private String previousDecision;
     private String siteID;
 
@@ -87,7 +87,7 @@ public class Drone {
         }
         else if(previousDecision.equals("scan")) {
             logger.info("STORING SCAN INFO:");
-            this.scanInfo = extraInfo;
+            this.scanInfo = new ScanStatus(extraInfo);
         }
 
     }
@@ -164,8 +164,16 @@ public class Drone {
         return direction;
     }
 
-    public JSONObject getScanInfo() {
-        return this.scanInfo;
+    public JSONArray getScanInfoBiome() {
+        return this.scanInfo.scanBiomes;
+    }
+
+    public JSONArray getScanInfoCreeks() {
+        return this.scanInfo.scanCreeks;
+    }
+
+    public JSONArray getScanInfoSites() {
+        return this.scanInfo.scanSites;
     }
 
     public String getPreviousDecision() {

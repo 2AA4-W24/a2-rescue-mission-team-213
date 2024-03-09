@@ -18,6 +18,7 @@ public class FindFirstEdge implements Phase {
         this.turnRight = false;
         resetTertiaryPhases();
     }
+    
     @Override
     public boolean lastPhase(){
         return false;
@@ -81,7 +82,7 @@ public class FindFirstEdge implements Phase {
     }
     
     private void checkScanAndEchoes(Drone drone) {
-        JSONArray biomes = drone.getScanInfo().getJSONArray("biomes");
+        JSONArray biomes = drone.getScanInfoBiome();
         if(biomes.length() == 1 && biomes.getString(0).equals("OCEAN") && drone.getEchoLeft().equals(EchoResult.OUT_OF_RANGE) && drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
             this.turnRight = true;
         }
