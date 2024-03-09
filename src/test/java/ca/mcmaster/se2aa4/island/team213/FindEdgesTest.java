@@ -76,7 +76,7 @@ public class FindEdgesTest {
         droneA.parseDecision(decision);
         droneA.updateStatus(response);
         phaseC.checkDrone(droneA);
-        assertEquals(droneA.getPreviousDecision(), Action.echoRight);
+        assertEquals(droneA.getPreviousDecision(), Action.ECHO_RIGHT);
         assertEquals(droneA.getEchoRight(), EchoResult.OUT_OF_RANGE);
         assertEquals(phaseC.createDecision(droneA).toString(), "{\"action\":\"heading\",\"parameters\":{\"direction\":\"" + droneA.getDirection().rightTurn() + "\"}}");
         assertTrue(phaseC.isFinished());

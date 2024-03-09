@@ -47,22 +47,22 @@ public class Drone {
 
 
 
-        if(previousDecision.equals(Action.echoRight)) {
+        if(previousDecision.equals(Action.ECHO_RIGHT)) {
             logger.info("STORING ECHO RIGHT INFO: " + extraInfo.getString("found"));
             this.echo.echoRight = EchoResult.valueOf(extraInfo.getString("found"));
             this.echo.rangeRight = extraInfo.getInt("range");
         } 
-        else if(previousDecision.equals(Action.echoLeft)) {
+        else if(previousDecision.equals(Action.ECHO_LEFT)) {
             logger.info("STORING ECHO LEFT INFO: " + extraInfo.getString("found"));
             this.echo.echoLeft = EchoResult.valueOf(extraInfo.getString("found"));
             this.echo.rangeLeft = extraInfo.getInt("range");
         } 
-        else if(previousDecision.equals(Action.echoAhead)) {
+        else if(previousDecision.equals(Action.ECHO_AHEAD)) {
             logger.info("STORING ECHO AHEAD INFO: " + extraInfo.getString("found"));
             this.echo.echoAhead = EchoResult.valueOf(extraInfo.getString("found"));
             this.echo.rangeAhead = extraInfo.getInt("range");
         }
-        else if(previousDecision.equals(Action.scan)) {
+        else if(previousDecision.equals(Action.SCAN)) {
             logger.info("STORING SCAN INFO:");
             this.scanInfo = new ScanStatus(extraInfo);
         }
@@ -109,37 +109,37 @@ public class Drone {
             logger.info("DRONE RECEIVED COMMAND FOR HEADING");
             if(this.direction.rightTurn().toString().equals(parameter.get("direction").toString())) {
                 this.direction = this.direction.rightTurn();
-                this.previousDecision = Action.turnRight;
+                this.previousDecision = Action.TURN_RIGHT;
             }
             else if(this.direction.leftTurn().toString().equals(parameter.get("direction").toString())) {
                 this.direction = this.direction.leftTurn();
-                this.previousDecision = Action.turnLeft;
+                this.previousDecision = Action.TURN_LEFT;
             }
         }
         else if(decision.getString("action").equals("echo")) {
             JSONObject parameter = decision.getJSONObject("parameters");
             if(this.direction.toString().equals(parameter.getString("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO AHEAD");
-                this.previousDecision = Action.echoAhead;
+                this.previousDecision = Action.ECHO_AHEAD;
             }
             else if(this.direction.rightTurn().toString().equals(parameter.get("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO RIGHT");
-                this.previousDecision = Action.echoRight;
+                this.previousDecision = Action.ECHO_RIGHT;
             }
             else if(this.direction.leftTurn().toString().equals(parameter.get("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO LEFT");
                 echoRequested = direction.leftTurn();
-                this.previousDecision = Action.echoLeft;
+                this.previousDecision = Action.ECHO_LEFT;
             }
         }
         else if(decision.getString("action").equals("scan")) {
-            this.previousDecision = Action.scan;
+            this.previousDecision = Action.SCAN;
         }
         else if(decision.getString("action").equals("fly")) {
             if (!Objects.equals(echo.echoAhead,null)){
                 this.subtractRangeHeading();
             }
-            this.previousDecision = Action.fly;
+            this.previousDecision = Action.FLY;
         } else if (decision.getString("action").equals("stop"))  {
             logger.info("DRONE RECEIVED COMMAND FOR STOP");
         }
