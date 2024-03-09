@@ -19,14 +19,29 @@ public class DecisionJSONs {
             decision.put("action", "scan");
         }
         else if(action.equals(Action.ECHO_LEFT)) {
-            parameter.put("direction", direction.leftTurn());
+            parameter.put("direction", direction.leftTurn().toString());
             decision.put("parameters", parameter);
             decision.put("action", "echo");
         }
         else if(action.equals(Action.ECHO_RIGHT)) {
-            parameter.put("direction", direction.rightTurn());
+            parameter.put("direction", direction.rightTurn().toString());
             decision.put("parameters", parameter);
             decision.put("action", "echo");
+        }
+        else if(action.equals(Action.ECHO_AHEAD)) {
+            parameter.put("direction", direction.toString());
+            decision.put("parameters", parameter);
+            decision.put("action", "echo");
+        }
+        else if(action.equals(Action.TURN_LEFT)) {
+            parameter.put("direction", direction.leftTurn().toString());
+            decision.put("parameters", parameter);
+            decision.put("action", "heading");  
+        }
+        else if(action.equals(Action.TURN_RIGHT)) {
+            parameter.put("direction", direction.rightTurn().toString());
+            decision.put("parameters", parameter);
+            decision.put("action", "heading");  
         }
         
         return decision;

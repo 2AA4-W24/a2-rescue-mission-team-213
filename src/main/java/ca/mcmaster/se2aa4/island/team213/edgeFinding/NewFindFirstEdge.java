@@ -55,6 +55,9 @@ public class NewFindFirstEdge implements Phase {
         JSONObject decision = new JSONObject();
         
         decision = DecisionJSONs.actionToJSONObject(this.decisionQueue.peek(), drone.getDirection());
+        if(this.decisionQueue.peek().equals(Action.TURN_RIGHT)) {
+            this.isFinished = true;
+        }
         this.decisionQueue.remove();
 
         return decision;
@@ -103,4 +106,7 @@ public class NewFindFirstEdge implements Phase {
         return this.increaseX;
     }
     
+    public Action getNextDecision() {
+        return this.decisionQueue.peek();
+    }
 }
