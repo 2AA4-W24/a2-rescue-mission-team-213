@@ -9,15 +9,15 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.mcmaster.se2aa4.island.team213.edgeFinding.FindSubsequentEdge;
 import ca.mcmaster.se2aa4.island.team213.edgeFinding.FlyPastDetermined;
 import ca.mcmaster.se2aa4.island.team213.edgeFinding.NewFindFirstEdge;
+import ca.mcmaster.se2aa4.island.team213.edgeFinding.NewFindSubsequentEdge;
 
 
 public class FindEdgesTest {
     private Drone droneA, droneB;
     private NewFindFirstEdge phaseA, phaseB;
-    private FindSubsequentEdge phaseC, phaseD;
+    private NewFindSubsequentEdge phaseC, phaseD;
     private FlyPastDetermined phaseE;
     private Phase phaseZ;
 
@@ -34,8 +34,8 @@ public class FindEdgesTest {
 
         phaseA = new NewFindFirstEdge(droneA.getDirection());
         phaseB = new NewFindFirstEdge(droneB.getDirection());
-        phaseC = new FindSubsequentEdge(0, 0, false, 0);
-        phaseD = new FindSubsequentEdge(0, 0, false, 3);
+        phaseC = new NewFindSubsequentEdge(0, 0, false, 0);
+        phaseD = new NewFindSubsequentEdge(0, 0, false, 3);
         phaseE = new FlyPastDetermined(0, 0, false, 0, flyActionsLeft);
         phaseZ = new NewFindFirstEdge(droneA.getDirection());
 
@@ -143,22 +143,29 @@ public class FindEdgesTest {
         assertFalse(phaseA.isFinished());
     }
 
-    // @Test
-    // public void testFindSubsequentEdge() {
-    //     droneA.parseDecision(decision);
-    //     droneA.updateStatus(response);
-    //     phaseC.checkDrone(droneA);
-    //     assertEquals(droneA.getPreviousDecision(), Action.ECHO_RIGHT);
-    //     assertEquals(droneA.getEchoRight(), EchoResult.OUT_OF_RANGE);
-    //     assertEquals(phaseC.createDecision(droneA).toString(), "{\"action\":\"heading\",\"parameters\":{\"direction\":\"" + droneA.getDirection().rightTurn() + "\"}}");
-    //     assertTrue(phaseC.isFinished());
-    // }
+    @Test
+    public void testFindSubsequentEdgeFinish() {
+        assertEquals(phaseC.getNextDecision(), Action.ECHO_RIGHT);
+        droneA.parseDecision(phaseC.createDecision(droneA));
+        droneA.updateStatus(echoOOBResponse);
+        phaseC.checkDrone(droneA);
 
-    // @Test
-    // public void testFinalFindSubsequentEdge() {
-    //     phaseZ = phaseD.nextPhase();
-    //     assertEquals(phaseZ.createDecision(droneA).toString(), "{\"action\":\"stop\"}");
-    // }
+        assertEquals(phaseC.getNextDecision(), Action.TURN_RIGHT);
+        phaseC.createDecision(droneA);
+        assertTrue(phaseC.isFinished());
+    }
+
+    @Test
+    public void testFindSubsequentEdgeLoop() {
+        assertEquals(phaseC.getNextDecision(), Action.ECHO_RIGHT);
+        droneA.parseDecision(phaseC.createDecision(droneA));
+        droneA.updateStatus(echoGResponse);
+        phaseC.checkDrone(droneA);
+
+        assertEquals(phaseC.getNextDecision(), Action.FLY);
+        phaseC.createDecision(droneA);
+        assertFalse(phaseC.isFinished());
+    }
 
     @Test
     public void testFlyPastDetermined() {

@@ -101,5 +101,9 @@ public class NewFindSubsequentEdge implements Phase {
             this.islandY += 1;
         }
     }    
+
+    public Action getNextDecision() {
+        return this.decisionQueue.peek();
+    }
     
 }
