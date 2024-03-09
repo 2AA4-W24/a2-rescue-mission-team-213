@@ -32,24 +32,24 @@ public class Explorer implements IExplorerRaid {
          * Stops if it is in last phase and phase is finished
          */
 
-        // if (phase.lastPhase() && phase.isFinished()){
-        //     decision.put("action", "stop");
-        // }
-        // /*
-        //  * If current phase is finished initialize next phase
-        //  */
-        // else if (phase.isFinished()){
-        //     phase = phase.nextPhase();
-        //     decision = phase.createDecision(drone);
-        // }
-        // else{
-        //     decision = phase.createDecision(drone);
-        // }
+        if(phase.lastPhase() && phase.isFinished()) {
+            decision.put("action", "stop");
+        }
+        /*
+         * If current phase is finished initialize next phase
+         */
+        else if(phase.isFinished()) {
+            phase = phase.nextPhase();
+            decision = phase.createDecision(drone);
+        }
+        else {
+            decision = phase.createDecision(drone);
+        }
 
-        decision = decisionMaker.decideDecision(drone);
-        logger.info("reached before");
+        // decision = decisionMaker.decideDecision(drone);
+        // logger.info("reached before");
         drone.parseDecision(decision);
-        logger.info("reached after");
+        // logger.info("reached after");
         return decision.toString();
     }
 
@@ -58,7 +58,7 @@ public class Explorer implements IExplorerRaid {
         JSONObject response = new JSONObject(new JSONTokener(new StringReader(s)));
         logger.info("** RESPONSE: " + response.toString());
         drone.updateStatus(response);
-        decisionMaker.sendDroneToPhase(drone);
+        phase.checkDrone(drone);
     }
 
     @Override

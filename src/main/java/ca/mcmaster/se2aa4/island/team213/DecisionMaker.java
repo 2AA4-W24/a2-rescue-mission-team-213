@@ -45,10 +45,5 @@ public class DecisionMaker {
         return decision;
     }
 
-    public void sendDroneToPhase(Drone drone) {
-        if(findEdgesInitialized) {
-            findEdges.checkDrone(drone);
-        }
-    }
 
 }

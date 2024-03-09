@@ -64,6 +64,7 @@ public class FindFirstEdge implements Phase {
             decision.put("action", "heading");  
         }
         else if(!this.movedForward) {
+            logger.info("** MOVING FORWARD IN FIND FIRST EDGE **");
             this.movedForward = true;
             decision.put("action", "fly");
         } 
@@ -74,14 +75,14 @@ public class FindFirstEdge implements Phase {
         else if(!this.echoedLeft) {
             this.echoedLeft = true;
             JSONObject parameter = new JSONObject();
-            parameter.put("direction", drone.getDirection().leftTurn());
+            parameter.put("direction", drone.getDirection().leftTurn().toString());
             decision.put("parameters", parameter);
             decision.put("action", "echo");
         } 
         else if(!this.echoedRight) {
             this.echoedRight = true;
             JSONObject parameter = new JSONObject();
-            parameter.put("direction", drone.getDirection().rightTurn());
+            parameter.put("direction", drone.getDirection().rightTurn().toString());
             decision.put("parameters", parameter);
             decision.put("action", "echo");
         }

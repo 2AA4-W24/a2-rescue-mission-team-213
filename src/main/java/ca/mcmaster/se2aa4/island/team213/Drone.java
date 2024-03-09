@@ -35,7 +35,7 @@ public class Drone {
 
     public void updateStatus(JSONObject response){
         logger.info("updating status...");
-        logger.info("** Response received:\n"+response.toString(2));
+        // logger.info("** Response received:\n"+response.toString(2));
         logger.info(this.previousDecision);
         battery -= response.getInt("cost");
 
@@ -106,12 +106,13 @@ public class Drone {
         if(decision.getString("action").equals("heading")) {
             this.echo = new EchoStatus();
             JSONObject parameter = decision.getJSONObject("parameters");
-            logger.info("DRONE RECEIVED COMMAND FOR HEADING");
             if(this.direction.rightTurn().toString().equals(parameter.get("direction").toString())) {
+                logger.info("DRONE RECEIVED COMMAND FOR RIGHT HEADING");
                 this.direction = this.direction.rightTurn();
                 this.previousDecision = Action.turnRight;
             }
             else if(this.direction.leftTurn().toString().equals(parameter.get("direction").toString())) {
+                logger.info("DRONE RECEIVED COMMAND FOR LEFT HEADING");
                 this.direction = this.direction.leftTurn();
                 this.previousDecision = Action.turnLeft;
             }
