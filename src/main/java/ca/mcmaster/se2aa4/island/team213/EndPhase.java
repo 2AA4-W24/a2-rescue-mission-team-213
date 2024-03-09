@@ -10,12 +10,12 @@ public class EndPhase implements Phase {
 
     @Override
     public boolean lastPhase(){
-        return false;
+        return true;
     }
 
     @Override
     public boolean isFinished() {
-        return true;
+        return false;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class EndPhase implements Phase {
 
     @Override
     public Phase nextPhase() {
-        return null;
+        return new EndPhase();
     }
     
 }

@@ -96,7 +96,7 @@ public class FindEdges implements Phase {
         Phase currentPhase = this.phases.peek();
         currentPhase.checkDrone(drone);
 
-        if(drone.getPreviousDecision().equals("echoRight")) {
+        if(drone.getPreviousDecision().equals(Action.echoRight)) {
             increaseXorY();
         }
         logger.info("** CURRENT X: " + this.x);

@@ -47,7 +47,6 @@ public class FindSubsequentEdge implements Phase {
             decision.put("parameters", parameter);
             decision.put("action", "echo");
         }
-        
 
         return decision;
     }

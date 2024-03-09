@@ -5,8 +5,11 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import ca.mcmaster.se2aa4.island.team213.Action;
+import ca.mcmaster.se2aa4.island.team213.Biome;
 import ca.mcmaster.se2aa4.island.team213.Direction;
 import ca.mcmaster.se2aa4.island.team213.Drone;
+import ca.mcmaster.se2aa4.island.team213.EchoResult;
 import ca.mcmaster.se2aa4.island.team213.Phase;
 
 public class FindFirstEdge implements Phase {
@@ -21,11 +24,14 @@ public class FindFirstEdge implements Phase {
 
     public FindFirstEdge(Drone drone) {
         this.isFinished = false;
+        this.turnRight = false;
+
+        resetTertiaryPhases();
         parseStartingDirection(drone.getDirection());
     }
 
     private void parseStartingDirection(Direction direction) {
-        if(direction.toString().equals("N") || direction.toString().equals("S")) {
+        if(direction.equals(Direction.N) || direction.equals(Direction.S)) {
             this.increaseX = false;
             this.islandX = 1;
             this.islandY = 0;
@@ -88,7 +94,7 @@ public class FindFirstEdge implements Phase {
         logger.info("** PREVIOUS DECISION: " + drone.getPreviousDecision());
         logger.info("**");
         logger.info("**");
-        if(drone.getPreviousDecision().equals("echoRight")) {
+        if(drone.getPreviousDecision().equals(Action.echoRight)) {
             increaseXorY();
             checkScanAndEchoes(drone);
         }
@@ -96,13 +102,13 @@ public class FindFirstEdge implements Phase {
 
     @Override
     public Phase nextPhase() {
-        return new FindSubsequentEdge(this.islandX, this.islandY, !this.increaseX, false);
-        // pass islandX, islandY, !increaseX
+        return new FindSubsequentEdge(this.islandX, this.islandY, !this.increaseX, 1);
     }
 
     private void checkScanAndEchoes(Drone drone) {
         JSONArray biomes = drone.getScanInfoBiome();
-        if(biomes.length() == 1 && biomes.getString(0).equals("OCEAN") && drone.getEchoLeft().equals("OUT_OF_RANGE") && drone.getEchoRight().equals("OUT_OF_RANGE")) {
+        Biome firstBiome = Biome.valueOf(biomes.getString(0));
+        if(biomes.length() == 1 && firstBiome.equals(Biome.OCEAN) && drone.getEchoLeft().equals(EchoResult.OUT_OF_RANGE) && drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
             increaseXorY();
             this.turnRight = true;
         }
@@ -124,5 +130,5 @@ public class FindFirstEdge implements Phase {
             this.islandY += 1;
         }
     }
-    
+
 }
