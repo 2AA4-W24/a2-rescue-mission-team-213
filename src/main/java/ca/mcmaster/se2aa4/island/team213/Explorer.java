@@ -31,19 +31,23 @@ public class Explorer implements IExplorerRaid {
         /*
          * Stops if it is in last phase and phase is finished
          */
-        if (phase.lastPhase() && phase.isFinished()){
-            decision.put("action", "stop");
-        }
-        /*
-         * If current phase is finished initialize next phase
-         */
-        else if (phase.isFinished()){
-            phase = phase.nextPhase();
-            decision = phase.createDecision(drone);
-        }
-        else{
-            decision = phase.createDecision(drone);
-        }
+
+        // if (phase.lastPhase() && phase.isFinished()){
+        //     decision.put("action", "stop");
+        // }
+        // /*
+        //  * If current phase is finished initialize next phase
+        //  */
+        // else if (phase.isFinished()){
+        //     phase = phase.nextPhase();
+        //     decision = phase.createDecision(drone);
+        // }
+        // else{
+        //     decision = phase.createDecision(drone);
+        // }
+
+        decision = decisionMaker.decideDecision(drone);
+        drone.parseDecision(decision);
         return decision.toString();
     }
 

@@ -1,12 +1,13 @@
-package ca.mcmaster.se2aa4.island.team213;
+package ca.mcmaster.se2aa4.island.team213.areaScan;
 
+import ca.mcmaster.se2aa4.island.team213.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class AreaScanNew implements Phase{
+public class AreaScanNew implements Phase {
     public int maxX; //fix
     public int maxY;
     public int x, y;
@@ -117,16 +118,14 @@ public class AreaScanNew implements Phase{
     }
     @Override
     public void checkDrone(Drone drone){
-        JSONObject scanInfo = drone.getScanInfo();
-        JSONObject extraInfo = scanInfo.getJSONObject("extras");
-        JSONArray creeksJSON = extraInfo.getJSONArray("creeks");
+        JSONArray creeksJSON = drone.getScanInfoCreeks();
         if (!creeksJSON.isEmpty()){
             for (int i=0; i<creeksJSON.length(); ++i){
                 shortestPath.addCreek(new PointsOfInterest(x,y, creeksJSON.getString(i)));
             }
         }
 
-        JSONArray sitesJSON = extraInfo.getJSONArray("sites");
+        JSONArray sitesJSON = drone.getScanInfoSites();
         if (!sitesJSON.isEmpty()){
             for (int i=0; i<sitesJSON.length(); ++i){
                 shortestPath.addSite(new PointsOfInterest(x,y, sitesJSON.getString(i)));
@@ -138,8 +137,7 @@ public class AreaScanNew implements Phase{
     }
     @Override
     public Phase nextPhase(){
-        System.out.println("hello");
-        return null;
+        return new AreaScanNew(0, 0, null);
     }
 
     private void rightTurnPos(){

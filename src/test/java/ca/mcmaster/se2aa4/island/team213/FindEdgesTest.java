@@ -2,24 +2,40 @@ package ca.mcmaster.se2aa4.island.team213;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.json.JSONObject;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import ca.mcmaster.se2aa4.island.team213.edgeFinding.FindFirstEdge;
+import ca.mcmaster.se2aa4.island.team213.edgeFinding.FindSubsequentEdge;
+import ca.mcmaster.se2aa4.island.team213.edgeFinding.FlyPastDetermined;
+
 
 public class FindEdgesTest {
     private Drone droneA, droneB;
-    private FindEdges feA, feB;
+    private FindFirstEdge phaseA, phaseB;
+    private FindSubsequentEdge phaseC, phaseD;
+    private FlyPastDetermined phaseE;
+    private Phase phaseZ;
+
+
+    private int flyActionsLeft;
     private JSONObject decision, parameter, response, extras;
 
     @BeforeEach 
     public void setUp() {
-        droneA = new Drone("N", 1000);
-        feA = new FindEdges(droneA);
+        droneA = new Drone("N", 1000);   
         droneB = new Drone("E", 1000);
-        feB = new FindEdges(droneB);
+
+        phaseA = new FindFirstEdge(droneA);
+        phaseB = new FindFirstEdge(droneB);
+        phaseC = new FindSubsequentEdge(0, 0, false, 0);
+        phaseD = new FindSubsequentEdge(0, 0, false, 3);
+        flyActionsLeft = 10;
+        phaseE = new FlyPastDetermined(0, 0, false, 0, flyActionsLeft);
+        phaseZ = new FindFirstEdge(droneA);
 
         decision = new JSONObject();
         parameter = new JSONObject();
@@ -30,6 +46,7 @@ public class FindEdgesTest {
         response = new JSONObject();
         extras = new JSONObject();
         extras.put("found", "OUT_OF_RANGE");
+        extras.put("range", 3); 
         response.put("extras", extras);
         response.put("cost", 1);
         response.put("status", "OK");
@@ -38,56 +55,46 @@ public class FindEdgesTest {
     @Test
     public void testStartStates() {
         assertEquals(droneA.getDirection(), Direction.N);
-        assertFalse(feA.isFinished());
-        assertFalse(feA.getIncreaseX());
+        assertFalse(phaseA.isFinished());
+        assertFalse(phaseA.getIncreaseX());
 
         assertEquals(droneB.getDirection(), Direction.E);
-        assertFalse(feB.isFinished());
-        assertTrue(feB.getIncreaseX());
+        assertFalse(phaseB.isFinished());
+        assertTrue(phaseB.getIncreaseX());
     }
 
     @Test
-    public void testQueue() {
-        assertEquals(feA.getPhases().peek(), feA.getFindFirstEdge());
-        feA.removeFromPhases();
-        assertNotEquals(feA.getPhases().peek(), feA.getFindFirstEdge());
-        assertEquals(feA.getPhases().peek(), feA.getFindSecondEdge());
+    public void testEndOfPhases() {
+        for(int i = 0; i < 6; i++){
+            phaseZ = phaseZ.nextPhase();
+        }
+        assertEquals(phaseZ.createDecision(droneA).toString(), "{\"action\":\"stop\"}");
     }
 
     @Test
-    public void testDecisionToDroneUpdate() {
+    public void testFindSubsequentEdge() {
         droneA.parseDecision(decision);
         droneA.updateStatus(response);
-
-        assertEquals(droneA.getPreviousDecision(), "echoRight");
-        assertEquals(droneA.getEchoRight(), "OUT_OF_RANGE");
+        phaseC.checkDrone(droneA);
+        assertEquals(droneA.getPreviousDecision(), Action.echoRight);
+        assertEquals(droneA.getEchoRight(), EchoResult.OUT_OF_RANGE);
+        assertEquals(phaseC.createDecision(droneA).toString(), "{\"action\":\"heading\",\"parameters\":{\"direction\":\"" + droneA.getDirection().rightTurn() + "\"}}");
+        assertTrue(phaseC.isFinished());
     }
 
     @Test
-    public void testRequeue() {
-        feA.removeFromPhases();
-
-        droneA.parseDecision(decision);
-        droneA.updateStatus(response);
-
-        feA.checkDrone(droneA);
-        assertFalse(feA.isFinished()); // feA.requeue() called in this method
-        feA.createDecision(droneA);
-        assertFalse(feA.isFinished());
-
-        assertEquals(feA.getPhases().peek(), feA.getFlyPastDeterminedA());
-        feA.removeFromPhases();
-        assertEquals(feA.getPhases().peek(), feA.getFindThirdEdge());
+    public void testFinalFindSubsequentEdge() {
+        phaseZ = phaseD.nextPhase();
+        assertEquals(phaseZ.createDecision(droneA).toString(), "{\"action\":\"stop\"}");
     }
 
     @Test
-    public void testEndQueue() {
-        feA.removeFromPhases();
-        feA.removeFromPhases();
-        feA.removeFromPhases();
+    public void testFlyPastDetermined() {
+        for(int i = 0; i < flyActionsLeft; i++) {
+            phaseE.checkDrone(droneA);
+        }
 
-        assertTrue(feA.isFinished());
-        
+        assertTrue(phaseE.isFinished());
     }
 
 }

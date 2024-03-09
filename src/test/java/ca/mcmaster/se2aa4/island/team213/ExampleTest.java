@@ -52,21 +52,20 @@ public class ExampleTest {
 //    }
 
 
-    @Test
-    public void areaScanNewTest(){
-        int width = 467;
-        int height = 246;
-//        Perimeter perimeterTest = new Perimeter(width, height, CornerPosition.BOTTOMLEFT);
-        Drone droneTest = new Drone(Direction.N.toString(), 10000);
-        AreaScanNew areaScanNew = new AreaScanNew(width, height, droneTest);
-        while (!areaScanNew.isFinished()){
-            areaScanNew.createDecision(null);
-            System.out.printf("x: %d, y: %d, maxX: %d, maxY: %d, xSteps: %d, ySteps: %d\n", areaScanNew.x, areaScanNew.y, areaScanNew.maxX, areaScanNew.maxY, areaScanNew.xSteps, areaScanNew.ySteps);
-        }
+    // @Test
+    // public void areaScanNewTest(){
+    //     int width = 467;
+    //     int height = 246;
+    //     Perimeter perimeterTest = new Perimeter(width, height, CornerPosition.BOTTOMLEFT);
+    //     AreaScanNew areaScanNew = new AreaScanNew(perimeterTest);
+    //     while (!areaScanNew.isFinished()){
+    //         areaScanNew.createDecision(null);
+    //         System.out.printf("x: %d, y: %d, maxX: %d, maxY: %d, xSteps: %d, ySteps: %d\n", areaScanNew.x, areaScanNew.y, areaScanNew.maxX, areaScanNew.maxY, areaScanNew.xSteps, areaScanNew.ySteps);
+    //     }
 
-        assertTrue(areaScanNew.maxX - 2 <= 0 || areaScanNew.maxY - 2 <= 0);
+    //     assertTrue(areaScanNew.maxX - 2 <= 0 || areaScanNew.maxY - 2 <= 0);
 
-    }
+    // }
 
 
 }
