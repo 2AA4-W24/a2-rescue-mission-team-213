@@ -6,9 +6,9 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import ca.mcmaster.se2aa4.island.team213.Action;
+import ca.mcmaster.se2aa4.island.team213.Direction;
 import ca.mcmaster.se2aa4.island.team213.Drone;
 import ca.mcmaster.se2aa4.island.team213.EchoResult;
-import ca.mcmaster.se2aa4.island.team213.EndPhase;
 import ca.mcmaster.se2aa4.island.team213.Phase;
 
 public class FindSubsequentEdge implements Phase {
@@ -16,6 +16,7 @@ public class FindSubsequentEdge implements Phase {
     private boolean increaseX;
     private int islandX, islandY;
     private int edgesFound;
+    private Direction droneDirection;
 
     private boolean echoedRight, movedForward;
     private boolean turnRight;
@@ -55,6 +56,8 @@ public class FindSubsequentEdge implements Phase {
             parameter.put("direction", drone.getDirection().rightTurn());
             decision.put("parameters", parameter);
             decision.put("action", "heading");  
+
+            this.droneDirection = drone.getDirection().rightTurn();
         }
         else if(!this.movedForward) {
             this.movedForward = true;
@@ -85,7 +88,7 @@ public class FindSubsequentEdge implements Phase {
     @Override
     public Phase nextPhase() {
         if(this.edgesFound == 3) {
-            return new AreaScanNew(islandX, islandY, droneDirection );
+            return new AreaScanNew(islandX, islandY, droneDirection);
         }
 
         int flyActionsLeft = !this.increaseX ? this.islandX : this.islandY;

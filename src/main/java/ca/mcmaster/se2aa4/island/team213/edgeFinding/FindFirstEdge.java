@@ -22,12 +22,12 @@ public class FindFirstEdge implements Phase {
 
     private final Logger logger = LogManager.getLogger();
 
-    public FindFirstEdge(Drone drone) {
+    public FindFirstEdge(Direction direction) {
         this.isFinished = false;
         this.turnRight = false;
 
         resetTertiaryPhases();
-        parseStartingDirection(drone.getDirection());
+        parseStartingDirection(direction);
     }
 
     private void parseStartingDirection(Direction direction) {
