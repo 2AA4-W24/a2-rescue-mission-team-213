@@ -17,9 +17,8 @@ import ca.mcmaster.se2aa4.island.team213.edgeFinding.NewFindSubsequentEdge;
 public class FindEdgesTest {
     private Drone droneA, droneB;
     private NewFindFirstEdge phaseA, phaseB;
-    private NewFindSubsequentEdge phaseC, phaseD;
-    private FlyPastDetermined phaseE;
-    private Phase phaseZ;
+    private NewFindSubsequentEdge phaseC;
+    private FlyPastDetermined phaseD;
 
 
     private int flyActionsLeft;
@@ -35,9 +34,7 @@ public class FindEdgesTest {
         phaseA = new NewFindFirstEdge(droneA.getDirection());
         phaseB = new NewFindFirstEdge(droneB.getDirection());
         phaseC = new NewFindSubsequentEdge(0, 0, false, 0);
-        phaseD = new NewFindSubsequentEdge(0, 0, false, 3);
-        phaseE = new FlyPastDetermined(0, 0, false, 0, flyActionsLeft);
-        phaseZ = new NewFindFirstEdge(droneA.getDirection());
+        phaseD = new FlyPastDetermined(0, 0, false, 0, flyActionsLeft);
 
         createEchoOOBResponse();
         createEchoGResponse();
@@ -170,10 +167,10 @@ public class FindEdgesTest {
     @Test
     public void testFlyPastDetermined() {
         for(int i = 0; i < flyActionsLeft; i++) {
-            phaseE.checkDrone(droneA);
+            phaseD.checkDrone(droneA);
         }
 
-        assertTrue(phaseE.isFinished());
+        assertTrue(phaseD.isFinished());
     }
 
 }
