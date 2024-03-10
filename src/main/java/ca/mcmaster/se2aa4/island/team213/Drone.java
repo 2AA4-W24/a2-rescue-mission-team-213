@@ -142,7 +142,7 @@ public class Drone {
         }
     }
 
-    public void setSiteID(String siteID){
+    public void setCreekID(String siteID){
         this.siteID = siteID;
     }
     public Direction getDirection() {

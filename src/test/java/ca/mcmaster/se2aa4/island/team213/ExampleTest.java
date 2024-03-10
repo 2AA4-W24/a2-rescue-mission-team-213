@@ -1,5 +1,6 @@
 package ca.mcmaster.se2aa4.island.team213;
 
+import ca.mcmaster.se2aa4.island.team213.areaScan.AreaScanNew;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -52,20 +53,19 @@ public class ExampleTest {
 //    }
 
 
-    // @Test
-    // public void areaScanNewTest(){
-    //     int width = 467;
-    //     int height = 246;
-    //     Perimeter perimeterTest = new Perimeter(width, height, CornerPosition.BOTTOMLEFT);
-    //     AreaScanNew areaScanNew = new AreaScanNew(perimeterTest);
-    //     while (!areaScanNew.isFinished()){
-    //         areaScanNew.createDecision(null);
-    //         System.out.printf("x: %d, y: %d, maxX: %d, maxY: %d, xSteps: %d, ySteps: %d\n", areaScanNew.x, areaScanNew.y, areaScanNew.maxX, areaScanNew.maxY, areaScanNew.xSteps, areaScanNew.ySteps);
-    //     }
-
-    //     assertTrue(areaScanNew.maxX - 2 <= 0 || areaScanNew.maxY - 2 <= 0);
-
-    // }
+//     @Test
+//     public void areaScanNewTest(){
+//         int width = 46;
+//         int height = 34;
+//         AreaScanNew areaScanNew = new AreaScanNew(width, height, Direction.E);
+//         while (!areaScanNew.isFinished()){
+//             areaScanNew.createDecision(null);
+//             System.out.printf("x: %d, y: %d, maxX: %d, maxY: %d, xSteps: %d, ySteps: %d\n", areaScanNew.x, areaScanNew.y, areaScanNew.maxX, areaScanNew.maxY, areaScanNew.xSteps, areaScanNew.ySteps);
+//         }
+//
+//         assertTrue(areaScanNew.maxX - 2 <= 0 || areaScanNew.maxY - 2 <= 0);
+//
+//     }
 
 
 }
