@@ -1,6 +1,8 @@
 package ca.mcmaster.se2aa4.island.team213.edgeFinding;
 
-import ca.mcmaster.se2aa4.island.team213.areaScan.AreaScanNew;
+import java.util.LinkedList;
+import java.util.Queue;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -10,6 +12,7 @@ import ca.mcmaster.se2aa4.island.team213.Direction;
 import ca.mcmaster.se2aa4.island.team213.Drone;
 import ca.mcmaster.se2aa4.island.team213.EchoResult;
 import ca.mcmaster.se2aa4.island.team213.Phase;
+import ca.mcmaster.se2aa4.island.team213.areaScan.AreaScanNew;
 
 public class FindSubsequentEdge implements Phase {
     private boolean isFinished;
@@ -17,25 +20,21 @@ public class FindSubsequentEdge implements Phase {
     private int islandX, islandY;
     private int edgesFound;
     private Direction droneDirection;
-
-    private boolean echoedRight, movedForward;
-    private boolean turnRight;
-
+    private Queue<Action> decisionQueue;
+   
     private final Logger logger = LogManager.getLogger();
 
     public FindSubsequentEdge(int islandX, int islandY, boolean increaseX, int edgesFound) {
         this.isFinished = false;
-        this.turnRight = false;
+        this.decisionQueue = new LinkedList<Action>();
+        this.decisionQueue.add(Action.ECHO_RIGHT);
 
         this.islandX = islandX;
         this.islandY = islandY;
         this.increaseX = increaseX;
         this.edgesFound = edgesFound;
-
-        this.movedForward = true;
-        this.echoedRight = false;
     }
-    
+
     @Override
     public boolean lastPhase() {
         return false;
@@ -49,36 +48,19 @@ public class FindSubsequentEdge implements Phase {
     @Override
     public JSONObject createDecision(Drone drone) {
         JSONObject decision = new JSONObject();
-
-        if(this.turnRight) {
+        
+        decision = DecisionJSONs.actionToJSONObject(this.decisionQueue.peek(), drone.getDirection());
+        if(this.decisionQueue.peek().equals(Action.TURN_RIGHT)) {
             this.isFinished = true;
-            JSONObject parameter = new JSONObject();
-            parameter.put("direction", drone.getDirection().rightTurn());
-            decision.put("parameters", parameter);
-            decision.put("action", "heading");  
-
             this.droneDirection = drone.getDirection().rightTurn();
         }
-        else if(!this.movedForward) {
-            this.movedForward = true;
-            decision.put("action", "fly");
-        }
-        else if(!this.echoedRight) {
-            this.echoedRight = true;
-            JSONObject parameter = new JSONObject();
-            parameter.put("direction", drone.getDirection().rightTurn());
-            decision.put("parameters", parameter);
-            decision.put("action", "echo");
-        }
+        this.decisionQueue.remove();
 
         return decision;
     }
 
     @Override
     public void checkDrone(Drone drone) {
-        logger.info("** PREVIOUS DECISION: " + drone.getPreviousDecision());
-        logger.info("**");
-        logger.info("**");
         if(drone.getPreviousDecision().equals(Action.ECHO_RIGHT)) {
             increaseXorY();
             checkEcho(drone);
@@ -88,7 +70,9 @@ public class FindSubsequentEdge implements Phase {
     @Override
     public Phase nextPhase() {
         if(this.edgesFound == 3) {
-            return new AreaScanNew(islandX, islandY, droneDirection);
+            logger.info("FINAL ISLAND X: " + this.islandX);
+            logger.info("FINAL ISLAND Y: " + this.islandY);
+            return new AreaScanNew(this.islandX, this.islandY, this.droneDirection);
         }
 
         int flyActionsLeft = !this.increaseX ? this.islandX : this.islandY;
@@ -98,14 +82,14 @@ public class FindSubsequentEdge implements Phase {
     private void checkEcho(Drone drone) {
         if(drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
             increaseXorY();
-            this.turnRight = true;
+            this.decisionQueue.add(Action.TURN_RIGHT);
         }
-        resetTertiaryPhases();
+        loadDecisionQueue();
     }
- 
-    private void resetTertiaryPhases() {
-        this.echoedRight = false;
-        this.movedForward = false;
+
+    private void loadDecisionQueue() {
+        this.decisionQueue.add(Action.FLY);
+        this.decisionQueue.add(Action.ECHO_RIGHT);
     }
 
     private void increaseXorY() { 
@@ -115,6 +99,10 @@ public class FindSubsequentEdge implements Phase {
         else {
             this.islandY += 1;
         }
-    }
+    }    
 
+    public Action getNextDecision() {
+        return this.decisionQueue.peek();
+    }
+    
 }

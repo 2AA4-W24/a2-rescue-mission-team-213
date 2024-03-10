@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 public class Explorer implements IExplorerRaid {
-    private DecisionMaker decisionMaker;
     private Drone drone;
     
     private final Logger logger = LogManager.getLogger();
@@ -20,7 +19,6 @@ public class Explorer implements IExplorerRaid {
     @Override
     public void initialize(String s) {
         config = new Configuration(s);
-        decisionMaker = new DecisionMaker();
         drone = new Drone(config.getDirection(), config.getBatteryLevel());
     }
 
@@ -46,7 +44,6 @@ public class Explorer implements IExplorerRaid {
             decision = phase.createDecision(drone);
         }
 
-        // decision = decisionMaker.decideDecision(drone);
         // logger.info("reached before");
         drone.parseDecision(decision);
         // logger.info("reached after");
@@ -56,7 +53,7 @@ public class Explorer implements IExplorerRaid {
     @Override
     public void acknowledgeResults(String s) {
         JSONObject response = new JSONObject(new JSONTokener(new StringReader(s)));
-        logger.info("** RESPONSE: " + response.toString());
+        logger.info("response received: " + response.toString());
         drone.updateStatus(response);
         phase.checkDrone(drone);
     }

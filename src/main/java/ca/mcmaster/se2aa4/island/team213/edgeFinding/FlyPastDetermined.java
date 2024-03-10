@@ -1,7 +1,7 @@
 package ca.mcmaster.se2aa4.island.team213.edgeFinding;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+// import org.apache.logging.log4j.LogManager;
+// import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import ca.mcmaster.se2aa4.island.team213.Drone;
@@ -14,7 +14,7 @@ public class FlyPastDetermined implements Phase{
     private int edgesFound;
     private int flyActionsLeft;
 
-    private final Logger logger = LogManager.getLogger();
+    // private final Logger logger = LogManager.getLogger();
 
     public FlyPastDetermined(int islandX, int islandY, boolean increaseX, int edgesFound, int flyActionsLeft) {
         this.isFinished = false;
@@ -45,9 +45,9 @@ public class FlyPastDetermined implements Phase{
 
     @Override
     public void checkDrone(Drone drone) {
-        logger.info("CURRENT FLY ACTIONS LEFT: " + Integer.toString(this.flyActionsLeft));
+        // logger.info("CURRENT FLY ACTIONS LEFT: " + Integer.toString(this.flyActionsLeft));
         this.flyActionsLeft -= 1;
-        logger.info("SUBTRACTING FLY ACTIONS TO: " + Integer.toString(this.flyActionsLeft));
+        // logger.info("SUBTRACTING FLY ACTIONS TO: " + Integer.toString(this.flyActionsLeft));
         if(this.flyActionsLeft == 0) {
             this.isFinished = true;
         }
@@ -55,7 +55,7 @@ public class FlyPastDetermined implements Phase{
 
     @Override
     public Phase nextPhase() {
-        return new NewFindSubsequentEdge(this.islandX, this.islandY, this.increaseX, this.edgesFound);
+        return new FindSubsequentEdge(this.islandX, this.islandY, this.increaseX, this.edgesFound);
     }
     
 }

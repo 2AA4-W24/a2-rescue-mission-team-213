@@ -10,14 +10,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import ca.mcmaster.se2aa4.island.team213.edgeFinding.FlyPastDetermined;
-import ca.mcmaster.se2aa4.island.team213.edgeFinding.NewFindFirstEdge;
-import ca.mcmaster.se2aa4.island.team213.edgeFinding.NewFindSubsequentEdge;
+import ca.mcmaster.se2aa4.island.team213.edgeFinding.FindFirstEdge;
+import ca.mcmaster.se2aa4.island.team213.edgeFinding.FindSubsequentEdge;
 
 
 public class FindEdgesTest {
     private Drone droneA, droneB;
-    private NewFindFirstEdge phaseA, phaseB;
-    private NewFindSubsequentEdge phaseC;
+    private FindFirstEdge phaseA, phaseB;
+    private FindSubsequentEdge phaseC;
     private FlyPastDetermined phaseD;
 
 
@@ -31,9 +31,9 @@ public class FindEdgesTest {
         droneA = new Drone("N", 1000);   
         droneB = new Drone("E", 1000);
 
-        phaseA = new NewFindFirstEdge(droneA.getDirection());
-        phaseB = new NewFindFirstEdge(droneB.getDirection());
-        phaseC = new NewFindSubsequentEdge(0, 0, false, 0);
+        phaseA = new FindFirstEdge(droneA.getDirection());
+        phaseB = new FindFirstEdge(droneB.getDirection());
+        phaseC = new FindSubsequentEdge(0, 0, false, 0);
         phaseD = new FlyPastDetermined(0, 0, false, 0, flyActionsLeft);
 
         createEchoOOBResponse();

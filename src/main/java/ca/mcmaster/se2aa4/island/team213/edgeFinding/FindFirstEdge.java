@@ -1,7 +1,8 @@
 package ca.mcmaster.se2aa4.island.team213.edgeFinding;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.LinkedList;
+import java.util.Queue;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -16,18 +17,14 @@ public class FindFirstEdge implements Phase {
     private boolean isFinished;
     private boolean increaseX;
     private int islandX, islandY;
-
-    private boolean movedForward, scanned, echoedLeft, echoedRight;
-    private boolean turnRight;
-
-    private final Logger logger = LogManager.getLogger();
+    private Queue<Action> decisionQueue;
 
     public FindFirstEdge(Direction direction) {
         this.isFinished = false;
-        this.turnRight = false;
+        this.decisionQueue = new LinkedList<Action>();
 
-        resetTertiaryPhases();
         parseStartingDirection(direction);
+        loadDecisionQueue();
     }
 
     private void parseStartingDirection(Direction direction) {
@@ -41,7 +38,7 @@ public class FindFirstEdge implements Phase {
             this.islandY = 1;
         }
     }
-
+    
     @Override
     public boolean lastPhase() {
         return false;
@@ -55,46 +52,18 @@ public class FindFirstEdge implements Phase {
     @Override
     public JSONObject createDecision(Drone drone) {
         JSONObject decision = new JSONObject();
-
-        if(this.turnRight) {
+        
+        decision = DecisionJSONs.actionToJSONObject(this.decisionQueue.peek(), drone.getDirection());
+        if(this.decisionQueue.peek().equals(Action.TURN_RIGHT)) {
             this.isFinished = true;
-            JSONObject parameter = new JSONObject();
-            parameter.put("direction", drone.getDirection().rightTurn());
-            decision.put("parameters", parameter);
-            decision.put("action", "heading");  
         }
-        else if(!this.movedForward) {
-            logger.info("** MOVING FORWARD IN FIND FIRST EDGE **");
-            this.movedForward = true;
-            decision.put("action", "fly");
-        } 
-        else if(!this.scanned) {
-            this.scanned = true;
-            decision.put("action", "scan");
-        } 
-        else if(!this.echoedLeft) {
-            this.echoedLeft = true;
-            JSONObject parameter = new JSONObject();
-            parameter.put("direction", drone.getDirection().leftTurn().toString());
-            decision.put("parameters", parameter);
-            decision.put("action", "echo");
-        } 
-        else if(!this.echoedRight) {
-            this.echoedRight = true;
-            JSONObject parameter = new JSONObject();
-            parameter.put("direction", drone.getDirection().rightTurn().toString());
-            decision.put("parameters", parameter);
-            decision.put("action", "echo");
-        }
+        this.decisionQueue.remove();
 
         return decision;
     }
 
     @Override
     public void checkDrone(Drone drone) {
-        logger.info("** PREVIOUS DECISION: " + drone.getPreviousDecision());
-        logger.info("**");
-        logger.info("**");
         if(drone.getPreviousDecision().equals(Action.ECHO_RIGHT)) {
             increaseXorY();
             checkScanAndEchoes(drone);
@@ -109,18 +78,19 @@ public class FindFirstEdge implements Phase {
     private void checkScanAndEchoes(Drone drone) {
         JSONArray biomes = drone.getScanInfoBiome();
         Biome firstBiome = Biome.valueOf(biomes.getString(0));
+        
         if(biomes.length() == 1 && firstBiome.equals(Biome.OCEAN) && drone.getEchoLeft().equals(EchoResult.OUT_OF_RANGE) && drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
             increaseXorY();
-            this.turnRight = true;
+            this.decisionQueue.add(Action.TURN_RIGHT);
         }
-        resetTertiaryPhases();
+        loadDecisionQueue();
     }
-
-    private void resetTertiaryPhases() {
-        this.movedForward = false;
-        this.scanned = false;
-        this.echoedLeft = false;
-        this.echoedRight = false;
+    
+    private void loadDecisionQueue() {
+        this.decisionQueue.add(Action.FLY);
+        this.decisionQueue.add(Action.SCAN);
+        this.decisionQueue.add(Action.ECHO_LEFT);
+        this.decisionQueue.add(Action.ECHO_RIGHT);
     }
 
     private void increaseXorY() { 
@@ -134,5 +104,9 @@ public class FindFirstEdge implements Phase {
 
     public boolean getIncreaseX() {
         return this.increaseX;
+    }
+    
+    public Action getNextDecision() {
+        return this.decisionQueue.peek();
     }
 }

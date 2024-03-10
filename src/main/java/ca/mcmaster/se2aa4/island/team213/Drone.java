@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class Drone {
@@ -13,7 +12,6 @@ public class Drone {
     private Direction direction;
     private EchoStatus echo = new EchoStatus();
     private ScanStatus scanInfo;
-    private Direction echoRequested;
     private Action previousDecision;
     private String siteID;
 
@@ -36,16 +34,11 @@ public class Drone {
     public void updateStatus(JSONObject response){
         logger.info("updating status...");
         // logger.info("** Response received:\n"+response.toString(2));
-        logger.info(this.previousDecision);
-        battery -= response.getInt("cost");
-
-        // TECHNICAL DEBT: currently just assumes content of extra is echo response object, does not consider for scan
-        //        logger.info("Additional information received: {}", extraInfo);
-
+        logger.info("previous decision: " + this.previousDecision);
+        this.battery -= response.getInt("cost");
+        logger.info("new battery level: " + this.battery);
         JSONObject extraInfo = response.getJSONObject("extras");
-        logger.info("Additional information received: {}", extraInfo);
-
-
+        logger.info("additional information received: {}", extraInfo);
 
         if(previousDecision.equals(Action.ECHO_RIGHT)) {
             logger.info("STORING ECHO RIGHT INFO: " + extraInfo.getString("found"));
@@ -67,7 +60,9 @@ public class Drone {
             this.scanInfo = new ScanStatus(extraInfo);
         }
 
-
+        logger.info("*");
+        logger.info("*");
+        logger.info("*");
 
     }
     public String getSiteID(){
@@ -129,14 +124,15 @@ public class Drone {
             }
             else if(this.direction.leftTurn().toString().equals(parameter.get("direction"))) {
                 logger.info("DRONE RECEIVED COMMAND FOR ECHO LEFT");
-                echoRequested = direction.leftTurn();
                 this.previousDecision = Action.ECHO_LEFT;
             }
         }
         else if(decision.getString("action").equals("scan")) {
+            logger.info("DRONE RECEIVED COMMAND FOR SCAN");
             this.previousDecision = Action.SCAN;
         }
         else if(decision.getString("action").equals("fly")) {
+            logger.info("DRONE RECEIVED COMMAND FOR FLY");
             if (!Objects.equals(echo.echoAhead,null)){
                 this.subtractRangeHeading();
             }

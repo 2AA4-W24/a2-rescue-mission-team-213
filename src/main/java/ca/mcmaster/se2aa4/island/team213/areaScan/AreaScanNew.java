@@ -1,6 +1,9 @@
 package ca.mcmaster.se2aa4.island.team213.areaScan;
 
 import ca.mcmaster.se2aa4.island.team213.*;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,6 +18,7 @@ public class AreaScanNew implements Phase {
     public Direction direction;
     private GetShortestPath shortestPath;
 
+    private final Logger logger = LogManager.getLogger();
 
     private Queue<JSONObject> taskQueue = new LinkedList<>();
 
@@ -23,6 +27,7 @@ public class AreaScanNew implements Phase {
         return true;
     }
     public AreaScanNew(int islandx, int islandy, Direction droneDirection){
+        logger.info("** AreaScanNew Created **");
         shortestPath = new GetShortestPath();
         maxX = islandx;
         maxY = islandy;
