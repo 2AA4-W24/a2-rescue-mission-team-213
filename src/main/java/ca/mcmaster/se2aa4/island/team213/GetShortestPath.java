@@ -3,12 +3,14 @@ import java.util.ArrayList;
 import java.util.Optional;
 public class GetShortestPath {
 
-    public SiteCandidate closestSite;
+    public SiteCandidate closestCreek;
     public ArrayList<PointsOfInterest> creeks;
     public ArrayList<PointsOfInterest> sites;
 
 
     public GetShortestPath(){
+        creeks = new ArrayList<>();
+        sites = new ArrayList<>();
 
     }
     public void addCreek(PointsOfInterest creek){
@@ -20,11 +22,12 @@ public class GetShortestPath {
 
     public void computeClosestSite(){
         if (!sites.isEmpty() && !creeks.isEmpty()){
+//            System.out.println("TEST -----------------------------------------------------");
             for (PointsOfInterest site: sites){
                 for (PointsOfInterest creek: creeks){
                     double distance = Math.sqrt(Math.pow((site.getX()-creek.getX()),2)+Math.pow((site.getY()- creek.getY()),2));
-                    if (getClosestSite().isEmpty() || distance < closestSite.distanceFromCreek){ //TODO turn into getter
-                        closestSite = new SiteCandidate(site.getID(), distance);
+                    if (getClosestCreek().isEmpty() || distance < closestCreek.distanceFromCreek){ //TODO turn into getter
+                        closestCreek = new SiteCandidate(creek.getID(), distance);
                     }
                 }
             }
@@ -33,11 +36,11 @@ public class GetShortestPath {
 
 
     }
-    public void updateSiteID(Drone drone){
-        drone.setSiteID(closestSite.id);
+    public void updateCreekID(Drone drone){
+        drone.setCreekID(closestCreek.id);
     }
 
-    public Optional<SiteCandidate> getClosestSite(){
-        return (closestSite == null? Optional.empty() : Optional.of(this.closestSite));
+    public Optional<SiteCandidate> getClosestCreek(){
+        return (closestCreek == null? Optional.empty() : Optional.of(this.closestCreek));
     }
 }

@@ -125,7 +125,6 @@ public class AreaScanNew implements Phase {
 //            shortestPath.computeClosestSite();
 //            shortestPath.updateSiteID(drone);
 
-
             return true;
         }
         return false;
@@ -146,7 +145,7 @@ public class AreaScanNew implements Phase {
             }
         }
         shortestPath.computeClosestSite();
-        shortestPath.updateSiteID(drone);
+        shortestPath.updateCreekID(drone);
 
 
 
