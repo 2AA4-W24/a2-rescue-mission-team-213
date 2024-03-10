@@ -1,7 +1,7 @@
 package ca.mcmaster.se2aa4.island.team213.edgeFinding;
 
-// import org.apache.logging.log4j.LogManager;
-// import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import ca.mcmaster.se2aa4.island.team213.Drone;
@@ -14,9 +14,10 @@ public class FlyPastDetermined implements Phase{
     private int edgesFound;
     private int flyActionsLeft;
 
-    // private final Logger logger = LogManager.getLogger();
+    private final Logger logger = LogManager.getLogger();
 
     public FlyPastDetermined(int islandX, int islandY, boolean increaseX, int edgesFound, int flyActionsLeft) {
+        logger.info("** FlyPastDetermined created with " + flyActionsLeft + " fly actions **");
         this.isFinished = false;
 
         this.islandX = islandX;
