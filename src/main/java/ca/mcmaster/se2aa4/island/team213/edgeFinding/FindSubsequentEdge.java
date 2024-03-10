@@ -25,6 +25,7 @@ public class FindSubsequentEdge implements Phase {
     private final Logger logger = LogManager.getLogger();
 
     public FindSubsequentEdge(int islandX, int islandY, boolean increaseX, int edgesFound) {
+        logger.info("** FindSubsequentEdge created with " + edgesFound + " edges found **");
         this.isFinished = false;
         this.decisionQueue = new LinkedList<Action>();
         this.decisionQueue.add(Action.ECHO_RIGHT);
