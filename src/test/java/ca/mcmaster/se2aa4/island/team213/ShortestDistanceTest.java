@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ShortestDistanceTest {
     @Test
     public void shortestDistanceTest(){
+        Drone droneTest = new Drone(Direction.N.toString(), 1000);
         GetShortestPath shortestPath = new GetShortestPath();
         shortestPath.addSite(new PointsOfInterest(30, 50, "1"));
 //        shortestPath.addSite(new PointsOfInterest(200, 500, "2"));

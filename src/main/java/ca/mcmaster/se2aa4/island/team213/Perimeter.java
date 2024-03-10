@@ -1,5 +1,8 @@
 package ca.mcmaster.se2aa4.island.team213;
 
+/*
+ * TODO remove class
+ */
 public class Perimeter {
     public int width;
     public int height;
