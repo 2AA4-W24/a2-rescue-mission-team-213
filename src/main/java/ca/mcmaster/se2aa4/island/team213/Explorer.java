@@ -10,7 +10,6 @@ import org.json.JSONTokener;
 
 public class Explorer implements IExplorerRaid {
     private Drone drone;
-    
     private final Logger logger = LogManager.getLogger();
     private Configuration config;
 
@@ -30,13 +29,14 @@ public class Explorer implements IExplorerRaid {
          * Stops if it is in last phase and phase is finished
          */
 
-        if(phase.lastPhase() && phase.isFinished()) {
+        if(drone.getBattery() <= 100 || (phase.lastPhase() && phase.isFinished())) {
             decision.put("action", "stop");
         }
         /*
          * If current phase is finished initialize next phase
          */
         else if(phase.isFinished()) {
+
             phase = phase.nextPhase();
             decision = phase.createDecision(drone);
         }
@@ -60,6 +60,8 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String deliverFinalReport() {
+        logger.warn("GAME ENDED?");
+        logger.info(drone.getSiteID());
         return drone.getSiteID();
     }
 

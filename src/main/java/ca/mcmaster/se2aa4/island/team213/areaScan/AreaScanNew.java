@@ -14,6 +14,8 @@ public class AreaScanNew implements Phase {
     public int maxX; //fix
     public int maxY;
     public int x, y;
+
+//    boolean lowBattery = false;
     public int xSteps, ySteps;
     public Direction direction;
     private GetShortestPath shortestPath;
@@ -22,13 +24,12 @@ public class AreaScanNew implements Phase {
 
     private Queue<JSONObject> taskQueue = new LinkedList<>();
 
-    @Override
-    public boolean lastPhase(){
-        return true;
-    }
+
     public AreaScanNew(int islandx, int islandy, Direction droneDirection){
-        logger.info("** AreaScanNew Created **");
+        logger.info("** AreaScanNew Created *****");
         shortestPath = new GetShortestPath();
+        logger.info(islandx);
+        logger.info(islandy);
         maxX = islandx;
         maxY = islandy;
         x = 0;
@@ -47,6 +48,7 @@ public class AreaScanNew implements Phase {
                 direction = Direction.N;
             }
         }
+//        logger.info("---------fdsfsdjfsadlfjsadlkfasdfs--------------------");
 
     }
     @Override
@@ -55,9 +57,11 @@ public class AreaScanNew implements Phase {
         JSONObject headingDirection = new JSONObject();
         // check if tasks are queued
         if (!taskQueue.isEmpty()){
+//            logger.info("REMOVING TASK FROM QUEUE - -------");
             decision = taskQueue.remove();
             return decision;
         }
+//        logger.warn("OTHER TASK ---------------------------------------------------------------");
 
         /*
          * Checks if steps taken in certain direction has reached threshold. The row/column occupied
@@ -120,39 +124,52 @@ public class AreaScanNew implements Phase {
     }
     @Override
     public boolean isFinished(){
-        if (maxX - 2 <= 0 || maxY - 2 <= 0){
-            //Computes shortest path out between all sites and creeks
-//            shortestPath.computeClosestSite();
-//            shortestPath.updateSiteID(drone);
-
+        if (maxX - 2 <= 0 || maxY - 2 <= 0) {
+//            logger.info("hellllllllllloooooooooooooooooooooooo");
+            logger.info(shortestPath.closestCreek.toString());
             return true;
         }
         return false;
+
+//        return (maxX - 2 <= 0 || maxY - 2 <= 0);
+    }
+
+    @Override
+    public boolean lastPhase(){
+        return true;
     }
     @Override
     public void checkDrone(Drone drone){
+//        lowBattery = (drone.getBattery() <= 100);
+
+//        logger.info("------------------BEGIN CHECKDRONE --------------------------------------");
         JSONArray creeksJSON = drone.getScanInfoCreeks();
         if (!creeksJSON.isEmpty()){
+//            logger.info("------------------BEGIN CHECKDRONE -------------------------------------------------------");
             for (int i=0; i<creeksJSON.length(); ++i){
+                logger.info(x + " " + y);
+                logger.info(creeksJSON.getString(i));
                 shortestPath.addCreek(new PointsOfInterest(x,y, creeksJSON.getString(i)));
             }
         }
 
         JSONArray sitesJSON = drone.getScanInfoSites();
         if (!sitesJSON.isEmpty()){
+//            logger.info("------------------BEGIN CHECKDRONE -----------------------------------------++++++++++++++++++++++");
             for (int i=0; i<sitesJSON.length(); ++i){
+//                logger.info("-----------------------------------------SITE FOUND: " + x + " "+ y + " " + sitesJSON.getString(i));
                 shortestPath.addSite(new PointsOfInterest(x,y, sitesJSON.getString(i)));
+
             }
         }
+//        logger.info("------------------MIDDLE CHECKDRONE --------------------------------------");
         shortestPath.computeClosestSite();
         shortestPath.updateCreekID(drone);
-
-
-
-
+//        logger.info("------------------END CHECKDRONE --------------------------------------");
     }
     @Override
     public Phase nextPhase(){
+        //Never reaches this method
         return null;
     }
 
