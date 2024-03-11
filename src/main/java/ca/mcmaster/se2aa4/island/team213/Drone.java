@@ -139,6 +139,7 @@ public class Drone {
             this.previousDecision = Action.FLY;
         } else if (decision.getString("action").equals("stop"))  {
             logger.info("DRONE RECEIVED COMMAND FOR STOP");
+            this.previousDecision = Action.stop;
         }
     }
 
