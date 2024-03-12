@@ -1,5 +1,6 @@
 package ca.mcmaster.se2aa4.island.team213.carvePerimeter;
 
+import java.util.LinkedList;
 import java.util.Queue;
 
 import org.json.JSONObject;
@@ -25,6 +26,7 @@ public class CarvePerimeter implements Phase {
 
     public CarvePerimeter(int islandX, int islandY, Direction droneDirection) {
         this.isFinished = false;
+        this.decisionQueue = new LinkedList<Action>();
         this.islandX = islandX;
         this.islandY = islandY;
         this.droneDirection = droneDirection;
@@ -109,9 +111,29 @@ public class CarvePerimeter implements Phase {
         }
     }
 
+    public void updateDroneOnBooleanMap(Action action) {
+        // Will update droneX and droneY relative to mapOfCheckedTiles  indicies if the previous action was FLY or TURN_RIGHT
+    }
+
     @Override
     public Phase nextPhase() {
         return new EndPhase();
     }
     
+    public int getDroneX() {
+        return this.droneX;
+    }
+
+    public int getDroneY() {
+        return this.droneY;
+    }
+
+    public int getHorizontalFlyActions() {
+        return this.horizontalFlyActions;
+    }
+
+    public int getVerticalFlyActions() {
+        return this.verticalFlyActions;
+    }
+
 }
