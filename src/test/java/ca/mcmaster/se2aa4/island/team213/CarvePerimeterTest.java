@@ -1,6 +1,7 @@
 package ca.mcmaster.se2aa4.island.team213;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -38,44 +39,73 @@ public class CarvePerimeterTest {
 
     @Test
     public void testFirstDroneTurn() {
-        for(int i = 0; i <= cpN.getVerticalFlyActions(); i++) {
+        for(int i = 0; i <= cpN.getVerticalFlyActions() * 2 + 1; i++) {
             drone.parseDecision(cpN.createDecision(drone));
+            cpN.checkDrone(drone);
         }
         assertEquals(drone.getPreviousDecision(), Action.TURN_RIGHT);
+        assertEquals(cpN.getDroneDirection(), Direction.E);
 
-        for(int i = 0; i <= cpW.getHorizontalFlyActions(); i++) {
+        for(int i = 0; i <= cpW.getHorizontalFlyActions() * 2 + 1; i++) {
             drone.parseDecision(cpW.createDecision(drone));
+            cpN.checkDrone(drone);
         }
         assertEquals(drone.getPreviousDecision(), Action.TURN_RIGHT);
+        assertEquals(cpN.getDroneDirection(), Direction.S);
     }
 
     @Test
     public void testFirstTwoDroneTurns() {
-        for(int i = 0; i <= cpW.getHorizontalFlyActions(); i++) {
+        for(int i = 0; i <= cpW.getHorizontalFlyActions() * 2 + 1; i++) {
             drone.parseDecision(cpW.createDecision(drone));
             cpW.checkDrone(drone);
         }
         assertEquals(drone.getPreviousDecision(), Action.TURN_RIGHT);
-        for(int i = 0; i <= cpW.getVerticalFlyActions(); i++) {
+
+        for(int i = 0; i <= cpW.getVerticalFlyActions() * 2 + 1; i++) {
             drone.parseDecision(cpW.createDecision(drone));
             cpW.checkDrone(drone);
         }
         assertEquals(drone.getPreviousDecision(), Action.TURN_RIGHT);
+        assertEquals(cpW.getDroneDirection(), Direction.E);
     }
 
     @Test
     public void testCarvePerimeterEnd() {
         for(int j = 0; j < 2; j++) {
-            for(int i = 0; i <= cpW.getHorizontalFlyActions(); i++) {
+            for(int i = 0; i <= cpW.getHorizontalFlyActions() * 2 + 1; i++) {
                 drone.parseDecision(cpW.createDecision(drone));
                 cpW.checkDrone(drone);
             }
-            for(int i = 0; i <= cpW.getVerticalFlyActions(); i++) {
+            for(int i = 0; i <= cpW.getVerticalFlyActions() * 2 + 1; i++) {
                 drone.parseDecision(cpW.createDecision(drone));
                 cpW.checkDrone(drone);
             }
         }
         assertTrue(cpW.isFinished());
+        assertEquals(cpW.getDroneX(), 18 - 2);
+        assertEquals(cpW.getDroneY(), 31 - 1);
+    }
+
+    @Test
+    public void testDroneXYUpdate() {
+        assertEquals(cpW.getDroneX(), 18 - 2);
+        assertEquals(cpW.getDroneY(), 31 - 1);
+        drone.parseDecision(cpW.createDecision(drone));
+        cpW.checkDrone(drone);
+        drone.parseDecision(cpW.createDecision(drone));
+        cpW.checkDrone(drone);
+        assertNotEquals(cpW.getDroneX(), 18 - 2);
+        assertEquals(cpW.getDroneY(), 31 - 1);
+
+        assertEquals(cpN.getDroneX(), 0);
+        assertEquals(cpN.getDroneY(), 10 - 2);
+        drone.parseDecision(cpN.createDecision(drone));
+        cpN.checkDrone(drone);
+        drone.parseDecision(cpN.createDecision(drone));
+        cpN.checkDrone(drone);
+        assertEquals(cpN.getDroneX(), 0);
+        assertNotEquals(cpN.getDroneY(), 10 - 2);
     }
 
 }

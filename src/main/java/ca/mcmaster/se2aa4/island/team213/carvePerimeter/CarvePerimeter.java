@@ -60,7 +60,7 @@ public class CarvePerimeter implements Phase {
     }
 
     private void loadDecisionQueue(Direction droneDirection) {
-        // decisionQueue.add(Action.ECHO_RIGHT);
+        decisionQueue.add(Action.ECHO_RIGHT);
         if(droneDirection.equals(Direction.N) || droneDirection.equals(Direction.S)) {
             loadFlyAndEchoActions(this.verticalFlyActions);
         }
@@ -73,7 +73,7 @@ public class CarvePerimeter implements Phase {
     private void loadFlyAndEchoActions(int amount) {
         for(int i = 0; i < amount; i++) {
             decisionQueue.add(Action.FLY);
-            // decisionQueue.add(Action.ECHO_RIGHT);
+            decisionQueue.add(Action.ECHO_RIGHT);
         }
     }
 
@@ -106,13 +106,14 @@ public class CarvePerimeter implements Phase {
     @Override
     public void checkDrone(Drone drone) {
         if(drone.getPreviousDecision().equals(Action.TURN_RIGHT)) {
+            updateDroneXYAfterRightTurn();
             this.droneDirection = this.droneDirection.rightTurn();
             loadDecisionQueue(this.droneDirection);
         }
-    }
+        else if(drone.getPreviousDecision().equals(Action.FLY)) {
+            updateDroneXYAfterFly();
+        }
 
-    public void updateDroneOnBooleanMap(Action action) {
-        // Will update droneX and droneY relative to mapOfCheckedTiles  indicies if the previous action was FLY or TURN_RIGHT
     }
 
     @Override
@@ -120,6 +121,56 @@ public class CarvePerimeter implements Phase {
         return new EndPhase();
     }
     
+    private void updateDroneXYAfterFly() {
+        if(this.droneDirection.equals(Direction.N)) {
+            decreaseDroneY();
+        }
+        else if(this.droneDirection.equals(Direction.E)) {
+            increaseDroneX();
+        }
+        else if(this.droneDirection.equals(Direction.S)) {
+            increaseDroneY();
+        }
+        else if(this.droneDirection.equals(Direction.W)) {
+            decreaseDroneX();
+        }
+    }
+
+    private void updateDroneXYAfterRightTurn() {
+        if(this.droneDirection.equals(Direction.N)) {
+            increaseDroneX();
+            decreaseDroneY();
+        }
+        else if(this.droneDirection.equals(Direction.E)) {
+            increaseDroneX();
+            increaseDroneY();
+        }
+        else if(this.droneDirection.equals(Direction.S)) {
+            decreaseDroneX();
+            increaseDroneY();
+        }
+        else if(this.droneDirection.equals(Direction.W)) {
+            decreaseDroneX();
+            decreaseDroneY();
+        }
+    }
+
+    private void increaseDroneX() {
+        this.droneX += 1;
+    }
+
+    private void decreaseDroneX() {
+        this.droneX -= 1;
+    }
+
+    private void increaseDroneY() {
+        this.droneY += 1;
+    }
+
+    private void decreaseDroneY() {
+        this.droneY -= 1;
+    }
+
     public int getDroneX() {
         return this.droneX;
     }
@@ -136,4 +187,7 @@ public class CarvePerimeter implements Phase {
         return this.verticalFlyActions;
     }
 
+    public Direction getDroneDirection() {
+        return this.droneDirection;
+    }
 }
