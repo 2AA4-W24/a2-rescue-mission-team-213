@@ -79,7 +79,7 @@ public class LocateIsland implements Phase {
             parameters.put("direction", drone.getDirection().rightTurn().toString());
             decision.put("parameters", parameters);
 
-            logger.info(drone.getDirection());
+//            logger.info(drone.getDirection());
 
             // set decision to turn right once and queue another one
             JSONObject secondTurn = new JSONObject();
@@ -146,7 +146,7 @@ public class LocateIsland implements Phase {
                 for (int i = 0; i < drone.getRangeRight(); i++){
                     JSONObject flyCommand = new JSONObject();
                     flyCommand.put("action", "fly");
-                    taskQueue.add((flyCommand));
+                    taskQueue.add(flyCommand);
                 }
             }
             // Ground is left
@@ -160,7 +160,7 @@ public class LocateIsland implements Phase {
                 for (int i = 0; i < drone.getRangeLeft(); i++){
                     JSONObject flyCommand = new JSONObject();
                     flyCommand.put("action", "fly");
-                    taskQueue.add((flyCommand));
+                    taskQueue.add(flyCommand);
                 }
             }
             

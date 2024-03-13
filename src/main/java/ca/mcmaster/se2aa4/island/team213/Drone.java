@@ -24,10 +24,10 @@ public class Drone {
 
     private void stringToDirection(String direction) {
         switch(direction) {
-            case ("N") -> this.direction = Direction.N;
-            case ("E") -> this.direction = Direction.E;
-            case ("S") -> this.direction = Direction.S;
-            case ("W") -> this.direction = Direction.W;
+            case "N" -> this.direction = Direction.N;
+            case "E" -> this.direction = Direction.E;
+            case "S" -> this.direction = Direction.S;
+            case "W" -> this.direction = Direction.W;
         }
     }
 
