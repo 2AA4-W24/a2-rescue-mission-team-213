@@ -178,7 +178,7 @@ public class CarvePerimeter implements Phase {
                 }
             }
             else {
-                for(int i = droneX; i < echoRange + 1; i++) {
+                for(int i = droneX; i < echoRange; i++) {
                     this.mapOfCheckedTiles[droneY][i] = true;
                 }
             }
@@ -190,7 +190,7 @@ public class CarvePerimeter implements Phase {
                 }
             }
             else {
-                for(int i = droneY; i < echoRange + 1; i++) {
+                for(int i = droneY; i < echoRange; i++) {
                     this.mapOfCheckedTiles[i][droneX] = true;
                 }
             }
@@ -202,7 +202,7 @@ public class CarvePerimeter implements Phase {
                 }
             }
             else {
-                for(int i = droneX; i >= droneX - echoRange; i--) {
+                for(int i = droneX; i > droneX - echoRange; i--) {
                     this.mapOfCheckedTiles[droneY][i] = true;
                 }
             }
@@ -214,7 +214,7 @@ public class CarvePerimeter implements Phase {
                 }
             }
             else {
-                for(int i = droneY; i >= droneY - echoRange; i--) {
+                for(int i = droneY; i > droneY - echoRange; i--) {
                     this.mapOfCheckedTiles[i][droneX] = true;
                 }
             }
