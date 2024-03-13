@@ -3,11 +3,14 @@ package ca.mcmaster.se2aa4.island.team213.carvePerimeter;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import ca.mcmaster.se2aa4.island.team213.Action;
 import ca.mcmaster.se2aa4.island.team213.Direction;
 import ca.mcmaster.se2aa4.island.team213.Drone;
+import ca.mcmaster.se2aa4.island.team213.EchoResult;
 import ca.mcmaster.se2aa4.island.team213.EndPhase;
 import ca.mcmaster.se2aa4.island.team213.Phase;
 import ca.mcmaster.se2aa4.island.team213.edgeFinding.DecisionJSONs;
@@ -24,7 +27,15 @@ public class CarvePerimeter implements Phase {
     private Queue<Action> decisionQueue;
     private boolean[][] mapOfCheckedTiles;
 
+    private final Logger logger = LogManager.getLogger();
+
     public CarvePerimeter(int islandX, int islandY, Direction droneDirection) {
+        logger.info("*");
+        logger.info("*");
+        logger.info("** new CarvePerimeter created **");
+        logger.info("*");
+        logger.info("*");
+        
         this.isFinished = false;
         this.decisionQueue = new LinkedList<Action>();
         this.islandX = islandX;
@@ -84,6 +95,19 @@ public class CarvePerimeter implements Phase {
 
     @Override
     public boolean isFinished() {
+        if(this.isFinished) {
+            for(int i = 0; i < islandY; i++) {
+                String test = "";
+                for(int j = 0; j < islandX; j++) {
+                    if(this.mapOfCheckedTiles[i][j] == true) {
+                        test += "- ";
+                    } else {
+                        test += "0 ";
+                    }
+                }
+                logger.info(test);
+            }
+        }
         return this.isFinished;
     }
 
@@ -113,12 +137,69 @@ public class CarvePerimeter implements Phase {
         else if(drone.getPreviousDecision().equals(Action.FLY)) {
             updateDroneXYAfterFly();
         }
+        else if(drone.getPreviousDecision().equals(Action.ECHO_RIGHT)) {
+            updateMapOfCheckedTiles(drone.getRangeRight(), drone.getEchoRight());
+        }
 
     }
 
     @Override
     public Phase nextPhase() {
         return new EndPhase();
+    }
+
+    private void updateMapOfCheckedTiles(Integer echoRange, EchoResult echoRight) {
+        if(this.droneDirection.equals(Direction.N)) {
+            if(echoRight.equals(EchoResult.OUT_OF_RANGE)) {
+                for(int i = droneX; i < islandX; i++) {
+                    this.mapOfCheckedTiles[droneY][i] = true;
+                }
+            }
+            else {
+                for(int i = droneX; i < echoRange + 1; i++) {
+                    this.mapOfCheckedTiles[droneY][i] = true;
+                }
+            }
+        }
+        else if(this.droneDirection.equals(Direction.E)) {
+            if(echoRight.equals(EchoResult.OUT_OF_RANGE)) {
+                for(int i = droneY; i < islandY; i++) {
+                    this.mapOfCheckedTiles[i][droneX] = true;
+                }
+            }
+            else {
+                for(int i = droneY; i < echoRange + 1; i++) {
+                    this.mapOfCheckedTiles[i][droneX] = true;
+                }
+            }
+        }
+        else if(this.droneDirection.equals(Direction.S)) {
+            logger.info("Scanning when facing south");
+            if(echoRight.equals(EchoResult.OUT_OF_RANGE)) {
+                logger.info("Receieved out of range");
+                for(int i = droneX; i >= 0; i--) {
+                    this.mapOfCheckedTiles[droneY][i] = true;
+                }
+            }
+            else {
+                logger.info("Receieved ground");
+                for(int i = droneX; i >= droneX - echoRange; i--) {
+                    this.mapOfCheckedTiles[droneY][i] = true;
+                }
+            }
+        }
+        else if(this.droneDirection.equals(Direction.W)) {
+            if(echoRight.equals(EchoResult.OUT_OF_RANGE)) {
+                for(int i = droneY; i >= 0; i--) {
+                    this.mapOfCheckedTiles[i][droneX] = true;
+                }
+            }
+            else {
+                for(int i = droneY; i >= droneY - echoRange; i--) {
+                    this.mapOfCheckedTiles[i][droneX] = true;
+                }
+            }
+        }
     }
     
     private void updateDroneXYAfterFly() {

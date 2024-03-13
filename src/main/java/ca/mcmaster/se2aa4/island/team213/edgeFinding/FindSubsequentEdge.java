@@ -13,6 +13,7 @@ import ca.mcmaster.se2aa4.island.team213.Drone;
 import ca.mcmaster.se2aa4.island.team213.EchoResult;
 import ca.mcmaster.se2aa4.island.team213.Phase;
 import ca.mcmaster.se2aa4.island.team213.areaScan.AreaScanNew;
+import ca.mcmaster.se2aa4.island.team213.carvePerimeter.CarvePerimeter;
 
 public class FindSubsequentEdge implements Phase {
     private boolean isFinished;
@@ -73,7 +74,8 @@ public class FindSubsequentEdge implements Phase {
         if(this.edgesFound == 3) {
             logger.info("FINAL ISLAND X: " + this.islandX);
             logger.info("FINAL ISLAND Y: " + this.islandY);
-            return new AreaScanNew(this.islandX, this.islandY, this.droneDirection);
+            return new CarvePerimeter(this.islandX, this.islandY, this.droneDirection);
+            // return new AreaScanNew(this.islandX, this.islandY, this.droneDirection);
         }
 
         int flyActionsLeft = !this.increaseX ? this.islandX : this.islandY;
