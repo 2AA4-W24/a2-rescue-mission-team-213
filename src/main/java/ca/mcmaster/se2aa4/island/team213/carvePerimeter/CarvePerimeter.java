@@ -97,6 +97,7 @@ public class CarvePerimeter implements Phase {
     @Override
     public boolean isFinished() {
         if(this.isFinished) {
+            int groundFound = 0;
             for(int i = 0; i < islandY; i++) {
                 String test = "";
                 for(int j = 0; j < islandX; j++) {
@@ -107,11 +108,15 @@ public class CarvePerimeter implements Phase {
                             test += "- ";
                         } else {
                             test += "0 ";
+                            groundFound += 1;
                         }
                     }
                 }
                 logger.info(test);
             }
+            logger.info("Total tiles: " + (islandY * islandX));
+            logger.info("Tiles left to scan: " + groundFound);
+            logger.info("Estimated battery cost: ~" + ((islandY * islandX * 8) - (groundFound * 8)));
         }
         return this.isFinished;
     }
