@@ -3,8 +3,10 @@ package ca.mcmaster.se2aa4.island.team213.carvePerimeter;
 import java.util.LinkedList;
 import java.util.Queue;
 
+
 import ca.mcmaster.se2aa4.island.team213.areaScan.AreaScanInterlaced;
 import ca.mcmaster.se2aa4.island.team213.areaScan.AreaScanNew;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -99,6 +101,9 @@ public class CarvePerimeter implements Phase {
     @Override
     public boolean isFinished() {
         if(this.isFinished) {
+
+            int groundFound = 0;
+
             for(int i = 0; i < islandY; i++) {
                 String test = "";
                 for(int j = 0; j < islandX; j++) {
@@ -109,11 +114,19 @@ public class CarvePerimeter implements Phase {
                             test += "- ";
                         } else {
                             test += "0 ";
+
+                            groundFound += 1;
+
                         }
                     }
                 }
                 logger.info(test);
             }
+
+            logger.info("Total tiles: " + (islandY * islandX));
+            logger.info("Tiles left to scan: " + groundFound);
+            logger.info("Estimated battery cost: ~" + ((islandY * islandX * 8) - (groundFound * 8)));
+
         }
         return this.isFinished;
     }
@@ -153,6 +166,7 @@ public class CarvePerimeter implements Phase {
     @Override
     public Phase nextPhase() {
         return new AreaScanInterlaced(islandX, islandY, droneDirection);
+
     }
 
     // Move out of this class
@@ -284,4 +298,6 @@ public class CarvePerimeter implements Phase {
     public Direction getDroneDirection() {
         return this.droneDirection;
     }
+
 }
+
