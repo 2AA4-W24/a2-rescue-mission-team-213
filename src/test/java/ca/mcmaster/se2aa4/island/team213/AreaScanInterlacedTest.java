@@ -6,11 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AreaScanInterlacedTest {
         @Test
     public void areaScanNewTest(){
-        int width = 46;
-        int height = 34;
+        int width = 26;
+        int height = 40;
         int i=150;
 
-            AreaScanInterlaced areaScanInterlaced = new AreaScanInterlaced(12, 10, Direction.N);
+            AreaScanInterlaced areaScanInterlaced = new AreaScanInterlaced(26, 40, Direction.E);
             System.out.printf("%d %d\n", areaScanInterlaced.stepsBeforeTurn, areaScanInterlaced.turnsBeforeReturn);
         while (!areaScanInterlaced.isFinished()){
             --i;

@@ -35,6 +35,10 @@ public class AreaScanInterlaced implements Phase {
     private Queue<JSONObject> taskQueue = new LinkedList<>();
 
     public AreaScanInterlaced(int islandx, int islandy, Direction droneDirection){
+        logger.info("---------------------------AREASCANINTERLACED CREATED---------------------------------------");
+        logger.info(islandx);
+        logger.info(islandy);
+        logger.info(droneDirection);
         direction = droneDirection;
         this.x = 0;
         this.y = 0;
@@ -72,32 +76,39 @@ public class AreaScanInterlaced implements Phase {
 
     @Override
     public boolean lastPhase() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isFinished() {
-        if (!extraColumn){
-            return (turnedAround && turns == turnsBeforeReturn-1 && movesSinceTurn == stepsBeforeTurn);
+        if (turnedAround && turns == turnsBeforeReturn-1 && movesSinceTurn == stepsBeforeTurn){
+            logger.info("ENDED");
+            return true;
         }
-        return (turnedAround && turns == turnsBeforeReturn && movesSinceTurn == stepsBeforeTurn);
+        return false;
+//        if (!extraColumn){
+//            logger.info("ENDED");
+//            return (turnedAround && turns == turnsBeforeReturn-1 && movesSinceTurn == stepsBeforeTurn);
+//        }
+//        return (turnedAround && turns == turnsBeforeReturn && movesSinceTurn == stepsBeforeTurn);
 
     }
 
     @Override
     public JSONObject createDecision(Drone drone) {
-        JSONObject enqueueScan = new JSONObject();
+        logger.info("x: " + x + "  y: " + y);
+//        JSONObject enqueueScan = new JSONObject();
         JSONObject decision = new JSONObject();
         JSONObject headingDirection = new JSONObject();
+        JSONObject finaldecision = new JSONObject();
 
         //TODO: ADD SCANNING TO TASKQUEUE AND FIGURE OUT HOW IT ALL TIES TOGETHER
 
-        // check if tasks are queued
-//        if (!taskQueue.isEmpty()){
-////            logger.info("REMOVING TASK FROM QUEUE - -------");
-//            decision = taskQueue.remove();
-//            return decision;
-//        }
+        if (!taskQueue.isEmpty()){
+//            logger.info("REMOVING TASK FROM QUEUE - -------");
+            decision = taskQueue.remove();
+            return decision;
+        }
 
         if (!turnedAround && turns == turnsBeforeReturn && movesSinceTurn == stepsBeforeTurn){
             System.out.printf("hello-------------------------\n");
@@ -113,7 +124,9 @@ public class AreaScanInterlaced implements Phase {
 
 //            leftTurnPos();
 //            direction = direction.leftTurn();
+            decision = new JSONObject();
             decision.put("action", "heading");
+            headingDirection = new JSONObject();
             headingDirection.put("direction", direction);
             decision.put("parameters", headingDirection);
             taskQueue.add(decision);
@@ -142,6 +155,7 @@ public class AreaScanInterlaced implements Phase {
 
 
             decision = new JSONObject();
+            headingDirection = new JSONObject();
 //            leftTurnPos();
 //            direction = direction.leftTurn();
             decision.put("action", "heading");
@@ -165,7 +179,8 @@ public class AreaScanInterlaced implements Phase {
             }
 
             //2 right turns
-
+            decision = new JSONObject();
+            headingDirection = new JSONObject();
             decision.put("action", "heading");
             headingDirection.put("direction", direction);
             decision.put("parameters", headingDirection);
@@ -181,6 +196,8 @@ public class AreaScanInterlaced implements Phase {
                 direction = direction.leftTurn();
                 lastTurnLeft = true;
             }
+            decision = new JSONObject();
+            headingDirection = new JSONObject();
             decision.put("action", "heading");
             headingDirection.put("direction", direction);
             decision.put("parameters", headingDirection);
@@ -198,8 +215,12 @@ public class AreaScanInterlaced implements Phase {
             movePos();
             movesSinceTurn++;
         }
-        //TODO: REMOVE RETURN NULL
-        return null;
+        JSONObject enqueueScan2 = new JSONObject();
+        enqueueScan2.put("action", "scan");
+        taskQueue.add(enqueueScan2);
+
+        finaldecision = taskQueue.remove();
+        return finaldecision;
 
     }
 
