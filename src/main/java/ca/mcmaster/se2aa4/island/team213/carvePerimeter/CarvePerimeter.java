@@ -21,7 +21,7 @@ public class CarvePerimeter implements Phase {
     private Direction droneDirection;
     private int rightTurnsPerformed;
 
-    private int droneX, droneY;
+    private int droneX, droneY;                             // store in ADT
     private int horizontalFlyActions, verticalFlyActions;
 
     private Queue<Action> decisionQueue;
@@ -32,7 +32,7 @@ public class CarvePerimeter implements Phase {
     public CarvePerimeter(int islandX, int islandY, Direction droneDirection) {
         logger.info("*");
         logger.info("*");
-        logger.info("** new CarvePerimeter created **");
+        logger.info("** new CarvePerimeter created **" + droneDirection);
         logger.info("*");
         logger.info("*");
         
@@ -51,6 +51,7 @@ public class CarvePerimeter implements Phase {
         loadDecisionQueue(droneDirection);
     }
 
+    // Move out of this class
     private void placeDroneOnBooleanMap(Direction droneDirection) {
         if(droneDirection.equals(Direction.N)) {
             this.droneX = 0;
@@ -99,10 +100,14 @@ public class CarvePerimeter implements Phase {
             for(int i = 0; i < islandY; i++) {
                 String test = "";
                 for(int j = 0; j < islandX; j++) {
-                    if(this.mapOfCheckedTiles[i][j] == true) {
-                        test += "- ";
+                    if(this.droneY == i && this.droneX == j) {
+                        test += "1 ";
                     } else {
-                        test += "0 ";
+                        if(this.mapOfCheckedTiles[i][j] == true) {
+                            test += "- ";
+                        } else {
+                            test += "0 ";
+                        }
                     }
                 }
                 logger.info(test);
@@ -148,6 +153,7 @@ public class CarvePerimeter implements Phase {
         return new EndPhase();
     }
 
+    // Move out of this class
     private void updateMapOfCheckedTiles(Integer echoRange, EchoResult echoRight) {
         if(this.droneDirection.equals(Direction.N)) {
             if(echoRight.equals(EchoResult.OUT_OF_RANGE)) {
@@ -174,15 +180,12 @@ public class CarvePerimeter implements Phase {
             }
         }
         else if(this.droneDirection.equals(Direction.S)) {
-            logger.info("Scanning when facing south");
             if(echoRight.equals(EchoResult.OUT_OF_RANGE)) {
-                logger.info("Receieved out of range");
                 for(int i = droneX; i >= 0; i--) {
                     this.mapOfCheckedTiles[droneY][i] = true;
                 }
             }
             else {
-                logger.info("Receieved ground");
                 for(int i = droneX; i >= droneX - echoRange; i--) {
                     this.mapOfCheckedTiles[droneY][i] = true;
                 }
@@ -202,6 +205,7 @@ public class CarvePerimeter implements Phase {
         }
     }
     
+    // Move out of this class
     private void updateDroneXYAfterFly() {
         if(this.droneDirection.equals(Direction.N)) {
             decreaseDroneY();
@@ -217,6 +221,7 @@ public class CarvePerimeter implements Phase {
         }
     }
 
+    // Move out of this class
     private void updateDroneXYAfterRightTurn() {
         if(this.droneDirection.equals(Direction.N)) {
             increaseDroneX();
@@ -236,26 +241,32 @@ public class CarvePerimeter implements Phase {
         }
     }
 
+    // Move out of this class
     private void increaseDroneX() {
         this.droneX += 1;
     }
 
+    // Move out of this class
     private void decreaseDroneX() {
         this.droneX -= 1;
     }
 
+    // Move out of this class
     private void increaseDroneY() {
         this.droneY += 1;
     }
 
+    // Move out of this class
     private void decreaseDroneY() {
         this.droneY -= 1;
     }
 
+    // Move out of this class
     public int getDroneX() {
         return this.droneX;
     }
 
+    // Move out of this class
     public int getDroneY() {
         return this.droneY;
     }
