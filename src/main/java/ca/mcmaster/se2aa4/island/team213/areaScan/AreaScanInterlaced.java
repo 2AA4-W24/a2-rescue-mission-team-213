@@ -30,18 +30,22 @@ public class AreaScanInterlaced implements Phase {
 
     public boolean turnedAround = false;
 
+    boolean[][] mapOfCheckedTiles;
+
     private final Logger logger = LogManager.getLogger();
 
     private Queue<JSONObject> taskQueue = new LinkedList<>();
 
-    public AreaScanInterlaced(int islandx, int islandy, Direction droneDirection){
+    public AreaScanInterlaced(int islandx, int islandy, int x, int y, Direction droneDirection, boolean[][] mapOfCheckedTiles){
         logger.info("---------------------------AREASCANINTERLACED CREATED---------------------------------------");
         logger.info(islandx);
         logger.info(islandy);
         logger.info(droneDirection);
         direction = droneDirection;
-        this.x = 0;
-        this.y = 0;
+        this.x = x;
+        this.y = y;
+
+        this.mapOfCheckedTiles = mapOfCheckedTiles;
 
         switch (droneDirection){
             case E, W -> {
@@ -215,9 +219,13 @@ public class AreaScanInterlaced implements Phase {
             movePos();
             movesSinceTurn++;
         }
-        JSONObject enqueueScan2 = new JSONObject();
-        enqueueScan2.put("action", "scan");
-        taskQueue.add(enqueueScan2);
+        if (!mapOfCheckedTiles[y][x]){
+            JSONObject enqueueScan2 = new JSONObject();
+            enqueueScan2.put("action", "scan");
+            taskQueue.add(enqueueScan2);
+            mapOfCheckedTiles[y][x] = true;
+        }
+
 
         finaldecision = taskQueue.remove();
         return finaldecision;
@@ -237,33 +245,33 @@ public class AreaScanInterlaced implements Phase {
     private void rightTurnPos(){
         switch(direction){
             case N -> {
-                y++;
+                y--;
                 x++;
             }
             case E -> {
                 x++;
-                y--;
+                y++;
             }
             case S -> {
-                y--;
+                y++;
                 x--;
             }
             case W -> {
                 x--;
-                y++;
+                y--;
             }
         }
     }
     private void movePos(){
         switch(direction){
             case N -> {
-                y++;
+                y--;
             }
             case E -> {
                 x++;
             }
             case S -> {
-                y--;
+                y++;
             }
             case W -> {
                 x--;
@@ -273,20 +281,20 @@ public class AreaScanInterlaced implements Phase {
     private void leftTurnPos(){
         switch(direction){
             case N -> {
-                y++;
+                y--;
                 x--;
             }
             case E -> {
                 x++;
-                y++;
+                y--;
             }
             case S -> {
-                y--;
+                y++;
                 x++;
             }
             case W -> {
                 x--;
-                y--;
+                y++;
             }
         }
     }

@@ -165,7 +165,7 @@ public class CarvePerimeter implements Phase {
 
     @Override
     public Phase nextPhase() {
-        return new AreaScanInterlaced(islandX, islandY, droneDirection);
+        return new AreaScanInterlaced(islandX, islandY, droneX, droneY, droneDirection, mapOfCheckedTiles);
 
     }
 
