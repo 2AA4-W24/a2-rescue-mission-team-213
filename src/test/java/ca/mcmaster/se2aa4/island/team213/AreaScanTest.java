@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AreaScanTest {
 //    @Test
 //    public void areaScanNewTest(){
-//        int width = 46;
+//        int width = 4 6;
 //        int height = 34;
 //        AreaScanNew areaScanNew = new AreaScanNew(width, height, Direction.E);
 //        while (!areaScanNew.isFinished()){
