@@ -23,17 +23,17 @@ public class FindFirstEdge implements Phase {
 
     private final Logger logger = LogManager.getLogger();
 
-    public FindFirstEdge(Direction direction) {
-        logger.info("** FindFirstEdge created, starting with drone facing " + direction.toString());
+    public FindFirstEdge(Direction droneDirection) {
+        logger.info("** FindFirstEdge created, starting with drone facing " + droneDirection.toString());
         this.isFinished = false;
         this.decisionQueue = new LinkedList<Action>();
 
-        parseStartingDirection(direction);
+        parseStartingDirection(droneDirection);
         loadDecisionQueue();
     }
 
-    private void parseStartingDirection(Direction direction) {
-        if(direction.equals(Direction.N) || direction.equals(Direction.S)) {
+    private void parseStartingDirection(Direction droneDirection) {
+        if(droneDirection.equals(Direction.N) || droneDirection.equals(Direction.S)) {
             this.increaseX = false;
             this.islandX = 1;
             this.islandY = 0;

@@ -61,6 +61,11 @@ public class Explorer implements IExplorerRaid {
     @Override
     public String deliverFinalReport() {
         logger.warn("GAME ENDED?");
+
+        if(drone.getSiteID().equals(null)) {
+            return "no site found";
+        }
+        
         logger.info(drone.getSiteID());
         return drone.getSiteID();
     }
