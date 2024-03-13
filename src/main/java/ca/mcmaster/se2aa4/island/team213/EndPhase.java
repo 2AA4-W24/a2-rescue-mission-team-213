@@ -4,9 +4,6 @@ import org.json.JSONObject;
 
 public class EndPhase implements Phase {
 
-    public EndPhase () {
-        
-    }
 
     @Override
     public boolean lastPhase(){
