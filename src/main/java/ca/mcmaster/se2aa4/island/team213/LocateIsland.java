@@ -97,16 +97,16 @@ public class LocateIsland implements Phase {
         else if (!(Objects.equals(drone.getEchoAhead(), EchoResult.GROUND) || Objects.equals(drone.getEchoRight(), EchoResult.GROUND) || Objects.equals(drone.getEchoLeft(), EchoResult.GROUND))){
             decision.put("action", "fly");
 
+//            JSONObject enqueueEcho = new JSONObject();
+//            enqueueEcho.put("action", "echo");
+//            JSONObject parameters = new JSONObject();
+//            parameters.put("direction", drone.getDirection().toString());
+//            enqueueEcho.put("parameters", parameters);
+//            taskQueue.add(enqueueEcho);
+
             JSONObject enqueueEcho = new JSONObject();
             enqueueEcho.put("action", "echo");
             JSONObject parameters = new JSONObject();
-            parameters.put("direction", drone.getDirection().toString());
-            enqueueEcho.put("parameters", parameters);
-            taskQueue.add(enqueueEcho);
-
-            enqueueEcho = new JSONObject();
-            enqueueEcho.put("action", "echo");
-            parameters = new JSONObject();
             parameters.put("direction", drone.getDirection().rightTurn().toString());
             enqueueEcho.put("parameters", parameters);
             taskQueue.add(enqueueEcho);
