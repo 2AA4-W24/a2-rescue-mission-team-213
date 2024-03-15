@@ -70,7 +70,7 @@ public class LocateIsland implements Phase {
 
 
         // check if reached the border of the map -> need to turn around
-        else if (Objects.equals(drone.getEchoAhead(), EchoResult.OUT_OF_RANGE) && Objects.equals(drone.getRangeHeading(), 1)){
+        else if (Objects.equals(drone.getEchoAhead(), EchoResult.OUT_OF_RANGE) && Objects.equals(drone.getRangeAhead(), 1)){
             decision.put("action", "heading");
             JSONObject parameters = new JSONObject();
             // TODO: violates law of demeter
@@ -132,7 +132,7 @@ public class LocateIsland implements Phase {
             if (Objects.equals(drone.getEchoAhead(), EchoResult.GROUND)){
                 decision.put("action", "fly");
                 // need to keep heading i - 1 times in that direction
-                for (int i = 0; i < drone.getRangeHeading(); i++){
+                for (int i = 0; i < drone.getRangeAhead(); i++){
                     taskQueue.add(decision);
                 }
             }
