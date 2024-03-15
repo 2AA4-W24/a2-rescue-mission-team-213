@@ -56,9 +56,10 @@ public class FindFirstEdge implements Phase {
 
     @Override
     public JSONObject createDecision(Drone drone) {
-        JSONObject decision = new JSONObject();
-        
-        decision = DecisionJSONs.actionToJSONObject(this.decisionQueue.peek(), drone.getDirection());
+        JSONObject decision;
+        Action nextAction = this.decisionQueue.peek();
+
+        decision = nextAction.toJSON(drone.getDirection());
         if(this.decisionQueue.peek().equals(Action.TURN_RIGHT)) {
             this.isFinished = true;
         }

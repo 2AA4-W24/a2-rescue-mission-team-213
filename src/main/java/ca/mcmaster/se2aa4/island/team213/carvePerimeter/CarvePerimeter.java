@@ -5,7 +5,6 @@ import java.util.Queue;
 
 
 import ca.mcmaster.se2aa4.island.team213.areaScan.AreaScanInterlaced;
-import ca.mcmaster.se2aa4.island.team213.areaScan.AreaScanNew;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,9 +14,7 @@ import ca.mcmaster.se2aa4.island.team213.Action;
 import ca.mcmaster.se2aa4.island.team213.Direction;
 import ca.mcmaster.se2aa4.island.team213.Drone;
 import ca.mcmaster.se2aa4.island.team213.EchoResult;
-import ca.mcmaster.se2aa4.island.team213.EndPhase;
 import ca.mcmaster.se2aa4.island.team213.Phase;
-import ca.mcmaster.se2aa4.island.team213.edgeFinding.DecisionJSONs;
 
 public class CarvePerimeter implements Phase {
     private boolean isFinished;
@@ -133,9 +130,10 @@ public class CarvePerimeter implements Phase {
 
     @Override
     public JSONObject createDecision(Drone drone) {
-        JSONObject decision = new JSONObject();
+        JSONObject decision;
+        Action nextAction = this.decisionQueue.peek();
         
-        decision = DecisionJSONs.actionToJSONObject(this.decisionQueue.peek(), drone.getDirection());
+        decision = nextAction.toJSON(drone.getDirection());
         if(this.decisionQueue.peek().equals(Action.TURN_RIGHT)) {
             this.rightTurnsPerformed += 1;
         }

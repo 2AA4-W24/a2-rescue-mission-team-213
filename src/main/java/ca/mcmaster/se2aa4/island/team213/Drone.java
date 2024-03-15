@@ -58,8 +58,8 @@ public class Drone {
     
     public void parseDecision(JSONObject decision) {
         if(decision.getString("action").equals("heading")) {
-            this.echo = new EchoStatus();
             JSONObject parameter = decision.getJSONObject("parameters");
+            this.echo = new EchoStatus();
             if(this.direction.rightTurn().toString().equals(parameter.get("direction").toString())) {
                 logger.info("DRONE RECEIVED COMMAND FOR RIGHT HEADING");
                 this.direction = this.direction.rightTurn();
@@ -93,7 +93,8 @@ public class Drone {
         else if(decision.getString("action").equals("fly")) {
             logger.info("DRONE RECEIVED COMMAND FOR FLY");
             this.previousDecision = Action.FLY;
-        } else if (decision.getString("action").equals("stop"))  {
+        } 
+        else if (decision.getString("action").equals("stop")) {
             logger.info("DRONE RECEIVED COMMAND FOR STOP");
             this.previousDecision = Action.STOP;
         }

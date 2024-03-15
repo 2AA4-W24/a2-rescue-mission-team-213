@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
+import ca.mcmaster.se2aa4.island.team213.Action;
 import ca.mcmaster.se2aa4.island.team213.Drone;
 import ca.mcmaster.se2aa4.island.team213.Phase;
 
@@ -39,8 +40,8 @@ public class FlyPastDetermined implements Phase{
 
     @Override
     public JSONObject createDecision(Drone drone) {
-        JSONObject decision = new JSONObject();
-        decision.put("action", "fly");
+        JSONObject decision;
+        decision = Action.FLY.toJSON(drone.getDirection());
         return decision;
     }
 
