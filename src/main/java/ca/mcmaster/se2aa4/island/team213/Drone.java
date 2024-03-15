@@ -122,8 +122,8 @@ public class Drone {
 
     public Integer getRangeRight() {
         return echo.rangeRight;
-    
     }
+
     public Integer getRangeLeft() {
         return echo.rangeLeft;
     }

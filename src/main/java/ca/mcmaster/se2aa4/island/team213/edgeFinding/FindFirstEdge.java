@@ -60,7 +60,7 @@ public class FindFirstEdge implements Phase {
         Action nextAction = this.decisionQueue.peek();
 
         decision = nextAction.toJSON(drone.getDirection());
-        if(this.decisionQueue.peek().equals(Action.TURN_RIGHT)) {
+        if(nextAction.equals(Action.TURN_RIGHT)) {
             this.isFinished = true;
         }
         this.decisionQueue.remove();

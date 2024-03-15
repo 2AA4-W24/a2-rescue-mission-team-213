@@ -52,7 +52,7 @@ public class FindSubsequentEdge implements Phase {
         Action nextAction = this.decisionQueue.peek();
         
         decision = nextAction.toJSON(drone.getDirection());
-        if(this.decisionQueue.peek().equals(Action.TURN_RIGHT)) {
+        if(nextAction.equals(Action.TURN_RIGHT)) {
             this.isFinished = true;
             this.droneDirection = drone.getDirection().rightTurn();
         }
@@ -74,8 +74,8 @@ public class FindSubsequentEdge implements Phase {
         if(this.edgesFound == 3) {
             logger.info("FINAL ISLAND X: " + this.islandX);
             logger.info("FINAL ISLAND Y: " + this.islandY);
+            
             return new CarvePerimeter(this.islandX, this.islandY, this.droneDirection);
-            // return new AreaScanNew(this.islandX, this.islandY, this.droneDirection);
         }
 
         int flyActionsLeft = !this.increaseX ? this.islandX : this.islandY;
