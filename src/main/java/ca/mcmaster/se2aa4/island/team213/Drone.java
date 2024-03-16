@@ -62,7 +62,9 @@ public class Drone {
             this.echo = new EchoStatus();
             if(this.direction.rightTurn().toString().equals(parameter.get("direction").toString())) {
                 logger.info("DRONE RECEIVED COMMAND FOR RIGHT HEADING");
+                logger.info("PREVIOUS DIRECION: " + this.direction.toString());
                 this.direction = this.direction.rightTurn();
+                logger.info("NEW DIRECION: " + this.direction.toString());
                 this.previousDecision = Action.TURN_RIGHT;
             }
             else if(this.direction.leftTurn().toString().equals(parameter.get("direction").toString())) {

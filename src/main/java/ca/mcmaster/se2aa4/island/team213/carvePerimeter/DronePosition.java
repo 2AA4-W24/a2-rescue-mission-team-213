@@ -1,15 +1,16 @@
 package ca.mcmaster.se2aa4.island.team213.carvePerimeter;
 
+import ca.mcmaster.se2aa4.island.team213.Action;
 import ca.mcmaster.se2aa4.island.team213.Direction;
 
 public class DronePosition {
-    private int droneX, droneY; 
+    private int droneX, droneY;
 
     public DronePosition(int islandX, int islandY, Direction droneDirection) {
-        placeDroneOnBooleanMap(droneDirection, islandX, islandY);
+        initializeDroneXY(islandX, islandY, droneDirection);
     }
 
-    private void placeDroneOnBooleanMap(Direction droneDirection, int islandX, int islandY) {
+    private void initializeDroneXY(int islandX, int islandY, Direction droneDirection) {
         if(droneDirection.equals(Direction.N)) {
             this.droneX = 0;
             this.droneY = islandY - 2;
@@ -28,7 +29,16 @@ public class DronePosition {
         }
     }
 
-    public void updateDroneXYAfterFly(Direction droneDirection) {
+    public void updatePositionAfterDecision(Action previousDecision, Direction droneDirection) {
+        if(previousDecision.equals(Action.FLY)) {
+            updateAfterFly(droneDirection);
+        }
+        else if(previousDecision.equals(Action.TURN_RIGHT)) {
+            updateAfterTurn(droneDirection);
+        }
+    }
+
+    private void updateAfterFly(Direction droneDirection) {
         if(droneDirection.equals(Direction.N)) {
             decreaseDroneY();
         }
@@ -43,22 +53,22 @@ public class DronePosition {
         }
     }
 
-    public void updateDroneXYAfterRightTurn(Direction droneDirection) {
+    private void updateAfterTurn(Direction droneDirection) {
         if(droneDirection.equals(Direction.N)) {
-            increaseDroneX();
+            decreaseDroneX();
             decreaseDroneY();
         }
         else if(droneDirection.equals(Direction.E)) {
             increaseDroneX();
-            increaseDroneY();
+            decreaseDroneY();
         }
         else if(droneDirection.equals(Direction.S)) {
-            decreaseDroneX();
+            increaseDroneX();
             increaseDroneY();
         }
         else if(droneDirection.equals(Direction.W)) {
             decreaseDroneX();
-            decreaseDroneY();
+            increaseDroneY();
         }
     }
 
@@ -85,5 +95,4 @@ public class DronePosition {
     public int getDroneY() {
         return this.droneY;
     }
-
 }
