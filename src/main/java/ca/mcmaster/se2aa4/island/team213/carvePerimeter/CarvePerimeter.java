@@ -3,6 +3,7 @@ package ca.mcmaster.se2aa4.island.team213.carvePerimeter;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import ca.mcmaster.se2aa4.island.team213.areaScan.AreaScanInterlaced;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -120,8 +121,9 @@ public class CarvePerimeter implements Phase {
 
     @Override
     public Phase nextPhase() {
-        return new EndPhase();
+//        return new EndPhase();
         // return area scan interlaced with dronePosition, checkedTiles, droneDirection
+        return new AreaScanInterlaced(dronePosition, checkedTiles, droneDirection);
     }
     
     public int getHorizontalFlyActions() {

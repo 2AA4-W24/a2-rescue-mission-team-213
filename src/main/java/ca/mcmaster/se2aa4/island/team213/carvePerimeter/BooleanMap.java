@@ -18,6 +18,17 @@ public class BooleanMap {
         this.map = new boolean[y][x];
     }
 
+    public boolean[][] getMap(){
+        return this.map;
+    }
+    public int getIslandX(){
+        return this.islandX;
+    }
+
+    public  int getIslandY(){
+        return this.islandY;
+    }
+
     public void updateMapFromEchoRight(Direction droneDirection, Integer echoRange, EchoResult echoRight, DronePosition dronePosition) {
         int loopBound;
         if(droneDirection.equals(Direction.N)) {
