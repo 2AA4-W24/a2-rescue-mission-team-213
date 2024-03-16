@@ -14,6 +14,7 @@ import ca.mcmaster.se2aa4.island.team213.Action;
 import ca.mcmaster.se2aa4.island.team213.Direction;
 import ca.mcmaster.se2aa4.island.team213.Drone;
 import ca.mcmaster.se2aa4.island.team213.EchoResult;
+import ca.mcmaster.se2aa4.island.team213.EndPhase;
 import ca.mcmaster.se2aa4.island.team213.Phase;
 
 public class CarvePerimeter implements Phase {
@@ -97,34 +98,34 @@ public class CarvePerimeter implements Phase {
 
     @Override
     public boolean isFinished() {
-        // if(this.isFinished) {
+        if(this.isFinished) {
 
-        //     int groundFound = 0;
+            int groundFound = 0;
 
-        //     for(int i = 0; i < islandY; i++) {
-        //         String test = "";
-        //         for(int j = 0; j < islandX; j++) {
-        //             if(this.droneY == i && this.droneX == j) {
-        //                 test += "1 ";
-        //             } else {
-        //                 if(this.mapOfCheckedTiles[i][j] == true) {
-        //                     test += "- ";
-        //                 } else {
-        //                     test += "0 ";
+            for(int i = 0; i < islandY; i++) {
+                String test = "";
+                for(int j = 0; j < islandX; j++) {
+                    if(this.droneY == i && this.droneX == j) {
+                        test += "1 ";
+                    } else {
+                        if(this.mapOfCheckedTiles[i][j] == true) {
+                            test += "- ";
+                        } else {
+                            test += "0 ";
 
-        //                     groundFound += 1;
+                            groundFound += 1;
 
-        //                 }
-        //             }
-        //         }
-        //         logger.info(test);
-        //     }
+                        }
+                    }
+                }
+                logger.info(test);
+            }
 
-        //     logger.info("Total tiles: " + (islandY * islandX));
-        //     logger.info("Tiles left to scan: " + groundFound);
-        //     logger.info("Estimated battery cost: ~" + ((islandY * islandX * 8) - (groundFound * 8)));
+            logger.info("Total tiles: " + (islandY * islandX));
+            logger.info("Tiles left to scan: " + groundFound);
+            logger.info("Estimated battery cost: ~" + ((islandY * islandX * 8) - (groundFound * 8)));
 
-        // }
+        }
         return this.isFinished;
     }
 
@@ -164,7 +165,7 @@ public class CarvePerimeter implements Phase {
     @Override
     public Phase nextPhase() {
         return new AreaScanInterlaced(islandX, islandY, droneX, droneY, droneDirection, mapOfCheckedTiles);
-
+        // return new EndPhase();
     }
 
     // Move out of this class
