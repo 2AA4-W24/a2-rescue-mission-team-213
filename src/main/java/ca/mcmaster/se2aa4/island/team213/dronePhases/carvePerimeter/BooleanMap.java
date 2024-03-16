@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team213.carvePerimeter;
+package ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

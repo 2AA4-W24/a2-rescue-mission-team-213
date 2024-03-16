@@ -1,6 +1,8 @@
 package ca.mcmaster.se2aa4.island.team213;
 
 import java.io.StringReader;
+
+import ca.mcmaster.se2aa4.island.team213.dronePhases.LocateIsland;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,10 +28,10 @@ public class Explorer implements IExplorerRaid {
         JSONObject decision = new JSONObject();
 
         /*
-         * Stops if it is in last phase and phase is finished
+         * Battery threshold
          */
 
-        if(drone.getBattery() <= 100 || (phase.lastPhase() && phase.isFinished())) {
+        if(drone.getBattery() <= 50) {
             decision.put("action", "stop");
         }
         /*
@@ -62,9 +64,10 @@ public class Explorer implements IExplorerRaid {
     public String deliverFinalReport() {
         logger.warn("GAME ENDED?");
 
-        if(drone.getSiteID().equals(null)) {
-            return "no site found";
-        }
+//        if(drone.getSiteID().equals(null)) {
+//            logger.info("no site found");
+//            return "no site found";
+//        }
         
         logger.info(drone.getSiteID());
         return drone.getSiteID();

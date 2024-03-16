@@ -25,8 +25,6 @@ public class GetShortestPath {
     }
 
     public void computeClosestSite(){
-//        logger.info("bruh");
-//        System.out.println("bruhfdsajfklasdjfsaklfsadjflsafjsadflsafjsafsdalfsadflsdjf");
         if (!sites.isEmpty() && !creeks.isEmpty()){
             for (PointsOfInterest site: sites){
                 for (PointsOfInterest creek: creeks){
@@ -37,16 +35,15 @@ public class GetShortestPath {
                     }
                 }
             }
-//            logger.info("/////////////////////////////////////////////////////////////////////////////////////////////");
-//            logger.info(closestCreek.id);
-
         }
-
-
+        /*
+         * Picks last creek it finds even if a site has not been found
+         */
+        else if (!creeks.isEmpty()){
+            closestCreek = new SiteCandidate(creeks.get(creeks.size()-1).getID(), Double.MAX_VALUE);
+        }
     }
     public void updateCreekID(Drone drone){
-//        logger.info("/////////////////////////////////////////////////////////////////////////////////////////////");
-//        logger.info(closestCreek.id);
         if (closestCreek != null){
             drone.setCreekID(closestCreek.id);
         }

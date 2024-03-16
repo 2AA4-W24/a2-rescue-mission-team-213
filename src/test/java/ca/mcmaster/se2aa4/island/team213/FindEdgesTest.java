@@ -9,9 +9,9 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.mcmaster.se2aa4.island.team213.edgeFinding.FlyPastDetermined;
-import ca.mcmaster.se2aa4.island.team213.edgeFinding.FindFirstEdge;
-import ca.mcmaster.se2aa4.island.team213.edgeFinding.FindSubsequentEdge;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding.FlyPastDetermined;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding.FindFirstEdge;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding.FindSubsequentEdge;
 
 
 public class FindEdgesTest {

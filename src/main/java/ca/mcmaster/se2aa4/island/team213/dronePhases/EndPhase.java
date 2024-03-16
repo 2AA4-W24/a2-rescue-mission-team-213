@@ -1,8 +1,11 @@
-package ca.mcmaster.se2aa4.island.team213;
+package ca.mcmaster.se2aa4.island.team213.dronePhases;
 
+import ca.mcmaster.se2aa4.island.team213.Drone;
+import ca.mcmaster.se2aa4.island.team213.Phase;
 import org.json.JSONObject;
 
 public class EndPhase implements Phase {
+    boolean isFinished = true;
 
 
     @Override
@@ -12,7 +15,7 @@ public class EndPhase implements Phase {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return this.isFinished;
     }
 
     @Override
@@ -25,11 +28,13 @@ public class EndPhase implements Phase {
     @Override
     public void checkDrone(Drone drone) {
         // Left empty, as this is a placeholder phase to avoid null phases in phase queues
+        this.isFinished = true;
     }
 
     @Override
     public Phase nextPhase() {
         return new EndPhase();
     }
-    
+
+
 }

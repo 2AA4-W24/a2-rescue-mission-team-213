@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team213.areaScan;
+package ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan;
 
 import ca.mcmaster.se2aa4.island.team213.Direction;
 
@@ -12,15 +12,12 @@ public class EdgeMap {
         this.mapOfCheckedTiles = mapOfCheckedTiles;
         this.droneDirection = droneDirection;
 
-        //TODO: do we need to initialize all values as false?
         this.edgeMap = new boolean[islandY][islandX];
 
 
-        /*
-         TODO: use enum or something instead of 1 for left and 2 for right
-         */
         switch (droneDirection){
             case E, W -> {
+
                 for (int y=0; y<mapOfCheckedTiles.length; ++y){
                     boolean foundFirstLand = false;
                     int lastX = 0;

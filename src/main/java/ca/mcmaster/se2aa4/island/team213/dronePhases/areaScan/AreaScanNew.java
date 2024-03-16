@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team213.areaScan;
+package ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan;
 
 import ca.mcmaster.se2aa4.island.team213.*;
 
@@ -140,12 +140,9 @@ public class AreaScanNew implements Phase {
     }
     @Override
     public void checkDrone(Drone drone){
-//        lowBattery = (drone.getBattery() <= 100);
 
-//        logger.info("------------------BEGIN CHECKDRONE --------------------------------------");
         JSONArray creeksJSON = drone.getScanInfoCreeks();
         if (!creeksJSON.isEmpty()){
-//            logger.info("------------------BEGIN CHECKDRONE -------------------------------------------------------");
             for (int i=0; i<creeksJSON.length(); ++i){
                 logger.info(x + " " + y);
                 logger.info(creeksJSON.getString(i));

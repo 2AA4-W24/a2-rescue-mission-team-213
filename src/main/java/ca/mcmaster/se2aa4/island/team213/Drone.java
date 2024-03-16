@@ -11,7 +11,7 @@ public class Drone {
     private EchoStatus echo = new EchoStatus();
     private ScanStatus scanInfo;
     private Action previousDecision;
-    private String siteID;
+    private String siteID = "";
 
     private final Logger logger = LogManager.getLogger();
 
@@ -150,7 +150,11 @@ public class Drone {
         return this.previousDecision;
     }
 
-    public String getSiteID() {
+    public String getSiteID()
+    {
+        if (this.siteID.isEmpty()){
+            return "no creek found";
+        }
         return this.siteID;
     }
 

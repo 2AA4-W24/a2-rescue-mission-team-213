@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team213.edgeFinding;
+package ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,7 +8,7 @@ import ca.mcmaster.se2aa4.island.team213.Action;
 import ca.mcmaster.se2aa4.island.team213.Drone;
 import ca.mcmaster.se2aa4.island.team213.Phase;
 
-public class FlyPastDetermined implements Phase{
+public class FlyPastDetermined implements Phase {
     private boolean isFinished;
     private boolean increaseX;
     private int islandX, islandY;

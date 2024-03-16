@@ -1,19 +1,13 @@
-package ca.mcmaster.se2aa4.island.team213.edgeFinding;
+package ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
+import ca.mcmaster.se2aa4.island.team213.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import ca.mcmaster.se2aa4.island.team213.Action;
-import ca.mcmaster.se2aa4.island.team213.Biome;
-import ca.mcmaster.se2aa4.island.team213.Direction;
-import ca.mcmaster.se2aa4.island.team213.Drone;
-import ca.mcmaster.se2aa4.island.team213.EchoResult;
-import ca.mcmaster.se2aa4.island.team213.Phase;
 
 public class FindFirstEdge implements Phase {
     private boolean isFinished;
