@@ -6,17 +6,17 @@ import static org.junit.Assert.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.mcmaster.se2aa4.island.team213.carvePerimeter.NewCarvePerimeter;
+import ca.mcmaster.se2aa4.island.team213.carvePerimeter.CarvePerimeter;
 
 
-public class NewCarvePerimeterTest {
-    NewCarvePerimeter cpN, cpE;
+public class CarvePerimeterTest {
+    CarvePerimeter cpN, cpE;
     Drone dN, dE;
 
     @BeforeEach
     public void setUp() {
-        cpN = new NewCarvePerimeter(10, 10, Direction.N);
-        cpE = new NewCarvePerimeter(10, 10, Direction.E);
+        cpN = new CarvePerimeter(10, 10, Direction.N);
+        cpE = new CarvePerimeter(10, 10, Direction.E);
         dN = new Drone("N", 50000);
         dE = new Drone("E", 50000);
     }
