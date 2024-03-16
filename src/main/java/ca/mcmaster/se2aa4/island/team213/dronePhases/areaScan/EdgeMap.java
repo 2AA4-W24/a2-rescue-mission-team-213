@@ -1,6 +1,6 @@
 package ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan;
 
-import ca.mcmaster.se2aa4.island.team213.Direction;
+import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 
 public class EdgeMap {
     boolean[][] edgeMap;

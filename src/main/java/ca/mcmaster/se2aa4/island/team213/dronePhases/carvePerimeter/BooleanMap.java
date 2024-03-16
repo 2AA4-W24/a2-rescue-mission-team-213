@@ -3,8 +3,8 @@ package ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ca.mcmaster.se2aa4.island.team213.Direction;
-import ca.mcmaster.se2aa4.island.team213.EchoResult;
+import ca.mcmaster.se2aa4.island.team213.enums.Direction;
+import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
 
 public class BooleanMap {
     boolean[][] map;

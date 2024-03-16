@@ -1,7 +1,7 @@
 package ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter;
 
-import ca.mcmaster.se2aa4.island.team213.Action;
-import ca.mcmaster.se2aa4.island.team213.Direction;
+import ca.mcmaster.se2aa4.island.team213.enums.Action;
+import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 
 public class DronePosition {
     private int droneX, droneY;
