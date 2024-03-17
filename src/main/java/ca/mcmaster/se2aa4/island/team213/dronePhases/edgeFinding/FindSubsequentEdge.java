@@ -1,19 +1,18 @@
-package ca.mcmaster.se2aa4.island.team213.edgeFinding;
+package ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
+import ca.mcmaster.se2aa4.island.team213.*;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
+import ca.mcmaster.se2aa4.island.team213.enums.Action;
+import ca.mcmaster.se2aa4.island.team213.enums.Direction;
+import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
-import ca.mcmaster.se2aa4.island.team213.Action;
-import ca.mcmaster.se2aa4.island.team213.Direction;
-import ca.mcmaster.se2aa4.island.team213.Drone;
-import ca.mcmaster.se2aa4.island.team213.EchoResult;
-import ca.mcmaster.se2aa4.island.team213.Phase;
-import ca.mcmaster.se2aa4.island.team213.areaScan.AreaScanNew;
-import ca.mcmaster.se2aa4.island.team213.carvePerimeter.CarvePerimeter;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.CarvePerimeter;
 
 public class FindSubsequentEdge implements Phase {
     private boolean isFinished;
@@ -49,10 +48,11 @@ public class FindSubsequentEdge implements Phase {
 
     @Override
     public JSONObject createDecision(Drone drone) {
-        JSONObject decision = new JSONObject();
+        JSONObject decision;
+        Action nextAction = this.decisionQueue.peek();
         
-        decision = DecisionJSONs.actionToJSONObject(this.decisionQueue.peek(), drone.getDirection());
-        if(this.decisionQueue.peek().equals(Action.TURN_RIGHT)) {
+        decision = nextAction.toJSON(drone.getDirection());
+        if(nextAction.equals(Action.TURN_RIGHT)) {
             this.isFinished = true;
             this.droneDirection = drone.getDirection().rightTurn();
         }
@@ -74,8 +74,8 @@ public class FindSubsequentEdge implements Phase {
         if(this.edgesFound == 3) {
             logger.info("FINAL ISLAND X: " + this.islandX);
             logger.info("FINAL ISLAND Y: " + this.islandY);
+            
             return new CarvePerimeter(this.islandX, this.islandY, this.droneDirection);
-            // return new AreaScanNew(this.islandX, this.islandY, this.droneDirection);
         }
 
         int flyActionsLeft = !this.increaseX ? this.islandX : this.islandY;

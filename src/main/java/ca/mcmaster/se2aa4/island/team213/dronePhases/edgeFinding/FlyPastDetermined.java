@@ -1,13 +1,14 @@
-package ca.mcmaster.se2aa4.island.team213.edgeFinding;
+package ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
+import ca.mcmaster.se2aa4.island.team213.enums.Action;
 import ca.mcmaster.se2aa4.island.team213.Drone;
-import ca.mcmaster.se2aa4.island.team213.Phase;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
 
-public class FlyPastDetermined implements Phase{
+public class FlyPastDetermined implements Phase {
     private boolean isFinished;
     private boolean increaseX;
     private int islandX, islandY;
@@ -39,8 +40,8 @@ public class FlyPastDetermined implements Phase{
 
     @Override
     public JSONObject createDecision(Drone drone) {
-        JSONObject decision = new JSONObject();
-        decision.put("action", "fly");
+        JSONObject decision;
+        decision = Action.FLY.toJSON(drone.getDirection());
         return decision;
     }
 

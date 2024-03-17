@@ -1,50 +1,45 @@
-package ca.mcmaster.se2aa4.island.team213.edgeFinding;
+package ca.mcmaster.se2aa4.island.team213.enums;
 
 import org.json.JSONObject;
 
-import ca.mcmaster.se2aa4.island.team213.Action;
-import ca.mcmaster.se2aa4.island.team213.Direction;
+public enum Action {
+    TURN_RIGHT, TURN_LEFT, ECHO_RIGHT, ECHO_LEFT, ECHO_AHEAD, SCAN, FLY, STOP;
 
-
-public class DecisionJSONs {
-    
-    public static JSONObject actionToJSONObject(Action action, Direction direction) {
+    public JSONObject toJSON(Direction direction) {
         JSONObject decision = new JSONObject();
         JSONObject parameter = new JSONObject();
 
-        if(action.equals(Action.FLY)) {
+        if(this.equals(Action.FLY)) {
             decision.put("action", "fly");
         }
-        else if(action.equals(Action.SCAN)) {
+        else if(this.equals(Action.SCAN)) {
             decision.put("action", "scan");
         }
-        else if(action.equals(Action.ECHO_LEFT)) {
+        else if(this.equals(Action.ECHO_LEFT)) {
             parameter.put("direction", direction.leftTurn().toString());
             decision.put("parameters", parameter);
             decision.put("action", "echo");
         }
-        else if(action.equals(Action.ECHO_RIGHT)) {
+        else if(this.equals(Action.ECHO_RIGHT)) {
             parameter.put("direction", direction.rightTurn().toString());
             decision.put("parameters", parameter);
             decision.put("action", "echo");
         }
-        else if(action.equals(Action.ECHO_AHEAD)) {
+        else if(this.equals(Action.ECHO_AHEAD)) {
             parameter.put("direction", direction.toString());
             decision.put("parameters", parameter);
             decision.put("action", "echo");
         }
-        else if(action.equals(Action.TURN_LEFT)) {
+        else if(this.equals(Action.TURN_LEFT)) {
             parameter.put("direction", direction.leftTurn().toString());
             decision.put("parameters", parameter);
             decision.put("action", "heading");  
         }
-        else if(action.equals(Action.TURN_RIGHT)) {
+        else if(this.equals(Action.TURN_RIGHT)) {
             parameter.put("direction", direction.rightTurn().toString());
             decision.put("parameters", parameter);
             decision.put("action", "heading");  
         }
-        
         return decision;
     }
-
 }

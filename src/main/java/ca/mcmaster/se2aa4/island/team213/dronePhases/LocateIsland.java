@@ -1,7 +1,10 @@
-package ca.mcmaster.se2aa4.island.team213;
+package ca.mcmaster.se2aa4.island.team213.dronePhases;
 
-import ca.mcmaster.se2aa4.island.team213.edgeFinding.FindFirstEdge;
+import ca.mcmaster.se2aa4.island.team213.*;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding.FindFirstEdge;
 
+import ca.mcmaster.se2aa4.island.team213.enums.Direction;
+import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -70,7 +73,7 @@ public class LocateIsland implements Phase {
 
 
         // check if reached the border of the map -> need to turn around
-        else if (Objects.equals(drone.getEchoAhead(), EchoResult.OUT_OF_RANGE) && Objects.equals(drone.getRangeHeading(), 1)){
+        else if (Objects.equals(drone.getEchoAhead(), EchoResult.OUT_OF_RANGE) && Objects.equals(drone.getRangeAhead(), 1)){
             decision.put("action", "heading");
             JSONObject parameters = new JSONObject();
             // TODO: violates law of demeter
@@ -132,7 +135,7 @@ public class LocateIsland implements Phase {
             if (Objects.equals(drone.getEchoAhead(), EchoResult.GROUND)){
                 decision.put("action", "fly");
                 // need to keep heading i - 1 times in that direction
-                for (int i = 0; i < drone.getRangeHeading(); i++){
+                for (int i = 0; i < drone.getRangeAhead(); i++){
                     taskQueue.add(decision);
                 }
             }

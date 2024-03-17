@@ -1,11 +1,12 @@
 package ca.mcmaster.se2aa4.island.team213;
 
+import ca.mcmaster.se2aa4.island.team213.enums.Action;
+import ca.mcmaster.se2aa4.island.team213.enums.Direction;
+import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.Objects;
 
 public class Drone {
     private Integer battery;
@@ -13,32 +14,28 @@ public class Drone {
     private EchoStatus echo = new EchoStatus();
     private ScanStatus scanInfo;
     private Action previousDecision;
-    private String siteID;
+    private String siteID = "";
 
     private final Logger logger = LogManager.getLogger();
 
-    public Drone(String direction, Integer battery){
-        stringToDirection(direction);
+    public Drone(String direction, Integer battery) {
+        this.direction = Direction.valueOf(direction);
         this.battery = battery;
     }
 
-    private void stringToDirection(String direction) {
-        switch(direction) {
-            case "N" -> this.direction = Direction.N;
-            case "E" -> this.direction = Direction.E;
-            case "S" -> this.direction = Direction.S;
-            case "W" -> this.direction = Direction.W;
-        }
+    // setter
+    public void setCreekID(String siteID) {
+        this.siteID = siteID;
     }
 
-    public void updateStatus(JSONObject response){
-//        logger.info("updating status...");
+    public void updateStatus(JSONObject response) {
+        // logger.info("updating status...");
         // logger.info("** Response received:\n"+response.toString(2));
-//        logger.info("previous decision: " + this.previousDecision);
+        //logger.info("previous decision: " + this.previousDecision);
         this.battery -= response.getInt("cost");
         logger.info("new battery level: " + this.battery);
         JSONObject extraInfo = response.getJSONObject("extras");
-//        logger.info("additional information received: {}", extraInfo);
+        // logger.info("additional information received: {}", extraInfo);
 
         if(previousDecision.equals(Action.ECHO_RIGHT)) {
             logger.info("STORING ECHO RIGHT INFO: " + extraInfo.getString("found"));
@@ -60,50 +57,17 @@ public class Drone {
             this.scanInfo = new ScanStatus(extraInfo);
         }
 
-//        logger.info("*");
-//        logger.info("*");
-//        logger.info("*");
-
     }
-    public String getSiteID(){
-        return this.siteID;
-    }
-
-    public EchoResult getEchoAhead() {
-        return echo.echoAhead;
-    }
-
-    public EchoResult getEchoRight() {
-        return echo.echoRight;
-    }
-
-    public EchoResult getEchoLeft() {
-        return echo.echoLeft;
-    }
-
-    public Integer getRangeRight(){return echo.rangeRight;}
-    public Integer getRangeLeft(){return echo.rangeLeft;}
-
-    public Integer getRangeHeading(){
-        return echo.rangeAhead;
-    }
-
-    public void subtractRangeHeading(){
-        echo.rangeAhead--;
-
-    }
-
-    // Section below added by Gary, includes some temporary accessor methods to make other classes work
-
-    // determines what the decision being sent to Explorer is
-    // also updates direction or position if the decision was a "fly" or "heading" action
+    
     public void parseDecision(JSONObject decision) {
         if(decision.getString("action").equals("heading")) {
-            this.echo = new EchoStatus();
             JSONObject parameter = decision.getJSONObject("parameters");
+            this.echo = new EchoStatus();
             if(this.direction.rightTurn().toString().equals(parameter.get("direction").toString())) {
                 logger.info("DRONE RECEIVED COMMAND FOR RIGHT HEADING");
+                logger.info("PREVIOUS DIRECION: " + this.direction.toString());
                 this.direction = this.direction.rightTurn();
+                logger.info("NEW DIRECION: " + this.direction.toString());
                 this.previousDecision = Action.TURN_RIGHT;
             }
             else if(this.direction.leftTurn().toString().equals(parameter.get("direction").toString())) {
@@ -133,28 +97,44 @@ public class Drone {
         }
         else if(decision.getString("action").equals("fly")) {
             logger.info("DRONE RECEIVED COMMAND FOR FLY");
-            if (!Objects.equals(echo.echoAhead,null)){
-                this.subtractRangeHeading();
-            }
             this.previousDecision = Action.FLY;
-        } else if (decision.getString("action").equals("stop"))  {
+        } 
+        else if (decision.getString("action").equals("stop")) {
             logger.info("DRONE RECEIVED COMMAND FOR STOP");
             this.previousDecision = Action.STOP;
         }
     }
 
-    public Integer getBattery(){
+    public Integer getBattery() {
         return this.battery;
     }
-    public void setCreekID(String siteID){
-        this.siteID = siteID;
-    }
+
     public Direction getDirection() {
         return direction;
     }
 
-    public JSONArray getScanInfoBiome() {
-        return this.scanInfo.scanBiomes;
+    public EchoResult getEchoRight() {
+        return echo.echoRight;
+    }
+
+    public EchoResult getEchoLeft() {
+        return echo.echoLeft;
+    }
+
+    public EchoResult getEchoAhead() {
+        return echo.echoAhead;
+    }
+
+    public Integer getRangeRight() {
+        return echo.rangeRight;
+    }
+
+    public Integer getRangeLeft() {
+        return echo.rangeLeft;
+    }
+
+    public Integer getRangeAhead() {
+        return echo.rangeAhead;
     }
 
     public JSONArray getScanInfoCreeks() {
@@ -165,8 +145,20 @@ public class Drone {
         return this.scanInfo.scanSites;
     }
 
+    public JSONArray getScanInfoBiomes() {
+        return this.scanInfo.scanBiomes;
+    }
+
     public Action getPreviousDecision() {
         return this.previousDecision;
+    }
+
+    public String getSiteID()
+    {
+        if (this.siteID.isEmpty()){
+            return "no creek found";
+        }
+        return this.siteID;
     }
 
 }
