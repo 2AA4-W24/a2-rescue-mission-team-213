@@ -120,9 +120,9 @@ public class CarvePerimeter implements Phase {
 
     @Override
     public Phase nextPhase() {
-        return new EndPhase();
+//        return new EndPhase();
         // return area scan interlaced with dronePosition, checkedTiles, droneDirection
-        // return new AreaScanInterlaced(dronePosition, checkedTiles, droneDirection);
+         return new AreaScanInterlaced(dronePosition, checkedTiles, droneDirection);
     }
     
     public int getHorizontalFlyActions() {
