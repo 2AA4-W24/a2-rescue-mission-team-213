@@ -1,5 +1,6 @@
 package ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter;
 
+import ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan.PointsOfInterest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -7,7 +8,7 @@ import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
 
 public class BooleanMap {
-    boolean[][] map;
+    public boolean[][] map;
     int islandX, islandY;
 
     private final Logger logger = LogManager.getLogger();
@@ -58,15 +59,19 @@ public class BooleanMap {
         }
     }
 
-    public void determineImpossibleTiles(int siteX, int siteY, int creekX, int creekY) {
+    public void determineImpossibleTiles(PointsOfInterest site, PointsOfInterest creek) {
+        int siteX = site.getX();
+        int siteY = site.getY();
+        int creekX = creek.getX();
+        int creekY = creek.getY();
         double distanceX = Math.abs(siteX - creekX);
         double distanceY = Math.abs(siteY - creekY);
         int distance = (int) Math.ceil(Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2)));
         
-        for(int i = 0; i < this.islandY; i++) {
-            for(int j = 0; j < this.islandX; j++) {
-                if(i < siteX - distance || i > siteX + distance || j < siteY - distance || j > siteY + distance) {
-                    this.map[i][j] = true;
+        for(int y = 0; y < this.islandY; y++) {
+            for(int x = 0; x < this.islandX; x++) {
+                if(x < siteX - distance - 1 || x > siteX + distance + 1 || y < siteY - distance - 1 || y > siteY + distance + 1) {
+                    this.map[y][x] = true;
                 }
             }
         }

@@ -47,6 +47,9 @@ public class AreaScanInterlaced implements Phase {
     int startx;
     int starty;
     Direction startDirection;
+
+    BooleanMap booleanMap;
+
     private final Logger logger = LogManager.getLogger();
 
     private Queue<JSONObject> taskQueue = new LinkedList<>();
@@ -58,8 +61,11 @@ public class AreaScanInterlaced implements Phase {
 //        logger.info(islandx);
 //        logger.info(islandy);
 //        logger.info(droneDirection);
+
+        this.booleanMap = mapOfCheckedTiles;
+
         shortestPath = new GetShortestPath();
-        this.islandx = mapOfCheckedTiles.getIslandX();
+        this.islandx = booleanMap.getIslandX();
 
         //TODO: GET RID OF ATTRIBUTES AFTER TESTING
         this.startx = dronePosition.getDroneX();
@@ -67,10 +73,12 @@ public class AreaScanInterlaced implements Phase {
         this.startDirection = droneDirection;
 
 
-        this.islandy = mapOfCheckedTiles.getIslandY();
+        this.islandy = booleanMap.getIslandY();
         this.direction = droneDirection;
         this.x = dronePosition.getDroneX();
         this.y = dronePosition.getDroneY();
+
+
 
         this.mapOfCheckedTiles = mapOfCheckedTiles.getMap();
 
@@ -152,36 +160,23 @@ public class AreaScanInterlaced implements Phase {
             logger.info("EDGEPOS----");
             logger.info(Arrays.toString(edgePos));
             logger.info(startx + "   " + starty + "   " + startDirection.toString());
+            logger.info(shortestPath.getSite().getX() + "   " + shortestPath.getSite().getY());
 
             return true;
         }
         return false;
-//        if (!extraColumn){
-//            logger.info("ENDED");
-//            return (turnedAround && turns == turnsBeforeReturn-1 && movesSinceTurn == stepsBeforeTurn);
-//        }
-//        return (turnedAround && turns == turnsBeforeReturn && movesSinceTurn == stepsBeforeTurn);
-
     }
 
     @Override
     public JSONObject createDecision(Drone drone) {
-
-//        Random random = new Random();
-//        int min = 6;
-//        int max = 8;
-//        int randomNumber = random.nextInt(max - min + 1) + min;
-
         logger.info("x: " + x + "  y: " + y + "   turnedAround:" + turnedAround);
 //        JSONObject enqueueScan = new JSONObject();
         JSONObject decision = new JSONObject();
         JSONObject headingDirection = new JSONObject();
         JSONObject finaldecision = new JSONObject();
 
-        //TODO: ADD SCANNING TO TASKQUEUE AND FIGURE OUT HOW IT ALL TIES TOGETHER
 
         if (!taskQueue.isEmpty()){
-//            logger.info("REMOVING TASK FROM QUEUE - -------");
             decision = taskQueue.remove();
             return decision;
         }
@@ -297,18 +292,14 @@ public class AreaScanInterlaced implements Phase {
             movePos();
             movesSinceTurn++;
         }
-        //(mapOfEdges[y][x])
 
-        if (!mapOfCheckedTiles[y][x]){
+        if (!booleanMap.getMap()[y][x]){
             JSONObject enqueueScan2 = new JSONObject();
             enqueueScan2.put("action", "scan");
             taskQueue.add(enqueueScan2);
-            mapOfCheckedTiles[y][x] = true;
+            booleanMap.getMap()[y][x] = true;
+//            mapOfCheckedTiles[y][x] = true;
         }
-//        JSONObject enqueueScan2 = new JSONObject();
-//        enqueueScan2.put("action", "scan");
-//        taskQueue.add(enqueueScan2);
-//        mapOfCheckedTiles[y][x] = true;
 
 
 
@@ -361,6 +352,11 @@ public class AreaScanInterlaced implements Phase {
 
         shortestPath.computeClosestSite();
         shortestPath.updateCreekID(drone);
+
+        if (shortestPath.checkIfPair()){
+            booleanMap.determineImpossibleTiles(shortestPath.getSite(), shortestPath.closestCreekPOI);
+        }
+
     }
 
     @Override
