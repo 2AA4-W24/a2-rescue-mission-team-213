@@ -2,7 +2,7 @@ package ca.mcmaster.se2aa4.island.team213;
 
 import java.io.StringReader;
 
-import ca.mcmaster.se2aa4.island.team213.dronePhases.LocateIsland;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.flyToIsland.LocateIsland;
 import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
