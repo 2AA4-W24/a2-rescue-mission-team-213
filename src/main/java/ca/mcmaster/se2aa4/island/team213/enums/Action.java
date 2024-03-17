@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team213;
+package ca.mcmaster.se2aa4.island.team213.enums;
 
 import org.json.JSONObject;
 

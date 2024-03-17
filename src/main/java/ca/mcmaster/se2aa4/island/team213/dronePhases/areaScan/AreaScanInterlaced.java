@@ -1,19 +1,22 @@
-package ca.mcmaster.se2aa4.island.team213.areaScan;
+package ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan;
 
-import ca.mcmaster.se2aa4.island.team213.Direction;
-import ca.mcmaster.se2aa4.island.team213.Drone;
-import ca.mcmaster.se2aa4.island.team213.Phase;
-import ca.mcmaster.se2aa4.island.team213.carvePerimeter.BooleanMap;
-import ca.mcmaster.se2aa4.island.team213.carvePerimeter.DronePosition;
+import ca.mcmaster.se2aa4.island.team213.*;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.EndPhase;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.BooleanMap;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.DronePosition;
+import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class AreaScanInterlaced implements Phase {
-
+    private GetShortestPath shortestPath;
     public int stepsBeforeTurn;
     public int turnsBeforeReturn;
 
@@ -39,6 +42,11 @@ public class AreaScanInterlaced implements Phase {
     boolean[][] mapOfCheckedTiles;
     boolean[][] mapOfEdges;
 
+    int[] edgePos;
+
+    int startx;
+    int starty;
+    Direction startDirection;
     private final Logger logger = LogManager.getLogger();
 
     private Queue<JSONObject> taskQueue = new LinkedList<>();
@@ -50,7 +58,15 @@ public class AreaScanInterlaced implements Phase {
 //        logger.info(islandx);
 //        logger.info(islandy);
 //        logger.info(droneDirection);
+        shortestPath = new GetShortestPath();
         this.islandx = mapOfCheckedTiles.getIslandX();
+
+        //TODO: GET RID OF ATTRIBUTES AFTER TESTING
+        this.startx = dronePosition.getDroneX();
+        this.starty = dronePosition.getDroneY();
+        this.startDirection = droneDirection;
+
+
         this.islandy = mapOfCheckedTiles.getIslandY();
         this.direction = droneDirection;
         this.x = dronePosition.getDroneX();
@@ -66,7 +82,7 @@ public class AreaScanInterlaced implements Phase {
         switch (droneDirection){
             case E, W -> {
                 this.stepsBeforeTurn = islandx-3;
-
+//                this.edgePos = new int[]{x, islandx+x};
                 //Even length width will result in an extra column that needs to be covered at the end
                 if (islandy % 2 == 0){
                     this.turnsBeforeReturn = islandy/2 - 1;
@@ -79,7 +95,7 @@ public class AreaScanInterlaced implements Phase {
             }
             case S, N -> {
                 this.stepsBeforeTurn = islandy-3;
-
+//                this.edgePos = new int[]{y, islandy+y};
                 if (islandx % 2 == 0){
                     this.turnsBeforeReturn = islandx/2 - 1;
                     extraColumn = true;
@@ -91,6 +107,22 @@ public class AreaScanInterlaced implements Phase {
             }
         }
 
+        switch (droneDirection){
+            case N -> {
+                this.edgePos = new int[] {y, y-islandy+2};
+            }
+            case E -> {
+                this.edgePos = new int[] {x, x+islandx-2};
+            }
+            case S -> {
+                this.edgePos = new int[] {y, y+islandy-2};
+            }
+            case W -> {
+                this.edgePos = new int[] {x, x-islandx+2};
+            }
+        }
+        logger.info(Arrays.toString(edgePos));
+
 
     }
 
@@ -101,7 +133,7 @@ public class AreaScanInterlaced implements Phase {
 
     @Override
     public boolean isFinished() {
-        if (turnedAround && turns == turnsBeforeReturn-1 && movesSinceTurn == stepsBeforeTurn){
+        if (turnedAround && turns == turnsBeforeReturn-1 && reachedEdge()){
             logger.info("ENDED");
             for (int yy=0; yy<mapOfEdges.length; ++yy) {
                 String test = "";
@@ -117,6 +149,10 @@ public class AreaScanInterlaced implements Phase {
             }
             logger.info(mapOfCheckedTiles.length + "   " + mapOfCheckedTiles[0].length);
             logger.info(mapOfEdges.length + "   " + mapOfEdges[0].length);
+            logger.info("EDGEPOS----");
+            logger.info(Arrays.toString(edgePos));
+            logger.info(startx + "   " + starty + "   " + startDirection.toString());
+
             return true;
         }
         return false;
@@ -130,7 +166,13 @@ public class AreaScanInterlaced implements Phase {
 
     @Override
     public JSONObject createDecision(Drone drone) {
-        logger.info("x: " + x + "  y: " + y);
+
+//        Random random = new Random();
+//        int min = 6;
+//        int max = 8;
+//        int randomNumber = random.nextInt(max - min + 1) + min;
+
+        logger.info("x: " + x + "  y: " + y + "   turnedAround:" + turnedAround);
 //        JSONObject enqueueScan = new JSONObject();
         JSONObject decision = new JSONObject();
         JSONObject headingDirection = new JSONObject();
@@ -144,10 +186,10 @@ public class AreaScanInterlaced implements Phase {
             return decision;
         }
 
-        if (!turnedAround && turns == turnsBeforeReturn && (movesSinceTurn == stepsBeforeTurn)){
+        if (!turnedAround && turns == turnsBeforeReturn && reachedEdge()){
             logger.info("--------------------------TURNING AROUND ----------------------------------");
-            System.out.printf("hello-------------------------\n");
-            System.out.printf("%b\n\n", lastTurnLeft);
+            turnedAround = true;
+
             if (lastTurnLeft){
                 leftTurnPos();
                 direction = direction.leftTurn();
@@ -157,8 +199,6 @@ public class AreaScanInterlaced implements Phase {
                 direction = direction.rightTurn();
             }
 
-//            leftTurnPos();
-//            direction = direction.leftTurn();
             decision = new JSONObject();
             decision.put("action", "heading");
             headingDirection = new JSONObject();
@@ -174,7 +214,6 @@ public class AreaScanInterlaced implements Phase {
                 blocksMovedSideways--;
                 movePos();
             }
-            turnedAround = true;
 
             //final left turn to face towards column
             if (lastTurnLeft){
@@ -188,7 +227,6 @@ public class AreaScanInterlaced implements Phase {
                 lastTurnLeft = true;
             }
 
-
             decision = new JSONObject();
             headingDirection = new JSONObject();
 
@@ -201,17 +239,23 @@ public class AreaScanInterlaced implements Phase {
             movesSinceTurn = 0;
 
         }
-        else if (movesSinceTurn == stepsBeforeTurn){
+        else if (reachedEdge()){
+            logger.info("------TURNING------------------------------------------------------------\n\n");
+            logger.info(movesSinceTurn);
+            logger.info(reachedEdge());
+            logger.info("turns: " + turns);
 
-            passedFirstEnd = false;
-
+//            passedFirstEnd = false;
+            logger.info("facing: " + direction);
             if (lastTurnLeft){
                 rightTurnPos();
                 direction = direction.rightTurn();
+                logger.info("RIGHT TURN");
             }
             else{
                 leftTurnPos();
                 direction = direction.leftTurn();
+                logger.info("LEFT TURN");
             }
 
             //2 right turns
@@ -243,8 +287,10 @@ public class AreaScanInterlaced implements Phase {
             blocksMovedSideways += 2;
             turns++;
 
+
         }
         else{
+            logger.info("------FLYING STRAIGHT------------------------------------------------------------\n\n");
             decision = new JSONObject();
             decision.put("action", "fly");
             taskQueue.add(decision);
@@ -259,10 +305,12 @@ public class AreaScanInterlaced implements Phase {
             taskQueue.add(enqueueScan2);
             mapOfCheckedTiles[y][x] = true;
         }
+//        JSONObject enqueueScan2 = new JSONObject();
+//        enqueueScan2.put("action", "scan");
+//        taskQueue.add(enqueueScan2);
+//        mapOfCheckedTiles[y][x] = true;
 
-        if (mapOfEdges[y][x] && !passedFirstEnd){
-            passedFirstEnd = true;
-        }
+
 
 
         finaldecision = taskQueue.remove();
@@ -270,14 +318,54 @@ public class AreaScanInterlaced implements Phase {
 
     }
 
+    private boolean reachedEdge(){
+        if (movesSinceTurn > 0){
+            switch (startDirection){
+                case N, S -> {
+                    for (int posY: edgePos){
+                        if (y == posY){
+                            return true;
+                        }
+                    }
+                }
+                case E, W -> {
+                    for (int posX: edgePos){
+                        if (x == posX){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
     @Override
     public void checkDrone(Drone drone) {
+        JSONArray creeksJSON = drone.getScanInfoCreeks();
+        if (!creeksJSON.isEmpty()){
+            for (int i=0; i<creeksJSON.length(); ++i){
+                logger.info(x + " " + y);
+                logger.info(creeksJSON.getString(i));
+                shortestPath.addCreek(new PointsOfInterest(x,y, creeksJSON.getString(i)));
+            }
+        }
 
+        JSONArray sitesJSON = drone.getScanInfoSites();
+        if (!sitesJSON.isEmpty()){
+            for (int i=0; i<sitesJSON.length(); ++i){
+                logger.info("SITE FOUND: " + x + " "+ y + " " + sitesJSON.getString(i));
+                shortestPath.addSite(new PointsOfInterest(x,y, sitesJSON.getString(i)));
+
+            }
+        }
+
+        shortestPath.computeClosestSite();
+        shortestPath.updateCreekID(drone);
     }
 
     @Override
     public Phase nextPhase() {
-        return null;
+        return new EndPhase();
     }
 
     private void rightTurnPos(){

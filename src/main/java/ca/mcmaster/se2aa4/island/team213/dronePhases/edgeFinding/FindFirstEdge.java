@@ -1,41 +1,48 @@
-package ca.mcmaster.se2aa4.island.team213.edgeFinding;
+package ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
+import ca.mcmaster.se2aa4.island.team213.*;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
+import ca.mcmaster.se2aa4.island.team213.enums.Action;
+import ca.mcmaster.se2aa4.island.team213.enums.Biome;
+import ca.mcmaster.se2aa4.island.team213.enums.Direction;
+import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import ca.mcmaster.se2aa4.island.team213.Action;
-import ca.mcmaster.se2aa4.island.team213.Direction;
-import ca.mcmaster.se2aa4.island.team213.Drone;
-import ca.mcmaster.se2aa4.island.team213.EchoResult;
-import ca.mcmaster.se2aa4.island.team213.Phase;
-import ca.mcmaster.se2aa4.island.team213.carvePerimeter.CarvePerimeter;
-
-public class FindSubsequentEdge implements Phase {
+public class FindFirstEdge implements Phase {
     private boolean isFinished;
     private boolean increaseX;
     private int islandX, islandY;
-    private int edgesFound;
-    private Direction droneDirection;
     private Queue<Action> decisionQueue;
-   
+
     private final Logger logger = LogManager.getLogger();
 
-    public FindSubsequentEdge(int islandX, int islandY, boolean increaseX, int edgesFound) {
-        logger.info("** FindSubsequentEdge created with " + edgesFound + " edges found **");
+    public FindFirstEdge(Direction droneDirection) {
+        logger.info("** FindFirstEdge created, starting with drone facing " + droneDirection.toString());
         this.isFinished = false;
         this.decisionQueue = new LinkedList<Action>();
-        this.decisionQueue.add(Action.ECHO_RIGHT);
 
-        this.islandX = islandX;
-        this.islandY = islandY;
-        this.increaseX = increaseX;
-        this.edgesFound = edgesFound;
+        parseStartingDirection(droneDirection);
+        loadDecisionQueue();
     }
 
+    private void parseStartingDirection(Direction droneDirection) {
+        if(droneDirection.equals(Direction.N) || droneDirection.equals(Direction.S)) {
+            this.increaseX = false;
+            this.islandX = 1;
+            this.islandY = 0;
+        } else {
+            this.increaseX = true;
+            this.islandX = 0;
+            this.islandY = 1;
+        }
+    }
+    
     @Override
     public boolean lastPhase() {
         return false;
@@ -50,11 +57,10 @@ public class FindSubsequentEdge implements Phase {
     public JSONObject createDecision(Drone drone) {
         JSONObject decision;
         Action nextAction = this.decisionQueue.peek();
-        
+
         decision = nextAction.toJSON(drone.getDirection());
         if(nextAction.equals(Action.TURN_RIGHT)) {
             this.isFinished = true;
-            this.droneDirection = drone.getDirection().rightTurn();
         }
         this.decisionQueue.remove();
 
@@ -65,33 +71,30 @@ public class FindSubsequentEdge implements Phase {
     public void checkDrone(Drone drone) {
         if(drone.getPreviousDecision().equals(Action.ECHO_RIGHT)) {
             increaseXorY();
-            checkEcho(drone);
+            checkScanAndEchoes(drone);
         }
     }
 
     @Override
     public Phase nextPhase() {
-        if(this.edgesFound == 3) {
-            logger.info("FINAL ISLAND X: " + this.islandX);
-            logger.info("FINAL ISLAND Y: " + this.islandY);
-            
-            return new CarvePerimeter(this.islandX, this.islandY, this.droneDirection);
-        }
-
-        int flyActionsLeft = !this.increaseX ? this.islandX : this.islandY;
-        return new FlyPastDetermined(this.islandX, this.islandY, !this.increaseX, this.edgesFound + 1, flyActionsLeft);
+        return new FindSubsequentEdge(this.islandX, this.islandY, !this.increaseX, 1);
     }
 
-    private void checkEcho(Drone drone) {
-        if(drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
+    private void checkScanAndEchoes(Drone drone) {
+        JSONArray biomes = drone.getScanInfoBiomes();
+        Biome firstBiome = Biome.valueOf(biomes.getString(0));
+        
+        if(biomes.length() == 1 && firstBiome.equals(Biome.OCEAN) && drone.getEchoLeft().equals(EchoResult.OUT_OF_RANGE) && drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
             increaseXorY();
             this.decisionQueue.add(Action.TURN_RIGHT);
         }
         loadDecisionQueue();
     }
-
+    
     private void loadDecisionQueue() {
         this.decisionQueue.add(Action.FLY);
+        this.decisionQueue.add(Action.SCAN);
+        this.decisionQueue.add(Action.ECHO_LEFT);
         this.decisionQueue.add(Action.ECHO_RIGHT);
     }
 
@@ -102,10 +105,13 @@ public class FindSubsequentEdge implements Phase {
         else {
             this.islandY += 1;
         }
-    }    
+    }
 
+    public boolean getIncreaseX() {
+        return this.increaseX;
+    }
+    
     public Action getNextDecision() {
         return this.decisionQueue.peek();
     }
-    
 }
