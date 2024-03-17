@@ -18,14 +18,14 @@ public class BooleanMap {
         this.map = new boolean[y][x];
     }
 
-    public boolean[][] getMap(){
+    public boolean[][] getMap() {
         return this.map;
     }
-    public int getIslandX(){
+    public int getIslandX() {
         return this.islandX;
     }
 
-    public  int getIslandY(){
+    public int getIslandY() {
         return this.islandY;
     }
 
@@ -54,6 +54,20 @@ public class BooleanMap {
             loopBound = echoRight.equals(EchoResult.OUT_OF_RANGE) ? 0 : dronePosition.getDroneY() - echoRange + 1;
             for(int i = dronePosition.getDroneY(); i >= loopBound; i--) {
                 this.map[i][dronePosition.getDroneX()] = true;
+            }
+        }
+    }
+
+    public void determineImpossibleTiles(int siteX, int siteY, int creekX, int creekY) {
+        double distanceX = Math.abs(siteX - creekX);
+        double distanceY = Math.abs(siteY - creekY);
+        int distance = (int) Math.ceil(Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2)));
+        
+        for(int i = 0; i < this.islandY; i++) {
+            for(int j = 0; j < this.islandX; j++) {
+                if(i < siteX - distance || i > siteX + distance || j < siteY - distance || j > siteY + distance) {
+                    this.map[i][j] = true;
+                }
             }
         }
     }

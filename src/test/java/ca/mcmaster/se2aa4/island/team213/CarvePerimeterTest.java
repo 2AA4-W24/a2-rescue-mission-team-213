@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.CarvePerimeter;
 
-
 public class CarvePerimeterTest {
     CarvePerimeter cpN, cpE;
     Drone dN, dE;
