@@ -5,6 +5,7 @@ import ca.mcmaster.se2aa4.island.team213.dronePhases.EndPhase;
 import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
 import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.BooleanMap;
 import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.DronePosition;
+import ca.mcmaster.se2aa4.island.team213.enums.Action;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,15 +26,15 @@ public class AreaScanInterlaced implements Phase {
     public int turns = 0;
 
     Direction direction;
-    public int x;
-    public int y;
+
+
+
     int islandx;
     int islandy;
 
 
     boolean passedFirstEnd;
     int blocksMovedSideways = 0;
-    boolean extraColumn;
 
     boolean lastTurnLeft = true;
 
@@ -50,6 +51,8 @@ public class AreaScanInterlaced implements Phase {
 
     BooleanMap booleanMap;
 
+    DronePosition dronePosition;
+
     private final Logger logger = LogManager.getLogger();
 
     private Queue<JSONObject> taskQueue = new LinkedList<>();
@@ -57,10 +60,9 @@ public class AreaScanInterlaced implements Phase {
 
     public AreaScanInterlaced(DronePosition dronePosition, BooleanMap mapOfCheckedTiles, Direction droneDirection){
         logger.info("---------------------------AREASCANINTERLACED CREATED---------------------------------------");
-//
-//        logger.info(islandx);
-//        logger.info(islandy);
-//        logger.info(droneDirection);
+
+
+        this.dronePosition = dronePosition;
 
         this.booleanMap = mapOfCheckedTiles;
 
@@ -68,15 +70,14 @@ public class AreaScanInterlaced implements Phase {
         this.islandx = booleanMap.getIslandX();
 
         //TODO: GET RID OF ATTRIBUTES AFTER TESTING
-        this.startx = dronePosition.getDroneX();
-        this.starty = dronePosition.getDroneY();
+//        this.startx = dronePosition.getDroneX();
+//        this.starty = dronePosition.getDroneY();
         this.startDirection = droneDirection;
 
 
         this.islandy = booleanMap.getIslandY();
         this.direction = droneDirection;
-        this.x = dronePosition.getDroneX();
-        this.y = dronePosition.getDroneY();
+
 
 
 
@@ -90,47 +91,39 @@ public class AreaScanInterlaced implements Phase {
         switch (droneDirection){
             case E, W -> {
                 this.stepsBeforeTurn = islandx-3;
-//                this.edgePos = new int[]{x, islandx+x};
                 //Even length width will result in an extra column that needs to be covered at the end
                 if (islandy % 2 == 0){
                     this.turnsBeforeReturn = islandy/2 - 1;
-                    extraColumn = true;
                 }
                 else{
                     this.turnsBeforeReturn = islandy/2;
-                    extraColumn = false;
                 }
             }
             case S, N -> {
                 this.stepsBeforeTurn = islandy-3;
-//                this.edgePos = new int[]{y, islandy+y};
                 if (islandx % 2 == 0){
                     this.turnsBeforeReturn = islandx/2 - 1;
-                    extraColumn = true;
                 }
                 else{
                     this.turnsBeforeReturn = islandx/2;
-                    extraColumn = false;
                 }
             }
         }
-
         switch (droneDirection){
             case N -> {
-                this.edgePos = new int[] {y, y-islandy+2};
+                this.edgePos = new int[] {dronePosition.getDroneY(), dronePosition.getDroneY()-islandy+2};
             }
             case E -> {
-                this.edgePos = new int[] {x, x+islandx-2};
+                this.edgePos = new int[] {dronePosition.getDroneX(), dronePosition.getDroneX()+islandx-2};
             }
             case S -> {
-                this.edgePos = new int[] {y, y+islandy-2};
+                this.edgePos = new int[] {dronePosition.getDroneY(), dronePosition.getDroneY()+islandy-2};
             }
             case W -> {
-                this.edgePos = new int[] {x, x-islandx+2};
+                this.edgePos = new int[] {dronePosition.getDroneX(), dronePosition.getDroneX()-islandx+2};
             }
         }
         logger.info(Arrays.toString(edgePos));
-
 
     }
 
@@ -141,44 +134,14 @@ public class AreaScanInterlaced implements Phase {
 
     @Override
     public boolean isFinished() {
-        if (turnedAround && turns == turnsBeforeReturn-1 && reachedEdge()){
-            logger.info("ENDED");
-            for (int yy=0; yy<mapOfEdges.length; ++yy) {
-                String test = "";
-                for (int xx = 0; xx < mapOfEdges[0].length; ++xx) {
-                    if (mapOfEdges[yy][xx]){
-                        test += "0";
-                    }
-                    else{
-                        test += "-";
-                    }
-                }
-                logger.info(test);
-            }
-            logger.info(mapOfCheckedTiles.length + "   " + mapOfCheckedTiles[0].length);
-            logger.info(mapOfEdges.length + "   " + mapOfEdges[0].length);
-            logger.info("EDGEPOS----");
-            logger.info(Arrays.toString(edgePos));
-            logger.info(startx + "   " + starty + "   " + startDirection.toString());
-            logger.info(shortestPath.getSite().getX() + "   " + shortestPath.getSite().getY());
-
-            return true;
-        }
-        return false;
+        return turnedAround && turns == turnsBeforeReturn-1 && reachedEdge();
     }
 
     @Override
     public JSONObject createDecision(Drone drone) {
-        logger.info("x: " + x + "  y: " + y + "   turnedAround:" + turnedAround);
-//        JSONObject enqueueScan = new JSONObject();
-        JSONObject decision = new JSONObject();
-        JSONObject headingDirection = new JSONObject();
-        JSONObject finaldecision = new JSONObject();
-
 
         if (!taskQueue.isEmpty()){
-            decision = taskQueue.remove();
-            return decision;
+            return taskQueue.remove();
         }
 
         if (!turnedAround && turns == turnsBeforeReturn && reachedEdge()){
@@ -186,126 +149,91 @@ public class AreaScanInterlaced implements Phase {
             turnedAround = true;
 
             if (lastTurnLeft){
-                leftTurnPos();
+
+                taskQueue.add(Action.TURN_LEFT.toJSON(direction));
                 direction = direction.leftTurn();
+                dronePosition.updatePositionAfterDecision(Action.TURN_LEFT, direction);
             }
             else{
-                rightTurnPos();
-                direction = direction.rightTurn();
-            }
 
-            decision = new JSONObject();
-            decision.put("action", "heading");
-            headingDirection = new JSONObject();
-            headingDirection.put("direction", direction);
-            decision.put("parameters", headingDirection);
-            taskQueue.add(decision);
+                taskQueue.add(Action.TURN_RIGHT.toJSON(direction));
+                direction = direction.rightTurn();
+                dronePosition.updatePositionAfterDecision(Action.TURN_RIGHT, direction);
+            }
 
             //Gets back to second column
             while (blocksMovedSideways - 3 > 0){
-                JSONObject moveForward = new JSONObject();
-                moveForward.put("action", "fly");
-                taskQueue.add(moveForward);
+                taskQueue.add(Action.FLY.toJSON(direction));
                 blocksMovedSideways--;
-                movePos();
+                dronePosition.updatePositionAfterDecision(Action.FLY, direction);
             }
 
             //final left turn to face towards column
             if (lastTurnLeft){
-                leftTurnPos();
+
+                taskQueue.add(Action.TURN_LEFT.toJSON(direction));
                 direction = direction.leftTurn();
+                dronePosition.updatePositionAfterDecision(Action.TURN_LEFT, direction);
                 lastTurnLeft = false;
             }
             else{
-                rightTurnPos();
+
+                taskQueue.add(Action.TURN_RIGHT.toJSON(direction));
                 direction = direction.rightTurn();
+                dronePosition.updatePositionAfterDecision(Action.TURN_RIGHT, direction);
                 lastTurnLeft = true;
             }
-
-            decision = new JSONObject();
-            headingDirection = new JSONObject();
-
-            decision.put("action", "heading");
-            headingDirection.put("direction", direction);
-            decision.put("parameters", headingDirection);
-            taskQueue.add(decision);
 
             turns = 0;
             movesSinceTurn = 0;
 
         }
         else if (reachedEdge()){
-            logger.info("------TURNING------------------------------------------------------------\n\n");
-            logger.info(movesSinceTurn);
-            logger.info(reachedEdge());
-            logger.info("turns: " + turns);
-
-//            passedFirstEnd = false;
-            logger.info("facing: " + direction);
+            /*
+             * Performs 2 left or right turns
+             */
             if (lastTurnLeft){
-                rightTurnPos();
+
+                taskQueue.add(Action.TURN_RIGHT.toJSON(direction));
                 direction = direction.rightTurn();
+                dronePosition.updatePositionAfterDecision(Action.TURN_RIGHT, direction);
                 logger.info("RIGHT TURN");
-            }
-            else{
-                leftTurnPos();
-                direction = direction.leftTurn();
-                logger.info("LEFT TURN");
-            }
 
-            //2 right turns
-            decision = new JSONObject();
-            headingDirection = new JSONObject();
-            decision.put("action", "heading");
-            headingDirection.put("direction", direction);
-            decision.put("parameters", headingDirection);
-            taskQueue.add(decision);
-
-            if (lastTurnLeft){
-                rightTurnPos();
+                taskQueue.add(Action.TURN_RIGHT.toJSON(direction));
                 direction = direction.rightTurn();
+                dronePosition.updatePositionAfterDecision(Action.TURN_RIGHT, direction);
                 lastTurnLeft = false;
             }
             else{
-                leftTurnPos();
+
+                taskQueue.add(Action.TURN_LEFT.toJSON(direction));
                 direction = direction.leftTurn();
+                dronePosition.updatePositionAfterDecision(Action.TURN_LEFT, direction);
+                logger.info("LEFT TURN");
+
+                taskQueue.add(Action.TURN_LEFT.toJSON(direction));
+                direction = direction.leftTurn();
+                dronePosition.updatePositionAfterDecision(Action.TURN_LEFT, direction);
                 lastTurnLeft = true;
             }
-            decision = new JSONObject();
-            headingDirection = new JSONObject();
-            decision.put("action", "heading");
-            headingDirection.put("direction", direction);
-            decision.put("parameters", headingDirection);
-            taskQueue.add(decision);
 
             movesSinceTurn = 0;
             blocksMovedSideways += 2;
             turns++;
-
-
         }
         else{
             logger.info("------FLYING STRAIGHT------------------------------------------------------------\n\n");
-            decision = new JSONObject();
-            decision.put("action", "fly");
-            taskQueue.add(decision);
-            movePos();
+            taskQueue.add(Action.FLY.toJSON(direction));
+            dronePosition.updatePositionAfterDecision(Action.FLY, direction);
             movesSinceTurn++;
         }
 
-        if (!booleanMap.getMap()[y][x]){
-            JSONObject enqueueScan2 = new JSONObject();
-            enqueueScan2.put("action", "scan");
-            taskQueue.add(enqueueScan2);
-            booleanMap.getMap()[y][x] = true;
-//            mapOfCheckedTiles[y][x] = true;
+        if (!booleanMap.getMap()[dronePosition.getDroneY()][dronePosition.getDroneX()]){
+            taskQueue.add(Action.SCAN.toJSON(direction));
+            booleanMap.getMap()[dronePosition.getDroneY()][dronePosition.getDroneX()] = true;
         }
 
-
-
-
-        finaldecision = taskQueue.remove();
-        return finaldecision;
+        return taskQueue.remove();
 
     }
 
@@ -314,14 +242,14 @@ public class AreaScanInterlaced implements Phase {
             switch (startDirection){
                 case N, S -> {
                     for (int posY: edgePos){
-                        if (y == posY){
+                        if (dronePosition.getDroneY() == posY){
                             return true;
                         }
                     }
                 }
                 case E, W -> {
                     for (int posX: edgePos){
-                        if (x == posX){
+                        if (dronePosition.getDroneX() == posX){
                             return true;
                         }
                     }
@@ -335,18 +263,14 @@ public class AreaScanInterlaced implements Phase {
         JSONArray creeksJSON = drone.getScanInfoCreeks();
         if (!creeksJSON.isEmpty()){
             for (int i=0; i<creeksJSON.length(); ++i){
-                logger.info(x + " " + y);
-                logger.info(creeksJSON.getString(i));
-                shortestPath.addCreek(new PointsOfInterest(x,y, creeksJSON.getString(i)));
+                shortestPath.addCreek(new PointsOfInterest(dronePosition.getDroneX(), dronePosition.getDroneY(), creeksJSON.getString(i)));
             }
         }
 
         JSONArray sitesJSON = drone.getScanInfoSites();
         if (!sitesJSON.isEmpty()){
             for (int i=0; i<sitesJSON.length(); ++i){
-                logger.info("SITE FOUND: " + x + " "+ y + " " + sitesJSON.getString(i));
-                shortestPath.addSite(new PointsOfInterest(x,y, sitesJSON.getString(i)));
-
+                shortestPath.addSite(new PointsOfInterest(dronePosition.getDroneX(), dronePosition.getDroneY(), sitesJSON.getString(i)));
             }
         }
 
@@ -356,68 +280,10 @@ public class AreaScanInterlaced implements Phase {
         if (shortestPath.checkIfPair()){
             booleanMap.determineImpossibleTiles(shortestPath.getSite(), shortestPath.closestCreekPOI);
         }
-
     }
 
     @Override
     public Phase nextPhase() {
         return new EndPhase();
-    }
-
-    private void rightTurnPos(){
-        switch(direction){
-            case N -> {
-                y--;
-                x++;
-            }
-            case E -> {
-                x++;
-                y++;
-            }
-            case S -> {
-                y++;
-                x--;
-            }
-            case W -> {
-                x--;
-                y--;
-            }
-        }
-    }
-    private void movePos(){
-        switch(direction){
-            case N -> {
-                y--;
-            }
-            case E -> {
-                x++;
-            }
-            case S -> {
-                y++;
-            }
-            case W -> {
-                x--;
-            }
-        }
-    }
-    private void leftTurnPos(){
-        switch(direction){
-            case N -> {
-                y--;
-                x--;
-            }
-            case E -> {
-                x++;
-                y--;
-            }
-            case S -> {
-                y++;
-                x++;
-            }
-            case W -> {
-                x--;
-                y++;
-            }
-        }
     }
 }
