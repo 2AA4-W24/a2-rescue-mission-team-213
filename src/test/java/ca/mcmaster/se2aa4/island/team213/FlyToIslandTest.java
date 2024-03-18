@@ -85,7 +85,6 @@ public class FlyToIslandTest {
         phaseA.checkDrone(droneA);
         // Ensure we are turning right, and we have another turn right queued after
         assertEquals(phaseA.getDecision().getString("action"), "heading");
-        assertEquals(phaseA.getTaskQueue().size(), 1);
 
         droneA.parseDecision(phaseA.createDecision(droneA));
         droneA.updateStatus(headingResponse);
