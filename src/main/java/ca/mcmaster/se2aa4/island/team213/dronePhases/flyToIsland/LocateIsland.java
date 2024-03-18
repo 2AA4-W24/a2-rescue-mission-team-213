@@ -18,6 +18,8 @@ import java.util.Queue;
 public class LocateIsland implements Phase {
     private final Logger logger = LogManager.getLogger();
 
+    JSONObject decision;
+
     private boolean noDataCollected = true;
     private boolean reachedBorder = false;
     private boolean needNextIteration = false;
@@ -35,7 +37,7 @@ public class LocateIsland implements Phase {
     public JSONObject createDecision(Drone drone) {
 //        logger.info("Items in Queue {}",taskQueue);
 
-        JSONObject decision = new JSONObject();
+        decision = new JSONObject();
 
         // first check if there are tasks to be executed
         if (!taskQueue.isEmpty()){
@@ -100,6 +102,14 @@ public class LocateIsland implements Phase {
     private void queueEchoLeftRight(Direction droneDirection){
         taskQueue.add(Action.ECHO_RIGHT.toJSON(droneDirection));
         taskQueue.add(Action.ECHO_LEFT.toJSON(droneDirection));
+    }
+
+    public JSONObject getDecision(){
+        return decision;
+    }
+
+    public Queue<JSONObject> getTaskQueue(){
+        return taskQueue;
     }
 
 

@@ -14,8 +14,13 @@ import java.util.Objects;
 import java.util.Queue;
 
 public class TravelToIsland implements Phase {
+
+    JSONObject decision;
     private Direction directionFacing;
     private Queue<JSONObject> taskQueue = new LinkedList<>();
+
+    // Phase is finished if taskQueue is complete, but also true at precondition, this variable ensures isFinished() isn't true at beginning
+    private boolean actionDone = false;
 
     @Override
     public boolean lastPhase(){
@@ -24,7 +29,7 @@ public class TravelToIsland implements Phase {
 
     @Override
     public JSONObject createDecision(Drone drone) {
-        JSONObject decision = new JSONObject();
+        decision = new JSONObject();
         JSONObject flyCommand = Action.FLY.toJSON(drone.getDirection());
         // Keep heading in direction
         if(!taskQueue.isEmpty()){
@@ -33,7 +38,7 @@ public class TravelToIsland implements Phase {
         else if (Objects.equals(drone.getEchoAhead(), EchoResult.GROUND)){
             decision = flyCommand;
             // need to keep heading i - 1 times in that direction
-            for (int i = 0; i < drone.getRangeAhead(); i++){
+            for (int i = 0; i < drone.getRangeAhead() - 1; i++){
                 taskQueue.add(flyCommand);
             }
         }
@@ -41,7 +46,7 @@ public class TravelToIsland implements Phase {
         else if (Objects.equals(drone.getEchoRight(), EchoResult.GROUND)){
             decision = Action.TURN_RIGHT.toJSON(drone.getDirection());
             // need to keep heading i - 1 times in that direction
-            for (int i = 0; i < drone.getRangeRight(); i++){
+            for (int i = 0; i < drone.getRangeRight() -1; i++){
                 taskQueue.add(flyCommand);
             }
         }
@@ -49,10 +54,11 @@ public class TravelToIsland implements Phase {
         else if (Objects.equals(drone.getEchoLeft(), EchoResult.GROUND)){
             decision = Action.TURN_LEFT.toJSON(drone.getDirection());
             // need to keep heading i - 1 times in that direction
-            for (int i = 0; i < drone.getRangeLeft(); i++){
+            for (int i = 0; i < drone.getRangeLeft() -1; i++){
                 taskQueue.add(flyCommand);
             }
         }
+        actionDone = true;
         return decision;
     }
 
@@ -68,7 +74,15 @@ public class TravelToIsland implements Phase {
 
     @Override
     public boolean isFinished() {
-        return taskQueue.isEmpty();
+        return actionDone && taskQueue.isEmpty();
+    }
+
+    public JSONObject getDecision(){
+        return decision;
+    }
+
+    public Queue<JSONObject> getTaskQueue(){
+        return taskQueue;
     }
 
 
