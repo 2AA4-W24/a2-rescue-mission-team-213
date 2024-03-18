@@ -8,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 public class Drone {
     private Integer battery;
     private Direction direction;
@@ -55,6 +57,11 @@ public class Drone {
         else if(previousDecision.equals(Action.SCAN)) {
             logger.info("STORING SCAN INFO:");
             this.scanInfo = new ScanStatus(extraInfo);
+        } else if (previousDecision.equals(Action.FLY)){
+            if (!Objects.isNull(this.echo.rangeAhead)){
+                this.echo.rangeAhead -= 1;
+            }
+
         }
 
     }
