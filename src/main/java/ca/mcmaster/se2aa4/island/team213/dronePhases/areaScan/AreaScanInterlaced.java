@@ -263,20 +263,20 @@ public class AreaScanInterlaced implements Phase {
     private boolean earlyTurn(){
         switch (startDirection){
             case N -> {
-                if (!turnedAround && hashMap.get(dronePosition.getDroneX()) != null && hashMap.get(dronePosition.getDroneX()+2) != null){
+                if (hashMap.get(dronePosition.getDroneX()) != null && hashMap.get(dronePosition.getDroneX()+2) != null){
                     if (goingUpOrRight){
                         //If passed both edge points
-                        if (hashMap.get(dronePosition.getDroneX()) != null && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX())[1]){
+                        if (dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
-                            if (hashMap.get(dronePosition.getDroneX()+2) != null &&  dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX()+2)[0] && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX()+2)[1]){
+                            if (dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX()+2)[0] && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX()+2)[1]){
                                 return true;
                             }
                         }
                     }
                     else{
-                        if (hashMap.get(dronePosition.getDroneX()) != null && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX())[1]){
+                        if (dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
-                            if (hashMap.get(dronePosition.getDroneX()+2) != null &&  dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX()+2)[0] && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX()+2)[1]){
+                            if (dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX()+2)[0] && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX()+2)[1]){
                                 return true;
                             }
                         }
@@ -286,6 +286,25 @@ public class AreaScanInterlaced implements Phase {
 
             }
             case E -> {
+                if (hashMap.get(dronePosition.getDroneY()) != null && hashMap.get(dronePosition.getDroneY()+2) != null){
+                    if (goingUpOrRight){
+                        //If passed both edge points
+                        if (dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY())[0] && dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY())[1]){
+                            //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
+                            if (dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY()+2)[0] && dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY()+2)[1]){
+                                return true;
+                            }
+                        }
+                    }
+                    else{
+                        if (dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY())[0] && dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY())[1]){
+                            //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
+                            if (dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY()+2)[0] && dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY()+2)[1]){
+                                return true;
+                            }
+                        }
+                    }
+                }
                 return false;
 
             }
@@ -316,6 +335,25 @@ public class AreaScanInterlaced implements Phase {
 
             }
             case W -> {
+                if (hashMap.get(dronePosition.getDroneY()) != null && hashMap.get(dronePosition.getDroneY()-2) != null){
+                    if (goingUpOrRight){
+                        //If passed both edge points
+                        if (dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY())[0] && dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY())[1]){
+                            //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
+                            if (dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY()-2)[0] && dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY()-2)[1]){
+                                return true;
+                            }
+                        }
+                    }
+                    else{
+                        if (dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY())[0] && dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY())[1]){
+                            //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
+                            if (dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY()-2)[0] && dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY()-2)[1]){
+                                return true;
+                            }
+                        }
+                    }
+                }
                 return false;
             }
         }
