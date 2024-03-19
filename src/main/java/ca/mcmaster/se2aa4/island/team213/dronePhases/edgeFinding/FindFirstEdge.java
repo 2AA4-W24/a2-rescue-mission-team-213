@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team213.edgeFinding;
+package ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -8,12 +8,13 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import ca.mcmaster.se2aa4.island.team213.Action;
 import ca.mcmaster.se2aa4.island.team213.Biome;
-import ca.mcmaster.se2aa4.island.team213.Direction;
 import ca.mcmaster.se2aa4.island.team213.Drone;
-import ca.mcmaster.se2aa4.island.team213.EchoResult;
-import ca.mcmaster.se2aa4.island.team213.Phase;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
+import ca.mcmaster.se2aa4.island.team213.enums.Action;
+import ca.mcmaster.se2aa4.island.team213.enums.Direction;
+import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
+
 
 public class FindFirstEdge implements Phase {
     private boolean isFinished;
@@ -57,8 +58,9 @@ public class FindFirstEdge implements Phase {
     @Override
     public JSONObject createDecision(Drone drone) {
         JSONObject decision = new JSONObject();
+        Action nextAction = this.decisionQueue.peek();
         
-        decision = DecisionJSONs.actionToJSONObject(this.decisionQueue.peek(), drone.getDirection());
+        decision = nextAction.toJSON(drone.getDirection());
         if(this.decisionQueue.peek().equals(Action.TURN_RIGHT)) {
             this.isFinished = true;
         }
@@ -81,7 +83,7 @@ public class FindFirstEdge implements Phase {
     }
 
     private void checkScanAndEchoes(Drone drone) {
-        JSONArray biomes = drone.getScanInfoBiome();
+        JSONArray biomes = drone.getScanInfoBiomes();
         Biome firstBiome = Biome.valueOf(biomes.getString(0));
         
         if(biomes.length() == 1 && firstBiome.equals(Biome.OCEAN) && drone.getEchoLeft().equals(EchoResult.OUT_OF_RANGE) && drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
