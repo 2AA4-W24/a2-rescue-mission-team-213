@@ -1,6 +1,6 @@
 package ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter;
 
-import ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan.PointsOfInterest;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan.PointOfInterest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -59,7 +59,7 @@ public class BooleanMap {
         }
     }
 
-    public void determineImpossibleTiles(PointsOfInterest site, PointsOfInterest creek) {
+    public void determineImpossibleTiles(PointOfInterest site, PointOfInterest creek) {
         int siteX = site.getX();
         int siteY = site.getY();
         int creekX = creek.getX();

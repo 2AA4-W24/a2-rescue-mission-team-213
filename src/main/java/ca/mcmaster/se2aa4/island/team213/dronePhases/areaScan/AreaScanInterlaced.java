@@ -13,118 +13,82 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class AreaScanInterlaced implements Phase {
-    private GetShortestPath shortestPath;
-    public int stepsBeforeTurn;
-    public int turnsBeforeReturn;
-
-    //Moves since turn is initialized to 1, as start position is one block ahead
-    public int movesSinceTurn = 0;
-    public int turns = 0;
-
-    Direction direction;
-
-
-
-    int islandx;
-    int islandy;
-
-
-    boolean passedFirstEnd;
-    int blocksMovedSideways = 0;
-
-    boolean lastTurnLeft = true;
-
-    public boolean turnedAround = false;
-
-    boolean[][] mapOfCheckedTiles;
-    boolean[][] mapOfEdges;
-
-    int[] edgePos;
-
-    int startx;
-    int starty;
-    Direction startDirection;
-
-    BooleanMap booleanMap;
-
-    DronePosition dronePosition;
-
+    int earlyturn = 0;
+    private boolean goingUpOrRight;
+    private final PointsOfInterests pointsOfInterest;
+    private int turnsBeforeReturn;
+    private int movesSinceTurn = 0;
+    private int turns = 0;
+    private Direction direction;
+    private int blocksMovedSideways = 0;
+    private boolean lastTurnLeft = true;
+    private boolean turnedAround = false;
+    private int[] edgePos;
+    private final Direction startDirection;
+    private final BooleanMap booleanMap;
+    private final DronePosition dronePosition;
     private final Logger logger = LogManager.getLogger();
+    private final Queue<JSONObject> taskQueue = new LinkedList<>();
 
-    private Queue<JSONObject> taskQueue = new LinkedList<>();
-    //int islandx, int islandy, int x, int y, Direction droneDirection, boolean[][] mapOfCheckedTiles
+    HashMap<Integer, int[]> hashMap;
 
     public AreaScanInterlaced(DronePosition dronePosition, BooleanMap mapOfCheckedTiles, Direction droneDirection){
-        logger.info("---------------------------AREASCANINTERLACED CREATED---------------------------------------");
-
+        logger.info("---------------------------AREA SCAN INTERLACED CREATED---------------------------------------");
 
         this.dronePosition = dronePosition;
-
         this.booleanMap = mapOfCheckedTiles;
-
-        shortestPath = new GetShortestPath();
-        this.islandx = booleanMap.getIslandX();
-
-        //TODO: GET RID OF ATTRIBUTES AFTER TESTING
-//        this.startx = dronePosition.getDroneX();
-//        this.starty = dronePosition.getDroneY();
+        this.pointsOfInterest = new PointsOfInterests();
         this.startDirection = droneDirection;
-
-
-        this.islandy = booleanMap.getIslandY();
+        int islandX = booleanMap.getIslandX();
+        int islandY = booleanMap.getIslandY();
         this.direction = droneDirection;
 
-
-
-
-        this.mapOfCheckedTiles = mapOfCheckedTiles.getMap();
-
-        EdgeMap edgeMap = new EdgeMap(this.mapOfCheckedTiles, this.direction, this.islandx, this.islandy);
-        mapOfEdges = edgeMap.getEdgeMap();
-
-        passedFirstEnd = false;
+//        EdgeMap edgeMap = new EdgeMap(mapOfCheckedTiles.getMap(), droneDirection, islandX, islandY);
+        EdgeMapNew edgeMap = new EdgeMapNew(dronePosition, droneDirection, islandX, islandY, mapOfCheckedTiles.getMap());
+        hashMap = edgeMap.getEdgeMap();
 
         switch (droneDirection){
             case E, W -> {
-                this.stepsBeforeTurn = islandx-3;
                 //Even length width will result in an extra column that needs to be covered at the end
-                if (islandy % 2 == 0){
-                    this.turnsBeforeReturn = islandy/2 - 1;
+                if (islandY % 2 == 0){
+                    this.turnsBeforeReturn = islandY /2 - 1;
                 }
                 else{
-                    this.turnsBeforeReturn = islandy/2;
+                    this.turnsBeforeReturn = islandY /2;
                 }
             }
             case S, N -> {
-                this.stepsBeforeTurn = islandy-3;
-                if (islandx % 2 == 0){
-                    this.turnsBeforeReturn = islandx/2 - 1;
+                if (islandX % 2 == 0){
+                    this.turnsBeforeReturn = islandX /2 - 1;
                 }
                 else{
-                    this.turnsBeforeReturn = islandx/2;
+                    this.turnsBeforeReturn = islandX /2;
                 }
             }
         }
         switch (droneDirection){
             case N -> {
-                this.edgePos = new int[] {dronePosition.getDroneY(), dronePosition.getDroneY()-islandy+2};
+                this.goingUpOrRight = true;
+                this.edgePos = new int[] {dronePosition.getDroneY(), dronePosition.getDroneY()- islandY +2};
             }
             case E -> {
-                this.edgePos = new int[] {dronePosition.getDroneX(), dronePosition.getDroneX()+islandx-2};
+                this.goingUpOrRight = true;
+                this.edgePos = new int[] {dronePosition.getDroneX(), dronePosition.getDroneX()+ islandX -2};
             }
             case S -> {
-                this.edgePos = new int[] {dronePosition.getDroneY(), dronePosition.getDroneY()+islandy-2};
+                this.goingUpOrRight = false;
+                this.edgePos = new int[] {dronePosition.getDroneY(), dronePosition.getDroneY()+ islandY -2};
             }
             case W -> {
-                this.edgePos = new int[] {dronePosition.getDroneX(), dronePosition.getDroneX()-islandx+2};
+                this.goingUpOrRight = false;
+                this.edgePos = new int[] {dronePosition.getDroneX(), dronePosition.getDroneX()- islandX +2};
             }
         }
-        logger.info(Arrays.toString(edgePos));
-
     }
 
     @Override
@@ -134,9 +98,21 @@ public class AreaScanInterlaced implements Phase {
 
     @Override
     public boolean isFinished() {
-        return turnedAround && turns == turnsBeforeReturn-1 && reachedEdge();
-    }
+        if (turnedAround && turns == turnsBeforeReturn-1 && reachedEdge()){
+            logger.info("early turns: " + earlyturn);
+            logger.info("start direction: " + startDirection);
+            logger.info(Arrays.toString(edgePos));
+            for (HashMap.Entry<Integer, int[]> entry : hashMap.entrySet()) {
+                Integer key = entry.getKey();
+                int[] value = entry.getValue();
+                String logMessage = String.format("Key: %d, Value: [%d, %d]", key, value[0], value[1]);
+                logger.info(logMessage);
+            }
+            return true;
+        }
 
+        return false;
+    }
     @Override
     public JSONObject createDecision(Drone drone) {
 
@@ -147,6 +123,7 @@ public class AreaScanInterlaced implements Phase {
         if (!turnedAround && turns == turnsBeforeReturn && reachedEdge()){
             logger.info("--------------------------TURNING AROUND ----------------------------------");
             turnedAround = true;
+            goingUpOrRight = !goingUpOrRight;
 
             if (lastTurnLeft){
 
@@ -188,7 +165,8 @@ public class AreaScanInterlaced implements Phase {
             movesSinceTurn = 0;
 
         }
-        else if (reachedEdge()){
+        else if (reachedEdge() || earlyTurn()){
+            goingUpOrRight = !goingUpOrRight;
             /*
              * Performs 2 left or right turns
              */
@@ -205,7 +183,6 @@ public class AreaScanInterlaced implements Phase {
                 lastTurnLeft = false;
             }
             else{
-
                 taskQueue.add(Action.TURN_LEFT.toJSON(direction));
                 direction = direction.leftTurn();
                 dronePosition.updatePositionAfterDecision(Action.TURN_LEFT, direction);
@@ -222,12 +199,11 @@ public class AreaScanInterlaced implements Phase {
             turns++;
         }
         else{
-            logger.info("------FLYING STRAIGHT------------------------------------------------------------\n\n");
             taskQueue.add(Action.FLY.toJSON(direction));
             dronePosition.updatePositionAfterDecision(Action.FLY, direction);
             movesSinceTurn++;
         }
-
+//        taskQueue.add(Action.SCAN.toJSON(direction));
         if (!booleanMap.getMap()[dronePosition.getDroneY()][dronePosition.getDroneX()]){
             taskQueue.add(Action.SCAN.toJSON(direction));
             booleanMap.getMap()[dronePosition.getDroneY()][dronePosition.getDroneX()] = true;
@@ -235,6 +211,31 @@ public class AreaScanInterlaced implements Phase {
 
         return taskQueue.remove();
 
+    }
+
+    /*
+     * Adds all creeks and sites found, and computs and updates the closest creekID
+     */
+    @Override
+    public void checkDrone(Drone drone) {
+        JSONArray creeksJSON = drone.getScanInfoCreeks();
+        JSONArray sitesJSON = drone.getScanInfoSites();
+
+        pointsOfInterest.addCreeks(creeksJSON, dronePosition);
+        pointsOfInterest.addSites(sitesJSON, dronePosition);
+        pointsOfInterest.computeClosestSite();
+        pointsOfInterest.updateCreekID(drone);
+
+        /*
+         * Once a site and creek pair is identified, will mark all new blocks that do not need to be scanned
+         */
+        if (pointsOfInterest.checkIfPair()){
+            booleanMap.determineImpossibleTiles(pointsOfInterest.getSite(), pointsOfInterest.getClosestCreek());
+        }
+    }
+    @Override
+    public Phase nextPhase() {
+        return new EndPhase();
     }
 
     private boolean reachedEdge(){
@@ -258,32 +259,66 @@ public class AreaScanInterlaced implements Phase {
         }
         return false;
     }
-    @Override
-    public void checkDrone(Drone drone) {
-        JSONArray creeksJSON = drone.getScanInfoCreeks();
-        if (!creeksJSON.isEmpty()){
-            for (int i=0; i<creeksJSON.length(); ++i){
-                shortestPath.addCreek(new PointsOfInterest(dronePosition.getDroneX(), dronePosition.getDroneY(), creeksJSON.getString(i)));
+
+    private boolean earlyTurn(){
+        switch (startDirection){
+            case N -> {
+                if (!turnedAround && hashMap.get(dronePosition.getDroneX()) != null && hashMap.get(dronePosition.getDroneX()+2) != null){
+                    if (goingUpOrRight){
+                        //If passed both edge points
+                        if (hashMap.get(dronePosition.getDroneX()) != null && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX())[1]){
+                            //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
+                            if (hashMap.get(dronePosition.getDroneX()+2) != null &&  dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX()+2)[0] && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX()+2)[1]){
+                                return true;
+                            }
+                        }
+                    }
+                    else{
+                        if (hashMap.get(dronePosition.getDroneX()) != null && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX())[1]){
+                            //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
+                            if (hashMap.get(dronePosition.getDroneX()+2) != null &&  dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX()+2)[0] && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX()+2)[1]){
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+
+            }
+            case E -> {
+                return false;
+
+            }
+            case S -> {
+                if (hashMap.get(dronePosition.getDroneX()) != null && hashMap.get(dronePosition.getDroneX()-2) != null){
+                    if (goingUpOrRight){
+                        //If passed both edge points
+                        if (dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX())[1]){
+                            //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
+                            if (dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX()-2)[0] && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX()-2)[1]){
+                                earlyturn++;
+                                return true;
+                            }
+                        }
+                    }
+                    else{
+                        if (dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX())[1]){
+                            //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
+                            if (dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX()-2)[0] && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX()-2)[1]){
+                                earlyturn++;
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                return false;
+
+            }
+            case W -> {
+                return false;
             }
         }
-
-        JSONArray sitesJSON = drone.getScanInfoSites();
-        if (!sitesJSON.isEmpty()){
-            for (int i=0; i<sitesJSON.length(); ++i){
-                shortestPath.addSite(new PointsOfInterest(dronePosition.getDroneX(), dronePosition.getDroneY(), sitesJSON.getString(i)));
-            }
-        }
-
-        shortestPath.computeClosestSite();
-        shortestPath.updateCreekID(drone);
-
-        if (shortestPath.checkIfPair()){
-            booleanMap.determineImpossibleTiles(shortestPath.getSite(), shortestPath.closestCreekPOI);
-        }
-    }
-
-    @Override
-    public Phase nextPhase() {
-        return new EndPhase();
+        return false;
     }
 }

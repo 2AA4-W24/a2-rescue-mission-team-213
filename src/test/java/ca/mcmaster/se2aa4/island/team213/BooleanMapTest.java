@@ -3,11 +3,8 @@ package ca.mcmaster.se2aa4.island.team213;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan.PointsOfInterest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.BooleanMap;
 
