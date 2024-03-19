@@ -8,7 +8,7 @@ public enum Action {
         JSONObject decision = new JSONObject();
         JSONObject parameter = new JSONObject();
 
-        switch (this){
+        switch (this) {
             case FLY -> {
                 decision.put("action", "fly");
             }
@@ -39,6 +39,9 @@ public enum Action {
                 parameter.put("direction", direction.rightTurn().toString());
                 decision.put("parameters", parameter);
                 decision.put("action", "heading");
+            }
+            case STOP -> {
+                decision.put("action", "stop");
             }
         }
         return decision;
