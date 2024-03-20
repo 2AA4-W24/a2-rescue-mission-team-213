@@ -28,28 +28,16 @@ public class Explorer implements IExplorerRaid {
     public String takeDecision() {
         JSONObject decision = new JSONObject();
 
-        /*
-         * Battery threshold
-         */
-
         if(drone.getBattery() <= 50) {
             decision.put("action", "stop");
-        }
-        /*
-         * If current phase is finished initialize next phase
-         */
-        else if(phase.isFinished()) {
-
-            phase = phase.nextPhase();
-            decision = phase.createDecision(drone);
-        }
-        else {
+        } else {
+            if(phase.isFinished()) {
+                phase = phase.nextPhase();
+            }
             decision = phase.createDecision(drone);
         }
 
-        // logger.info("reached before");
         drone.parseDecision(decision);
-        // logger.info("reached after");
         return decision.toString();
     }
 
@@ -63,13 +51,7 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String deliverFinalReport() {
-        logger.warn("GAME ENDED?");
-
-//        if(drone.getSiteID().equals(null)) {
-//            logger.info("no site found");
-//            return "no site found";
-//        }
-        
+        logger.warn("GAME ENDED?");        
         logger.info(drone.getSiteID());
         return drone.getSiteID();
     }

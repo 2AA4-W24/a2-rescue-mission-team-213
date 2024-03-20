@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import ca.mcmaster.se2aa4.island.team213.Biome;
+import ca.mcmaster.se2aa4.island.team213.enums.Biome;
 import ca.mcmaster.se2aa4.island.team213.Drone;
 import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
 import ca.mcmaster.se2aa4.island.team213.enums.Action;

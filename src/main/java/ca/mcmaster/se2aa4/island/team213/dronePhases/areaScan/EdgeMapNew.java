@@ -2,8 +2,6 @@ package ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan;
 
 import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.DronePosition;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
-import scala.Int;
-
 import java.util.HashMap;
 
 public class EdgeMapNew {

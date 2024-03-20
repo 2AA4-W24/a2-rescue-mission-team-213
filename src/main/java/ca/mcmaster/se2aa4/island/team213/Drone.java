@@ -25,19 +25,14 @@ public class Drone {
         this.battery = battery;
     }
 
-    // setter
     public void setCreekID(String siteID) {
         this.siteID = siteID;
     }
 
     public void updateStatus(JSONObject response) {
-        // logger.info("updating status...");
-        // logger.info("** Response received:\n"+response.toString(2));
-        //logger.info("previous decision: " + this.previousDecision);
         this.battery -= response.getInt("cost");
         logger.info("new battery level: " + this.battery);
         JSONObject extraInfo = response.getJSONObject("extras");
-        // logger.info("additional information received: {}", extraInfo);
 
         if(previousDecision.equals(Action.ECHO_RIGHT)) {
             logger.info("STORING ECHO RIGHT INFO: " + extraInfo.getString("found"));
@@ -61,9 +56,7 @@ public class Drone {
             if (!Objects.isNull(this.echo.rangeAhead)){
                 this.echo.rangeAhead -= 1;
             }
-
         }
-
     }
     
     public void parseDecision(JSONObject decision) {
