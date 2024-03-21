@@ -54,8 +54,8 @@ public class FindSubsequentEdge implements Phase {
         
         decision = nextAction.toJSON(drone.getDirection());
         if(this.decisionQueue.peek().equals(Action.TURN_RIGHT)) {
-            this.isFinished = true;
             this.droneDirection = drone.getDirection().rightTurn();
+            this.isFinished = true;
         }
         this.decisionQueue.remove();
 

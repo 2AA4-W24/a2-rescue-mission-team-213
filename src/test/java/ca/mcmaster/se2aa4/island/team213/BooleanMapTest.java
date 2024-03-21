@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan.PointOfInterest;
@@ -16,38 +16,39 @@ public class BooleanMapTest {
     boolean[][] indices;
     PointOfInterest site, creek;
     String mapRow;
-    
+
     private final Logger logger = LogManager.getLogger();
 
-   @BeforeEach
-   public void setUp() {
-       map = new BooleanMap(50, 50);
-       PointOfInterest site = new PointOfInterest(10, 10, "1");
-       PointOfInterest creek = new PointOfInterest(13, 14, "2");
-       map.determineImpossibleTiles(site, creek);
-       indices = map.getMap();
+    @BeforeEach
+    public void setUp() {
+        map = new BooleanMap(50, 50);
+        site = new PointOfInterest(10, 10, "1");
+        creek = new PointOfInterest(13, 14, "2");
+    }
 
-       for(int i = 0; i < map.getIslandY(); i++) {
-           mapRow = "";
-           for(int j = 0; j < map.getIslandX(); j++) {
-               mapRow += (indices[i][j] ? "- " : "0 ");
-           }
-           logger.info(mapRow);
-       }
-   }
+    @Test
+    public void testImpossibleTiles() {
+        map.determineImpossibleTiles(site, creek);
+        indices = map.getMap();
 
-   @Test
-   public void testImpossibleTiles() {
-       assertFalse(indices[15][10]);
-       assertTrue(indices[16][10]);
+        int siteX = site.getX();
+        int siteY = site.getY();
+        int creekX = creek.getX();
+        int creekY = creek.getY();
+        double distanceX = Math.abs(siteX - creekX);
+        double distanceY = Math.abs(siteY - creekY);
+        int distance = (int) Math.ceil(Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2)));
+        
+        assertFalse(indices[siteY + distance + 1][siteX]);
+        assertTrue(indices[siteY + distance + 2][siteX]);
 
-       assertFalse(indices[5][10]);
-       assertTrue(indices[4][10]);
+        assertFalse(indices[siteY - distance - 1][siteX]);
+        assertTrue(indices[siteY - distance - 2][siteX]);
 
-       assertFalse(indices[10][15]);
-       assertTrue(indices[10][16]);
+        assertFalse(indices[siteY][siteX + distance + 1]);
+        assertTrue(indices[siteY][siteX + distance + 2]);
 
-       assertFalse(indices[10][5]);
-       assertTrue(indices[10][4]);
-   }
+        assertFalse(indices[siteY][siteX - distance - 1]);
+        assertTrue(indices[siteY][siteX - distance - 2]);
+    }
 }

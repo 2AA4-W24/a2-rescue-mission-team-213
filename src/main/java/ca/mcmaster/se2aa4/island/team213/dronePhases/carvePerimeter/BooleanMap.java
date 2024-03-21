@@ -1,8 +1,6 @@
 package ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter;
 
 import ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan.PointOfInterest;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
@@ -10,8 +8,6 @@ import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
 public class BooleanMap {
     public boolean[][] map;
     int islandX, islandY;
-
-    private final Logger logger = LogManager.getLogger();
 
     public BooleanMap(int x, int y) {
         this.islandX = x;

@@ -36,7 +36,7 @@ public class DronePosition {
             case FLY -> updateAfterFly(droneDirection);
             case TURN_RIGHT -> updateAfterRightTurn(droneDirection);
             case TURN_LEFT -> updateAfterLeftTurn(droneDirection);
-            default -> { /* do nothing */}
+            default -> { /* do nothing */ }
         }
     }
 

@@ -15,8 +15,7 @@ public class Configuration {
         initializeConfiguration(s);
     }
 
-    public void initializeConfiguration(String s){
-        // Technical Debt: direction, batteryLevel not accessible to configure drone run
+    private void initializeConfiguration(String s){
         Logger logger = LogManager.getLogger();
         logger.info("** Initializing the Exploration Command Center");
         JSONObject info = new JSONObject(new JSONTokener(new StringReader(s)));

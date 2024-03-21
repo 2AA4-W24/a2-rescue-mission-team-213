@@ -47,9 +47,7 @@ public class FlyPastDetermined implements Phase {
 
     @Override
     public void checkDrone(Drone drone) {
-        // logger.info("CURRENT FLY ACTIONS LEFT: " + Integer.toString(this.flyActionsLeft));
         this.flyActionsLeft -= 1;
-        // logger.info("SUBTRACTING FLY ACTIONS TO: " + Integer.toString(this.flyActionsLeft));
         if(this.flyActionsLeft == 0) {
             this.isFinished = true;
         }

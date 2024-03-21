@@ -56,34 +56,6 @@ public class CarvePerimeter implements Phase {
 
     @Override
     public boolean isFinished() {
-        if(this.isFinished) {
-
-            int groundFound = 0;
-
-            for(int i = 0; i < checkedTiles.islandY; i++) {
-                String test = "";
-                for(int j = 0; j < checkedTiles.islandX; j++) {
-                    if(this.dronePosition.getDroneY() == i && this.dronePosition.getDroneX() == j) {
-                        test += "1 ";
-                    } else {
-                        if(this.checkedTiles.map[i][j] == true) {
-                            test += "- ";
-                        } else {
-                            test += "0 ";
-
-                            groundFound += 1;
-
-                        }
-                    }
-                }
-                logger.info(test);
-            }
-
-            logger.info("Total tiles: " + (checkedTiles.islandY * checkedTiles.islandX));
-            logger.info("Tiles left to scan: " + groundFound);
-            logger.info("Estimated battery cost: ~" + ((checkedTiles.islandY * checkedTiles.islandX * 8) - (groundFound * 8)));
-
-        }
         return this.isFinished;
     }
 

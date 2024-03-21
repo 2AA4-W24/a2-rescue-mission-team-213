@@ -4,11 +4,10 @@ import ca.mcmaster.se2aa4.island.team213.Drone;
 import org.json.JSONObject;
 
 public class EndPhase implements Phase {
-    boolean isFinished = true;
-
+    boolean isFinished = false;
 
     @Override
-    public boolean lastPhase(){
+    public boolean lastPhase() {
         return true;
     }
 
@@ -26,7 +25,6 @@ public class EndPhase implements Phase {
 
     @Override
     public void checkDrone(Drone drone) {
-        // Left empty, as this is a placeholder phase to avoid null phases in phase queues
         this.isFinished = true;
     }
 

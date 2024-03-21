@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding.FlyPastDetermined;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.CarvePerimeter;
 import ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding.FindFirstEdge;
 import ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding.FindSubsequentEdge;
 
@@ -19,9 +21,8 @@ import ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding.FindSubsequentE
 public class FindEdgesTest {
     private Drone droneA, droneB;
     private FindFirstEdge phaseA, phaseB;
-    private FindSubsequentEdge phaseC;
+    private FindSubsequentEdge phaseC, phaseE;
     private FlyPastDetermined phaseD;
-
 
     private int flyActionsLeft;
     private JSONObject echoOOBResponse, echoGResponse, scanResponse;
@@ -37,6 +38,7 @@ public class FindEdgesTest {
         phaseB = new FindFirstEdge(droneB.getDirection());
         phaseC = new FindSubsequentEdge(0, 0, false, 0);
         phaseD = new FlyPastDetermined(0, 0, false, 0, flyActionsLeft);
+        phaseE = new FindSubsequentEdge(0, 0, true, 3);
 
         createEchoOOBResponse();
         createEchoGResponse();
@@ -118,28 +120,28 @@ public class FindEdgesTest {
 
     @Test
     public void testFindFirstEdgeLoop() {
-        assertEquals(phaseA.getNextDecision(), Action.FLY);
-        droneA.parseDecision(phaseA.createDecision(droneA));
-        phaseA.checkDrone(droneA);
+        assertEquals(phaseB.getNextDecision(), Action.FLY);
+        droneB.parseDecision(phaseB.createDecision(droneB));
+        phaseB.checkDrone(droneB);
 
-        assertEquals(phaseA.getNextDecision(), Action.SCAN);
-        droneA.parseDecision(phaseA.createDecision(droneA));
-        droneA.updateStatus(scanResponse);
-        phaseA.checkDrone(droneA);
+        assertEquals(phaseB.getNextDecision(), Action.SCAN);
+        droneB.parseDecision(phaseB.createDecision(droneB));
+        droneB.updateStatus(scanResponse);
+        phaseB.checkDrone(droneB);
 
-        assertEquals(phaseA.getNextDecision(), Action.ECHO_LEFT);
-        droneA.parseDecision(phaseA.createDecision(droneA));
-        droneA.updateStatus(echoOOBResponse);
-        phaseA.checkDrone(droneA);
+        assertEquals(phaseB.getNextDecision(), Action.ECHO_LEFT);
+        droneB.parseDecision(phaseB.createDecision(droneB));
+        droneB.updateStatus(echoOOBResponse);
+        phaseB.checkDrone(droneB);
 
-        assertEquals(phaseA.getNextDecision(), Action.ECHO_RIGHT);
-        droneA.parseDecision(phaseA.createDecision(droneA));
-        droneA.updateStatus(echoGResponse);
-        phaseA.checkDrone(droneA);
+        assertEquals(phaseB.getNextDecision(), Action.ECHO_RIGHT);
+        droneB.parseDecision(phaseB.createDecision(droneB));
+        droneB.updateStatus(echoGResponse);
+        phaseB.checkDrone(droneB);
 
-        assertEquals(phaseA.getNextDecision(), Action.FLY);
-        phaseA.createDecision(droneA);
-        assertFalse(phaseA.isFinished());
+        assertEquals(phaseB.getNextDecision(), Action.FLY);
+        phaseB.createDecision(droneB);
+        assertFalse(phaseB.isFinished());
     }
 
     @Test
@@ -169,10 +171,33 @@ public class FindEdgesTest {
     @Test
     public void testFlyPastDetermined() {
         for(int i = 0; i < flyActionsLeft; i++) {
+            phaseD.createDecision(droneA);
             phaseD.checkDrone(droneA);
         }
-
         assertTrue(phaseD.isFinished());
     }
+
+    @Test
+    public void testNextPhases() {
+        Phase test;
+
+        test = phaseA.nextPhase();
+        assertTrue(test instanceof FindSubsequentEdge);
+
+        test = phaseC.nextPhase();
+        assertTrue(test instanceof FlyPastDetermined);
+
+        test = phaseD.nextPhase();
+        assertTrue(test instanceof FindSubsequentEdge);
+
+        droneA.parseDecision(phaseE.createDecision(droneA));
+        droneA.updateStatus(echoOOBResponse);
+        phaseE.checkDrone(droneA);
+        phaseE.createDecision(droneA);
+        test = phaseE.nextPhase();
+        assertTrue(test instanceof CarvePerimeter);
+
+    }
+
 
 }
