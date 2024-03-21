@@ -22,6 +22,7 @@ public class BooleanMap {
     public boolean[][] getMap() {
         return this.map;
     }
+    
     public int getIslandX() {
         return this.islandX;
     }
@@ -45,7 +46,6 @@ public class BooleanMap {
             }
         }
         else if(droneDirection.equals(Direction.S)) {
-            logger.info("hello");
             loopBound = echoRight.equals(EchoResult.OUT_OF_RANGE) ? 0 : dronePosition.getDroneX() - echoRange + 1;
             for(int i = dronePosition.getDroneX(); i >= loopBound; i--) {
                 this.map[dronePosition.getDroneY()][i] = true;
