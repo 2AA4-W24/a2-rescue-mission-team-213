@@ -3,8 +3,6 @@ package ca.mcmaster.se2aa4.island.team213;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -16,8 +14,6 @@ public class BooleanMapTest {
     boolean[][] indices;
     PointOfInterest site, creek;
     String mapRow;
-
-    private final Logger logger = LogManager.getLogger();
 
     @BeforeEach
     public void setUp() {
