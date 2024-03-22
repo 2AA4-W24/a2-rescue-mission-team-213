@@ -1,9 +1,9 @@
 package ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan;
 
 public class PointOfInterest {
-    public final int x;
-    public final int y;
-    public final String id;
+    private final int x;
+    private final int y;
+    private final String id;
 
     public PointOfInterest(int x, int y, String id){
         this.x = x;
@@ -11,12 +11,12 @@ public class PointOfInterest {
         this.id = id;
     }
     public int getX(){
-        return x;
+        return this.x;
     }
     public int getY(){
-        return y;
+        return this.y;
     }
     public String getID(){
-        return id;
+        return this.id;
     }
 }

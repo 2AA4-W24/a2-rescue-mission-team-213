@@ -3,6 +3,7 @@ import ca.mcmaster.se2aa4.island.team213.*;
 import java.util.ArrayList;
 
 import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.DronePosition;
+import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -10,8 +11,10 @@ import org.json.JSONArray;
 public class PointsOfInterests {
     private final Logger logger = LogManager.getLogger();
     private CreekCandidate closestCreek;
-    private final ArrayList<PointOfInterest> creeks;
+    public final ArrayList<PointOfInterest> creeks;
     private final ArrayList<PointOfInterest> sites;
+    private int maxCoordX;
+    private int maxCoordY;
 
     private boolean havePair = false;
     public PointsOfInterests(){
@@ -25,7 +28,7 @@ public class PointsOfInterests {
             for (PointOfInterest site: sites){
                 for (PointOfInterest creek: creeks){
                     double distance = Math.sqrt(Math.pow((site.getX()-creek.getX()),2)+Math.pow((site.getY()- creek.getY()),2));
-                    if (getClosestCreek() == null || distance < closestCreek.getDistanceFromCreek()){
+                    if (getClosestCreek() == null || distance < closestCreek.distanceFromCreek()){
                         closestCreek = new CreekCandidate(creek, distance);
                         havePair = true;
                     }
@@ -64,8 +67,11 @@ public class PointsOfInterests {
     }
 
     public PointOfInterest getClosestCreek(){
-        return this.closestCreek.getClosestCreek();
+        if (this.closestCreek != null){
+            return this.closestCreek.creekCandidate();
 
+        }
+        return null;
     }
 
     public void addCreeks(JSONArray creeksJSON, DronePosition dronePosition){
@@ -83,4 +89,26 @@ public class PointsOfInterests {
             }
         }
     }
+
+    public int maxCoord(Direction startDirection){
+        if (this.checkIfPair()){
+            switch (startDirection){
+                case N -> {
+                    return sites.get(0).getX() + (int)closestCreek.distanceFromCreek();
+                }
+                case E -> {
+                    return sites.get(0).getY() + (int)closestCreek.distanceFromCreek();
+                }
+                case S -> {
+                    return sites.get(0).getX() - (int)closestCreek.distanceFromCreek();
+                }
+                case W -> {
+                    return sites.get(0).getY() - (int)closestCreek.distanceFromCreek();
+                }
+            }
+        }
+        return 0;
+    }
+
+
 }

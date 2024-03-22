@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class AreaScanInterlaced implements Phase {
-    int earlyturn = 0;
+    int earlyturnyes = 0;
     private boolean goingUpOrRight;
     private final PointsOfInterests pointsOfInterest;
     private int turnsBeforeReturn;
@@ -48,7 +48,6 @@ public class AreaScanInterlaced implements Phase {
         int islandY = booleanMap.getIslandY();
         this.direction = droneDirection;
 
-//        EdgeMap edgeMap = new EdgeMap(mapOfCheckedTiles.getMap(), droneDirection, islandX, islandY);
         EdgeMapNew edgeMap = new EdgeMapNew(dronePosition, droneDirection, islandX, islandY, mapOfCheckedTiles.getMap());
         hashMap = edgeMap.getEdgeMap();
 
@@ -98,9 +97,8 @@ public class AreaScanInterlaced implements Phase {
 
     @Override
     public boolean isFinished() {
-        if (turnedAround && turns == turnsBeforeReturn-1 && reachedEdge()){
-            logger.info("early turns: " + earlyturn);
-            logger.info("start direction: " + startDirection);
+        if (turnedAround && reachedEdge() && (turns == turnsBeforeReturn-1 || earlyReturnInterlaced())){
+            logger.info("earlyturnyes: " + earlyturnyes);
             logger.info(Arrays.toString(edgePos));
             for (HashMap.Entry<Integer, int[]> entry : hashMap.entrySet()) {
                 Integer key = entry.getKey();
@@ -120,7 +118,10 @@ public class AreaScanInterlaced implements Phase {
             return taskQueue.remove();
         }
 
-        if (!turnedAround && turns == turnsBeforeReturn && reachedEdge()){
+        if ((!turnedAround && (turns == turnsBeforeReturn || earlyReturnInterlaced()) && reachedEdge())){
+            if (earlyReturnInterlaced()){
+                earlyturnyes = dronePosition.getDroneX();
+            }
             logger.info("--------------------------TURNING AROUND ----------------------------------");
             turnedAround = true;
             goingUpOrRight = !goingUpOrRight;
@@ -166,12 +167,12 @@ public class AreaScanInterlaced implements Phase {
 
         }
         else if (reachedEdge() || earlyTurn()){
+            logger.info("------------------TURN---------------");
             goingUpOrRight = !goingUpOrRight;
             /*
              * Performs 2 left or right turns
              */
             if (lastTurnLeft){
-
                 taskQueue.add(Action.TURN_RIGHT.toJSON(direction));
                 direction = direction.rightTurn();
                 dronePosition.updatePositionAfterDecision(Action.TURN_RIGHT, direction);
@@ -199,11 +200,15 @@ public class AreaScanInterlaced implements Phase {
             turns++;
         }
         else{
+            logger.info("FLY----------");
             taskQueue.add(Action.FLY.toJSON(direction));
             dronePosition.updatePositionAfterDecision(Action.FLY, direction);
             movesSinceTurn++;
         }
-//        taskQueue.add(Action.SCAN.toJSON(direction));
+
+        /*
+         * Checks if the current position has to be scanned
+         */
         if (!booleanMap.getMap()[dronePosition.getDroneY()][dronePosition.getDroneX()]){
             taskQueue.add(Action.SCAN.toJSON(direction));
             booleanMap.getMap()[dronePosition.getDroneY()][dronePosition.getDroneX()] = true;
@@ -236,6 +241,27 @@ public class AreaScanInterlaced implements Phase {
     @Override
     public Phase nextPhase() {
         return new EndPhase();
+    }
+
+
+    private boolean earlyReturnInterlaced(){
+        if (pointsOfInterest.checkIfPair()){
+            switch (startDirection){
+                case N -> {
+                    return dronePosition.getDroneX() > pointsOfInterest.maxCoord(startDirection);
+                }
+                case E -> {
+                    return dronePosition.getDroneY() > pointsOfInterest.maxCoord(startDirection);
+                }
+                case S -> {
+                    return dronePosition.getDroneX() < pointsOfInterest.maxCoord(startDirection);
+                }
+                case W -> {
+                    return dronePosition.getDroneY() < pointsOfInterest.maxCoord(startDirection);
+                }
+            }
+        }
+        return false;
     }
 
     private boolean reachedEdge(){
@@ -315,7 +341,6 @@ public class AreaScanInterlaced implements Phase {
                         if (dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
                             if (dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX()-2)[0] && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX()-2)[1]){
-                                earlyturn++;
                                 return true;
                             }
                         }
@@ -324,7 +349,6 @@ public class AreaScanInterlaced implements Phase {
                         if (dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
                             if (dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX()-2)[0] && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX()-2)[1]){
-                                earlyturn++;
                                 return true;
                             }
                         }
