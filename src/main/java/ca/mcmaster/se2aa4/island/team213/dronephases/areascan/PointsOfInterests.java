@@ -1,10 +1,8 @@
 package ca.mcmaster.se2aa4.island.team213.dronephases.areascan;
 import ca.mcmaster.se2aa4.island.team213.*;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 import ca.mcmaster.se2aa4.island.team213.dronephases.carveperimeter.DronePosition;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;

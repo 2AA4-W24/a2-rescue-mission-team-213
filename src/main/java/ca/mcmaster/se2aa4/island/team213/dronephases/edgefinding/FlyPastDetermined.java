@@ -1,7 +1,5 @@
 package ca.mcmaster.se2aa4.island.team213.dronephases.edgefinding;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import ca.mcmaster.se2aa4.island.team213.enums.Action;

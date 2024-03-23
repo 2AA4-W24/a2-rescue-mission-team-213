@@ -16,8 +16,6 @@ public class Drone {
     private Action previousDecision;
     private String creekID = "";
 
-//    private final Logger logger = LogManager.getLogger();
-
     public Drone(String direction, Integer battery) {
         this.direction = Direction.valueOf(direction);
         this.battery = battery;
