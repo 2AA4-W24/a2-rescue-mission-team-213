@@ -5,7 +5,7 @@ import java.util.Queue;
 
 import ca.mcmaster.se2aa4.island.team213.*;
 import ca.mcmaster.se2aa4.island.team213.dronephases.Phase;
-import ca.mcmaster.se2aa4.island.team213.dronephases.areascan.AreaScanInterlaced;
+import ca.mcmaster.se2aa4.island.team213.dronephases.areascan.InterlacedAreaScan;
 import ca.mcmaster.se2aa4.island.team213.enums.Action;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import org.json.JSONObject;
@@ -84,7 +84,7 @@ public class CarvePerimeter implements Phase {
 
     @Override
     public Phase nextPhase() {
-         return new AreaScanInterlaced(dronePosition, checkedTiles, droneDirection);
+         return new InterlacedAreaScan(dronePosition, checkedTiles, droneDirection);
     }
     
     public int getHorizontalFlyActions() {

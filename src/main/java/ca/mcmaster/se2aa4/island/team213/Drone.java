@@ -3,8 +3,6 @@ package ca.mcmaster.se2aa4.island.team213;
 import ca.mcmaster.se2aa4.island.team213.enums.Action;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -16,7 +14,7 @@ public class Drone {
     private EchoStatus echo = new EchoStatus();
     private ScanStatus scanInfo;
     private Action previousDecision;
-    private String siteID = "";
+    private String creekID = "";
 
 //    private final Logger logger = LogManager.getLogger();
 
@@ -25,8 +23,8 @@ public class Drone {
         this.battery = battery;
     }
 
-    public void setCreekID(String siteID) {
-        this.siteID = siteID;
+    public void setCreekID(String creekID) {
+        this.creekID = creekID;
     }
 
     public void updateStatus(JSONObject response) {
@@ -153,12 +151,12 @@ public class Drone {
         return this.previousDecision;
     }
 
-    public String getSiteID()
+    public String getCreekID()
     {
-        if (this.siteID.isEmpty()){
+        if (this.creekID.isEmpty()){
             return "no creek found";
         }
-        return this.siteID;
+        return this.creekID;
     }
 
 }

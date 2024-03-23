@@ -42,14 +42,14 @@ public class ShortestDistanceTest {
         shortestPath.computeClosestSite();
         shortestPath.updateCreekID(drone);
 
-        assertEquals(drone.getSiteID(), "3");
+        assertEquals(drone.getCreekID(), "3");
     }
 
     @Test
     public void noCreekOrSite(){
         shortestPath.computeClosestSite();
         shortestPath.updateCreekID(drone);
-        assertEquals(drone.getSiteID(), "no creek found");
+        assertEquals(drone.getCreekID(), "no creek found");
     }
 
     private JSONArray makeJSON(String id){

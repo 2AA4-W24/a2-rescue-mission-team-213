@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-public class AreaScanInterlaced implements Phase {
+public class InterlacedAreaScan implements Phase {
     private boolean goingUpOrRight;
     private final PointsOfInterests pointsOfInterest;
     private int turnsBeforeReturn;
@@ -31,7 +31,7 @@ public class AreaScanInterlaced implements Phase {
     private final Queue<JSONObject> taskQueue = new LinkedList<>();
     Map<Integer, int[]> edgePosMap;
 
-    public AreaScanInterlaced(DronePosition dronePosition, BooleanMap mapOfCheckedTiles, Direction droneDirection){
+    public InterlacedAreaScan(DronePosition dronePosition, BooleanMap mapOfCheckedTiles, Direction droneDirection){
         this.dronePosition = dronePosition;
         this.booleanMap = mapOfCheckedTiles;
         this.pointsOfInterest = new PointsOfInterests();
