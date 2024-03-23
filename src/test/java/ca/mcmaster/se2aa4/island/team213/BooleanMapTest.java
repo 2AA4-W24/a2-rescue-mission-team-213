@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-import ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan.PointOfInterest;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.BooleanMap;
+import ca.mcmaster.se2aa4.island.team213.dronephases.areascan.PointOfInterest;
+import ca.mcmaster.se2aa4.island.team213.dronephases.carveperimeter.BooleanMap;
 
 public class BooleanMapTest {
     BooleanMap map;

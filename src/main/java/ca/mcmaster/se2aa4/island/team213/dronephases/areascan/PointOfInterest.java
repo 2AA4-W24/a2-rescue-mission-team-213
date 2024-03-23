@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan;
+package ca.mcmaster.se2aa4.island.team213.dronephases.areascan;
 
 public class PointOfInterest {
     private final int x;

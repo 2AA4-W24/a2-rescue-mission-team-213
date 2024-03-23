@@ -1,35 +1,32 @@
-package ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding;
+package ca.mcmaster.se2aa4.island.team213.dronephases.edgefinding;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
 import ca.mcmaster.se2aa4.island.team213.*;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
+import ca.mcmaster.se2aa4.island.team213.dronephases.Phase;
 import ca.mcmaster.se2aa4.island.team213.enums.Action;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import org.json.JSONObject;
 
-import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.CarvePerimeter;
+import ca.mcmaster.se2aa4.island.team213.dronephases.carveperimeter.CarvePerimeter;
 
 public class FindSubsequentEdge implements Phase {
     private boolean isFinished;
     private boolean increaseX;
-    private int islandX, islandY;
+    private int islandX;
+    private int islandY;
     private int edgesFound;
     private Direction droneDirection;
     private Queue<Action> decisionQueue;
 
-    private final Logger logger = LogManager.getLogger();
 
     public FindSubsequentEdge(int islandX, int islandY, boolean increaseX, int edgesFound) {
-        logger.info("** FindSubsequentEdge created with " + edgesFound + " edges found **");
         this.isFinished = false;
         this.decisionQueue = new LinkedList<Action>();
         this.decisionQueue.add(Action.ECHO_RIGHT);
-
         this.islandX = islandX;
         this.islandY = islandY;
         this.increaseX = increaseX;
@@ -67,8 +64,6 @@ public class FindSubsequentEdge implements Phase {
     @Override
     public Phase nextPhase() {
         if(this.edgesFound == 3) {
-            logger.info("FINAL ISLAND X: " + this.islandX);
-            logger.info("FINAL ISLAND Y: " + this.islandY);
 
             return new CarvePerimeter(this.islandX, this.islandY, this.droneDirection);
         }

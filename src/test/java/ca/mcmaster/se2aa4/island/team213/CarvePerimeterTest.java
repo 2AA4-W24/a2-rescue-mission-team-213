@@ -10,7 +10,7 @@ import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.CarvePerimeter;
+import ca.mcmaster.se2aa4.island.team213.dronephases.carveperimeter.CarvePerimeter;
 
 public class CarvePerimeterTest {
     JSONObject echoGResponse, echoOOBResponse;

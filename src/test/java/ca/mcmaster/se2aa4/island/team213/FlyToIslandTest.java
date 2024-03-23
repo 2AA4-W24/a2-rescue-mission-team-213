@@ -1,8 +1,8 @@
 package ca.mcmaster.se2aa4.island.team213;
 
-import ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding.FindFirstEdge;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.flyToIsland.LocateIsland;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.flyToIsland.TravelToIsland;
+import ca.mcmaster.se2aa4.island.team213.dronephases.edgefinding.FindFirstEdge;
+import ca.mcmaster.se2aa4.island.team213.dronephases.flytoisland.LocateIsland;
+import ca.mcmaster.se2aa4.island.team213.dronephases.flytoisland.TravelToIsland;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
 import org.json.JSONObject;
@@ -21,7 +21,10 @@ public class FlyToIslandTest {
     private TravelToIsland phaseB;
     private int distanceToLand = 3;
 
-    private JSONObject echoOOBResponse, echoGResponse, headingResponse, flyResponse;
+    private JSONObject echoOOBResponse;
+    private JSONObject echoGResponse;
+    private JSONObject headingResponse;
+    private JSONObject flyResponse;
 
     @BeforeEach
     public void setUp() {

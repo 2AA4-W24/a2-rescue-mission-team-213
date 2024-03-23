@@ -1,14 +1,14 @@
-package ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan;
+package ca.mcmaster.se2aa4.island.team213.dronephases.areascan;
 
-import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.DronePosition;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import java.util.HashMap;
+import java.util.Map;
 
 public class EdgeMap {
 
-    HashMap<Integer, int[]> edgeMap = new HashMap<>();
+    Map<Integer, int[]> edgeMap = new HashMap<>();
 
-    public HashMap<Integer, int[]> getEdgeMap(){
+    public Map<Integer, int[]> getEdgeMap(){
         return this.edgeMap;
     }
     public EdgeMap(Direction direction, boolean[][] mapOfCheckedTiles){

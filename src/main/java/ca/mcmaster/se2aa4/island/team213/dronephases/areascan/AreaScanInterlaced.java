@@ -1,17 +1,17 @@
-package ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan;
+package ca.mcmaster.se2aa4.island.team213.dronephases.areascan;
 
 import ca.mcmaster.se2aa4.island.team213.*;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.EndPhase;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.BooleanMap;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.DronePosition;
+import ca.mcmaster.se2aa4.island.team213.dronephases.EndPhase;
+import ca.mcmaster.se2aa4.island.team213.dronephases.Phase;
+import ca.mcmaster.se2aa4.island.team213.dronephases.carveperimeter.BooleanMap;
+import ca.mcmaster.se2aa4.island.team213.dronephases.carveperimeter.DronePosition;
 import ca.mcmaster.se2aa4.island.team213.enums.Action;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 public class AreaScanInterlaced implements Phase {
@@ -29,7 +29,7 @@ public class AreaScanInterlaced implements Phase {
     private final BooleanMap booleanMap;
     private final DronePosition dronePosition;
     private final Queue<JSONObject> taskQueue = new LinkedList<>();
-    private final HashMap<Integer, int[]> edgePosMap;
+    Map<Integer, int[]> edgePosMap;
 
     public AreaScanInterlaced(DronePosition dronePosition, BooleanMap mapOfCheckedTiles, Direction droneDirection){
         this.dronePosition = dronePosition;
@@ -93,7 +93,7 @@ public class AreaScanInterlaced implements Phase {
             return taskQueue.remove();
         }
 
-        if ((!turnedAround && (turns == turnsBeforeReturn || earlyReturnInterlaced()) && reachedEdge())){
+        if (!turnedAround && (turns == turnsBeforeReturn || earlyReturnInterlaced()) && reachedEdge()){
             turnedAround = true;
             goingUpOrRight = !goingUpOrRight;
 
@@ -209,6 +209,7 @@ public class AreaScanInterlaced implements Phase {
     public Phase nextPhase() {
         return new EndPhase();
     }
+
 
     private boolean earlyReturnInterlaced(){
         if (pointsOfInterest.checkIfPair()){

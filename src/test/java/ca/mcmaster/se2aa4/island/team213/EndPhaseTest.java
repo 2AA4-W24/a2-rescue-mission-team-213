@@ -7,8 +7,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.mcmaster.se2aa4.island.team213.dronePhases.EndPhase;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
+import ca.mcmaster.se2aa4.island.team213.dronephases.EndPhase;
+import ca.mcmaster.se2aa4.island.team213.dronephases.Phase;
 import ca.mcmaster.se2aa4.island.team213.enums.Action;
 
 public class EndPhaseTest {

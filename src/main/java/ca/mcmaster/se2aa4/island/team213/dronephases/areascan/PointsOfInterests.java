@@ -1,15 +1,19 @@
-package ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan;
+package ca.mcmaster.se2aa4.island.team213.dronephases.areascan;
 import ca.mcmaster.se2aa4.island.team213.*;
-import java.util.ArrayList;
 
-import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.DronePosition;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+
+import ca.mcmaster.se2aa4.island.team213.dronephases.carveperimeter.DronePosition;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import org.json.JSONArray;
 
 public class PointsOfInterests {
     private CreekCandidate closestCreek;
-    private final ArrayList<PointOfInterest> creeks;
-    private final ArrayList<PointOfInterest> sites;
+    private final List<PointOfInterest> creeks;
+    private final List<PointOfInterest> sites;
     private boolean hasSiteCreekPair = false;
     public PointsOfInterests(){
         this.creeks = new ArrayList<>();
@@ -20,7 +24,7 @@ public class PointsOfInterests {
         if (!sites.isEmpty() && !creeks.isEmpty()){
             for (PointOfInterest site: sites){
                 for (PointOfInterest creek: creeks){
-                    double distance = Math.sqrt(Math.pow((site.getX()-creek.getX()),2)+Math.pow((site.getY()- creek.getY()),2));
+                    double distance = Math.sqrt(Math.pow(site.getX()-creek.getX(),2)+Math.pow(site.getY()- creek.getY(),2));
                     if (getClosestCreek() == null || distance < closestCreek.distanceFromCreek()){
                         closestCreek = new CreekCandidate(creek, distance);
                         hasSiteCreekPair = true;

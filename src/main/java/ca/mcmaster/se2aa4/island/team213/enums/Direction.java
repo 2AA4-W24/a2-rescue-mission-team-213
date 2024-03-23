@@ -19,6 +19,8 @@ public enum Direction {
             case W -> S;
         };
     }
+
+    @Override
     public String toString(){
         return switch (this) {
             case N -> "N";

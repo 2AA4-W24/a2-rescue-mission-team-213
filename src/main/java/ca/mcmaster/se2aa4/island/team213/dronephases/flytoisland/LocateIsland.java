@@ -1,6 +1,6 @@
-package ca.mcmaster.se2aa4.island.team213.dronePhases.flyToIsland;
+package ca.mcmaster.se2aa4.island.team213.dronephases.flytoisland;
 
-import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
+import ca.mcmaster.se2aa4.island.team213.dronephases.Phase;
 
 import ca.mcmaster.se2aa4.island.team213.Drone;
 import ca.mcmaster.se2aa4.island.team213.enums.Action;

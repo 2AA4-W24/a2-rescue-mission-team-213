@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding;
+package ca.mcmaster.se2aa4.island.team213.dronephases.edgefinding;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -6,19 +6,18 @@ import org.json.JSONObject;
 
 import ca.mcmaster.se2aa4.island.team213.enums.Action;
 import ca.mcmaster.se2aa4.island.team213.Drone;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
+import ca.mcmaster.se2aa4.island.team213.dronephases.Phase;
 
 public class FlyPastDetermined implements Phase {
     private boolean isFinished;
     private boolean increaseX;
-    private int islandX, islandY;
+    private int islandX;
+    private int islandY;
     private int edgesFound;
     private int flyActionsLeft;
 
-    private final Logger logger = LogManager.getLogger();
 
     public FlyPastDetermined(int islandX, int islandY, boolean increaseX, int edgesFound, int flyActionsLeft) {
-        logger.info("** FlyPastDetermined created with " + flyActionsLeft + " fly actions **");
         this.isFinished = false;
 
         this.islandX = islandX;

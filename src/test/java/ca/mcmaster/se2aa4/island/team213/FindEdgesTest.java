@@ -11,11 +11,11 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding.FlyPastDetermined;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.CarvePerimeter;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding.FindFirstEdge;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding.FindSubsequentEdge;
+import ca.mcmaster.se2aa4.island.team213.dronephases.edgefinding.FlyPastDetermined;
+import ca.mcmaster.se2aa4.island.team213.dronephases.Phase;
+import ca.mcmaster.se2aa4.island.team213.dronephases.carveperimeter.CarvePerimeter;
+import ca.mcmaster.se2aa4.island.team213.dronephases.edgefinding.FindFirstEdge;
+import ca.mcmaster.se2aa4.island.team213.dronephases.edgefinding.FindSubsequentEdge;
 
 
 public class FindEdgesTest {
@@ -25,7 +25,9 @@ public class FindEdgesTest {
     private FlyPastDetermined phaseD;
 
     private int flyActionsLeft;
-    private JSONObject echoOOBResponse, echoGResponse, scanResponse;
+    private JSONObject echoOOBResponse;
+    private JSONObject  echoGResponse;
+    private JSONObject  scanResponse;
 
     @BeforeEach 
     public void setUp() {

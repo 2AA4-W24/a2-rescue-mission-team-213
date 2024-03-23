@@ -1,8 +1,8 @@
 package ca.mcmaster.se2aa4.island.team213;
 
-import ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan.AreaScanInterlaced;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.BooleanMap;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.DronePosition;
+import ca.mcmaster.se2aa4.island.team213.dronephases.areascan.AreaScanInterlaced;
+import ca.mcmaster.se2aa4.island.team213.dronephases.carveperimeter.BooleanMap;
+import ca.mcmaster.se2aa4.island.team213.dronephases.carveperimeter.DronePosition;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

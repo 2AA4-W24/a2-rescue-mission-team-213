@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter;
+package ca.mcmaster.se2aa4.island.team213.dronephases.carveperimeter;
 
 import ca.mcmaster.se2aa4.island.team213.enums.Action;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;

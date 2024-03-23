@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team213.dronePhases;
+package ca.mcmaster.se2aa4.island.team213.dronephases;
 
 import ca.mcmaster.se2aa4.island.team213.Drone;
 import org.json.JSONObject;

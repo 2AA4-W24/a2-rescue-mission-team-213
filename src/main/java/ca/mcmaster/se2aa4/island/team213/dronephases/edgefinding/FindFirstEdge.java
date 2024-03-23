@@ -1,16 +1,15 @@
-package ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding;
+package ca.mcmaster.se2aa4.island.team213.dronephases.edgefinding;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
 import ca.mcmaster.se2aa4.island.team213.*;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
+import ca.mcmaster.se2aa4.island.team213.dronephases.Phase;
 import ca.mcmaster.se2aa4.island.team213.enums.Action;
 import ca.mcmaster.se2aa4.island.team213.enums.Biome;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -18,14 +17,12 @@ public class FindFirstEdge implements Phase {
     private boolean isFinished;
     private boolean increaseX;
     private int islandX, islandY;
-    private Queue<Action> decisionQueue;
+    private Queue<Action> decisionQueue = new LinkedList<Action>();
 
-    private final Logger logger = LogManager.getLogger();
+
 
     public FindFirstEdge(Direction droneDirection) {
-        logger.info("** FindFirstEdge created, starting with drone facing " + droneDirection.toString());
         this.isFinished = false;
-        this.decisionQueue = new LinkedList<Action>();
 
         parseStartingDirection(droneDirection);
         loadDecisionQueue();

@@ -4,7 +4,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ScanStatus {
-    JSONArray scanCreeks, scanSites, scanBiomes;
+    JSONArray scanCreeks;
+    JSONArray scanSites;
+    JSONArray scanBiomes;
 
     public ScanStatus(JSONObject extraInfo) {
         this.scanCreeks = extraInfo.getJSONArray("creeks");

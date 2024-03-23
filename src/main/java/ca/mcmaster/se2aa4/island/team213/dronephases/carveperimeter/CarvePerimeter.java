@@ -1,15 +1,13 @@
-package ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter;
+package ca.mcmaster.se2aa4.island.team213.dronephases.carveperimeter;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
 import ca.mcmaster.se2aa4.island.team213.*;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan.AreaScanInterlaced;
+import ca.mcmaster.se2aa4.island.team213.dronephases.Phase;
+import ca.mcmaster.se2aa4.island.team213.dronephases.areascan.AreaScanInterlaced;
 import ca.mcmaster.se2aa4.island.team213.enums.Action;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 public class CarvePerimeter implements Phase {
@@ -17,10 +15,11 @@ public class CarvePerimeter implements Phase {
     private Queue<Action> decisionQueue;
     private BooleanMap checkedTiles;
     private DronePosition dronePosition;
-    private int horizontalFlyActions, verticalFlyActions, rightTurnsPerformed;
+    private int horizontalFlyActions;
+    private int verticalFlyActions;
+    private int rightTurnsPerformed;
     private Direction droneDirection;
 
-    private final Logger logger = LogManager.getLogger();
 
     public CarvePerimeter(int islandX, int islandY, Direction droneDirection) {
         this.isFinished = false;
@@ -74,8 +73,7 @@ public class CarvePerimeter implements Phase {
     @Override
     public void checkDrone(Drone drone) {
         this.dronePosition.updatePositionAfterDecision(drone.getPreviousDecision(), drone.getDirection());
-        logger.info("Drone X: " + dronePosition.getDroneX());
-        logger.info("Drone Y: " + dronePosition.getDroneY());
+
         if(drone.getPreviousDecision().equals(Action.TURN_RIGHT)) {
             loadDecisionQueue(drone.getDirection());
         }
