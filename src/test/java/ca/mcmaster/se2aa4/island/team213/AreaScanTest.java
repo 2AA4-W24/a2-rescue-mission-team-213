@@ -4,8 +4,6 @@ import ca.mcmaster.se2aa4.island.team213.dronephases.areascan.InterlacedAreaScan
 import ca.mcmaster.se2aa4.island.team213.dronephases.carveperimeter.BooleanMap;
 import ca.mcmaster.se2aa4.island.team213.dronephases.carveperimeter.DronePosition;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,14 +12,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AreaScanTest {
-    private final Logger logger = LogManager.getLogger();
     private JSONObject response;
     private JSONObject scanResponse;
     private Drone dE;
     private Drone dS;
     private Drone dN;
     private Drone dW;
-
     private InterlacedAreaScan areaScanEast;
     private InterlacedAreaScan areaScanSouth;
     private InterlacedAreaScan areaScanNorth;
@@ -99,8 +95,6 @@ public class AreaScanTest {
         createAction();
         dE.parseDecision(response);
         dE.updateStatus(scanResponse);
-        logger.info(dE.getScanInfoSites());
-        logger.info(dE.getScanInfoCreeks());
         areaScanEast.checkDrone(dE);
 
         areaScanEast.createDecision(dE);
