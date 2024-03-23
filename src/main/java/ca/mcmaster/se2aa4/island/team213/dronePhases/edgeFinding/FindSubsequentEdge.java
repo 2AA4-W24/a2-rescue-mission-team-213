@@ -3,17 +3,16 @@ package ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import ca.mcmaster.se2aa4.island.team213.*;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
+import ca.mcmaster.se2aa4.island.team213.enums.Action;
+import ca.mcmaster.se2aa4.island.team213.enums.Direction;
+import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
-import ca.mcmaster.se2aa4.island.team213.Drone;
-
-import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
 import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.CarvePerimeter;
-import ca.mcmaster.se2aa4.island.team213.enums.Action;
-import ca.mcmaster.se2aa4.island.team213.enums.Direction;
-import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
 
 public class FindSubsequentEdge implements Phase {
     private boolean isFinished;
@@ -22,7 +21,7 @@ public class FindSubsequentEdge implements Phase {
     private int edgesFound;
     private Direction droneDirection;
     private Queue<Action> decisionQueue;
-   
+
     private final Logger logger = LogManager.getLogger();
 
     public FindSubsequentEdge(int islandX, int islandY, boolean increaseX, int edgesFound) {
@@ -44,13 +43,13 @@ public class FindSubsequentEdge implements Phase {
 
     @Override
     public JSONObject createDecision(Drone drone) {
-        JSONObject decision = new JSONObject();
+        JSONObject decision;
         Action nextAction = this.decisionQueue.peek();
-        
+
         decision = nextAction.toJSON(drone.getDirection());
-        if(this.decisionQueue.peek().equals(Action.TURN_RIGHT)) {
-            this.droneDirection = drone.getDirection().rightTurn();
+        if(nextAction.equals(Action.TURN_RIGHT)) {
             this.isFinished = true;
+            this.droneDirection = drone.getDirection().rightTurn();
         }
         this.decisionQueue.remove();
 
@@ -70,6 +69,7 @@ public class FindSubsequentEdge implements Phase {
         if(this.edgesFound == 3) {
             logger.info("FINAL ISLAND X: " + this.islandX);
             logger.info("FINAL ISLAND Y: " + this.islandY);
+
             return new CarvePerimeter(this.islandX, this.islandY, this.droneDirection);
         }
 
@@ -90,17 +90,17 @@ public class FindSubsequentEdge implements Phase {
         this.decisionQueue.add(Action.ECHO_RIGHT);
     }
 
-    private void increaseXorY() { 
+    private void increaseXorY() {
         if(this.increaseX) {
             this.islandX += 1;
-        } 
+        }
         else {
             this.islandY += 1;
         }
-    }    
+    }
 
     public Action getNextDecision() {
         return this.decisionQueue.peek();
     }
-    
+
 }

@@ -14,13 +14,12 @@ public class AreaScanTest {
     private Drone dE;
     private AreaScanInterlaced areaScanNorth;
     private DronePosition dronePosition;
-    private Direction droneDirection;
+
     @BeforeEach
     public void setUp() {
         dE = new Drone("E", 15000);
-        droneDirection = Direction.E;
         dronePosition = new DronePosition(1,0,Direction.E);
-        areaScanNorth = new AreaScanInterlaced(dronePosition, new BooleanMap(20,20), droneDirection);
+        areaScanNorth = new AreaScanInterlaced(dronePosition, new BooleanMap(20,20), Direction.E);
     }
 
     @Test
