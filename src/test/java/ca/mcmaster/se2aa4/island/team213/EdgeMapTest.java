@@ -1,6 +1,6 @@
 package ca.mcmaster.se2aa4.island.team213;
 
-import ca.mcmaster.se2aa4.island.team213.dronePhases.areaScan.EdgeMap;
+import ca.mcmaster.se2aa4.island.team213.dronephases.areascan.EdgeMap;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,11 +10,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class EdgeMapTest {
 
     private EdgeMap edgeMap;
-    HashMap<Integer, int[]> edgeHashMap;
+    Map<Integer, int[]> edgeHashMap;
     private final Logger logger = LogManager.getLogger();
     @BeforeEach
     public void setUp(){
