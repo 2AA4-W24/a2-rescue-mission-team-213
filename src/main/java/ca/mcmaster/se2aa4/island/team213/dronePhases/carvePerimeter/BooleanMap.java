@@ -6,8 +6,9 @@ import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
 
 public class BooleanMap {
-    private boolean[][] map;
-    private int islandX, islandY;
+    private final boolean[][] map;
+    private final int islandX;
+    private final int islandY;
 
     public BooleanMap(int x, int y) {
         this.islandX = x;

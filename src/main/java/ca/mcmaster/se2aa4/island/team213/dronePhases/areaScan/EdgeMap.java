@@ -4,14 +4,14 @@ import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.DronePositio
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import java.util.HashMap;
 
-public class EdgeMapNew {
+public class EdgeMap {
 
     HashMap<Integer, int[]> edgeMap = new HashMap<>();
 
     public HashMap<Integer, int[]> getEdgeMap(){
         return this.edgeMap;
     }
-    public EdgeMapNew(DronePosition dronePosition, Direction direction, int islandX, int islandY, boolean[][] mapOfCheckedTiles){
+    public EdgeMap(Direction direction, boolean[][] mapOfCheckedTiles){
 
         switch (direction){
             case E, W -> {

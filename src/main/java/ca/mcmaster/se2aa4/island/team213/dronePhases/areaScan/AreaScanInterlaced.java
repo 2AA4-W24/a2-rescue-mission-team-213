@@ -7,8 +7,6 @@ import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.BooleanMap;
 import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.DronePosition;
 import ca.mcmaster.se2aa4.island.team213.enums.Action;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -42,7 +40,7 @@ public class AreaScanInterlaced implements Phase {
         int islandY = booleanMap.getIslandY();
         this.direction = droneDirection;
 
-        EdgeMapNew edgeMap = new EdgeMapNew(dronePosition, droneDirection, islandX, islandY, mapOfCheckedTiles.getMap());
+        EdgeMap edgeMap = new EdgeMap(droneDirection, mapOfCheckedTiles.getMap());
         edgePosMap = edgeMap.getEdgeMap();
 
         switch (droneDirection){
@@ -263,17 +261,13 @@ public class AreaScanInterlaced implements Phase {
                         //If passed both edge points
                         if (dronePosition.getDroneY() <= edgePosMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() <= edgePosMap.get(dronePosition.getDroneX())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
-                            if (dronePosition.getDroneY() <= edgePosMap.get(dronePosition.getDroneX()+2)[0] && dronePosition.getDroneY() <= edgePosMap.get(dronePosition.getDroneX()+2)[1]){
-                                return true;
-                            }
+                            return dronePosition.getDroneY() <= edgePosMap.get(dronePosition.getDroneX() + 2)[0] && dronePosition.getDroneY() <= edgePosMap.get(dronePosition.getDroneX() + 2)[1];
                         }
                     }
                     else{
                         if (dronePosition.getDroneY() >= edgePosMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() >= edgePosMap.get(dronePosition.getDroneX())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
-                            if (dronePosition.getDroneY() >= edgePosMap.get(dronePosition.getDroneX()+2)[0] && dronePosition.getDroneY() >= edgePosMap.get(dronePosition.getDroneX()+2)[1]){
-                                return true;
-                            }
+                            return dronePosition.getDroneY() >= edgePosMap.get(dronePosition.getDroneX() + 2)[0] && dronePosition.getDroneY() >= edgePosMap.get(dronePosition.getDroneX() + 2)[1];
                         }
                     }
                 }
@@ -286,17 +280,13 @@ public class AreaScanInterlaced implements Phase {
                         //If passed both edge points
                         if (dronePosition.getDroneX() >= edgePosMap.get(dronePosition.getDroneY())[0] && dronePosition.getDroneX() >= edgePosMap.get(dronePosition.getDroneY())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
-                            if (dronePosition.getDroneX() >= edgePosMap.get(dronePosition.getDroneY()+2)[0] && dronePosition.getDroneX() >= edgePosMap.get(dronePosition.getDroneY()+2)[1]){
-                                return true;
-                            }
+                            return dronePosition.getDroneX() >= edgePosMap.get(dronePosition.getDroneY() + 2)[0] && dronePosition.getDroneX() >= edgePosMap.get(dronePosition.getDroneY() + 2)[1];
                         }
                     }
                     else{
                         if (dronePosition.getDroneX() <= edgePosMap.get(dronePosition.getDroneY())[0] && dronePosition.getDroneX() <= edgePosMap.get(dronePosition.getDroneY())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
-                            if (dronePosition.getDroneX() <= edgePosMap.get(dronePosition.getDroneY()+2)[0] && dronePosition.getDroneX() <= edgePosMap.get(dronePosition.getDroneY()+2)[1]){
-                                return true;
-                            }
+                            return dronePosition.getDroneX() <= edgePosMap.get(dronePosition.getDroneY() + 2)[0] && dronePosition.getDroneX() <= edgePosMap.get(dronePosition.getDroneY() + 2)[1];
                         }
                     }
                 }
