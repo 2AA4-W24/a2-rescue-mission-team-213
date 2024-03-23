@@ -12,13 +12,11 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class AreaScanInterlaced implements Phase {
-    int earlyturnyes = 0;
     private boolean goingUpOrRight;
     private final PointsOfInterests pointsOfInterest;
     private int turnsBeforeReturn;
@@ -32,14 +30,10 @@ public class AreaScanInterlaced implements Phase {
     private final Direction startDirection;
     private final BooleanMap booleanMap;
     private final DronePosition dronePosition;
-    private final Logger logger = LogManager.getLogger();
     private final Queue<JSONObject> taskQueue = new LinkedList<>();
-
-    HashMap<Integer, int[]> hashMap;
+    HashMap<Integer, int[]> edgePosMap;
 
     public AreaScanInterlaced(DronePosition dronePosition, BooleanMap mapOfCheckedTiles, Direction droneDirection){
-        logger.info("---------------------------AREA SCAN INTERLACED CREATED---------------------------------------");
-
         this.dronePosition = dronePosition;
         this.booleanMap = mapOfCheckedTiles;
         this.pointsOfInterest = new PointsOfInterests();
@@ -49,7 +43,7 @@ public class AreaScanInterlaced implements Phase {
         this.direction = droneDirection;
 
         EdgeMapNew edgeMap = new EdgeMapNew(dronePosition, droneDirection, islandX, islandY, mapOfCheckedTiles.getMap());
-        hashMap = edgeMap.getEdgeMap();
+        edgePosMap = edgeMap.getEdgeMap();
 
         switch (droneDirection){
             case E, W -> {
@@ -92,19 +86,7 @@ public class AreaScanInterlaced implements Phase {
 
     @Override
     public boolean isFinished() {
-        if (turnedAround && reachedEdge() && (turns == turnsBeforeReturn-1 || earlyReturnInterlaced())){
-            logger.info("earlyturnyes: " + earlyturnyes);
-            logger.info(Arrays.toString(edgePos));
-            for (HashMap.Entry<Integer, int[]> entry : hashMap.entrySet()) {
-                Integer key = entry.getKey();
-                int[] value = entry.getValue();
-                String logMessage = String.format("Key: %d, Value: [%d, %d]", key, value[0], value[1]);
-                logger.info(logMessage);
-            }
-            return true;
-        }
-
-        return false;
+        return turnedAround && reachedEdge() && (turns == turnsBeforeReturn-1 || earlyReturnInterlaced());
     }
     @Override
     public JSONObject createDecision(Drone drone) {
@@ -114,10 +96,6 @@ public class AreaScanInterlaced implements Phase {
         }
 
         if ((!turnedAround && (turns == turnsBeforeReturn || earlyReturnInterlaced()) && reachedEdge())){
-            if (earlyReturnInterlaced()){
-                earlyturnyes = dronePosition.getDroneX();
-            }
-            logger.info("--------------------------TURNING AROUND ----------------------------------");
             turnedAround = true;
             goingUpOrRight = !goingUpOrRight;
 
@@ -162,7 +140,6 @@ public class AreaScanInterlaced implements Phase {
 
         }
         else if (reachedEdge() || earlyTurn()){
-            logger.info("------------------TURN---------------");
             goingUpOrRight = !goingUpOrRight;
             /*
              * Performs 2 left or right turns
@@ -171,7 +148,6 @@ public class AreaScanInterlaced implements Phase {
                 taskQueue.add(Action.TURN_RIGHT.toJSON(direction));
                 direction = direction.rightTurn();
                 dronePosition.updatePositionAfterDecision(Action.TURN_RIGHT, direction);
-                logger.info("RIGHT TURN");
 
                 taskQueue.add(Action.TURN_RIGHT.toJSON(direction));
                 direction = direction.rightTurn();
@@ -182,7 +158,6 @@ public class AreaScanInterlaced implements Phase {
                 taskQueue.add(Action.TURN_LEFT.toJSON(direction));
                 direction = direction.leftTurn();
                 dronePosition.updatePositionAfterDecision(Action.TURN_LEFT, direction);
-                logger.info("LEFT TURN");
 
                 taskQueue.add(Action.TURN_LEFT.toJSON(direction));
                 direction = direction.leftTurn();
@@ -195,7 +170,6 @@ public class AreaScanInterlaced implements Phase {
             turns++;
         }
         else{
-            logger.info("FLY----------");
             taskQueue.add(Action.FLY.toJSON(direction));
             dronePosition.updatePositionAfterDecision(Action.FLY, direction);
             movesSinceTurn++;
@@ -214,7 +188,7 @@ public class AreaScanInterlaced implements Phase {
     }
 
     /*
-     * Adds all creeks and sites found, and computs and updates the closest creekID
+     * Adds all creeks and sites found, and computes and updates the closest creekID
      */
     @Override
     public void checkDrone(Drone drone) {
@@ -284,20 +258,20 @@ public class AreaScanInterlaced implements Phase {
     private boolean earlyTurn(){
         switch (startDirection){
             case N -> {
-                if (hashMap.get(dronePosition.getDroneX()) != null && hashMap.get(dronePosition.getDroneX()+2) != null){
+                if (edgePosMap.get(dronePosition.getDroneX()) != null && edgePosMap.get(dronePosition.getDroneX()+2) != null){
                     if (goingUpOrRight){
                         //If passed both edge points
-                        if (dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX())[1]){
+                        if (dronePosition.getDroneY() <= edgePosMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() <= edgePosMap.get(dronePosition.getDroneX())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
-                            if (dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX()+2)[0] && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX()+2)[1]){
+                            if (dronePosition.getDroneY() <= edgePosMap.get(dronePosition.getDroneX()+2)[0] && dronePosition.getDroneY() <= edgePosMap.get(dronePosition.getDroneX()+2)[1]){
                                 return true;
                             }
                         }
                     }
                     else{
-                        if (dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX())[1]){
+                        if (dronePosition.getDroneY() >= edgePosMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() >= edgePosMap.get(dronePosition.getDroneX())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
-                            if (dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX()+2)[0] && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX()+2)[1]){
+                            if (dronePosition.getDroneY() >= edgePosMap.get(dronePosition.getDroneX()+2)[0] && dronePosition.getDroneY() >= edgePosMap.get(dronePosition.getDroneX()+2)[1]){
                                 return true;
                             }
                         }
@@ -307,20 +281,20 @@ public class AreaScanInterlaced implements Phase {
 
             }
             case E -> {
-                if (hashMap.get(dronePosition.getDroneY()) != null && hashMap.get(dronePosition.getDroneY()+2) != null){
+                if (edgePosMap.get(dronePosition.getDroneY()) != null && edgePosMap.get(dronePosition.getDroneY()+2) != null){
                     if (goingUpOrRight){
                         //If passed both edge points
-                        if (dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY())[0] && dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY())[1]){
+                        if (dronePosition.getDroneX() >= edgePosMap.get(dronePosition.getDroneY())[0] && dronePosition.getDroneX() >= edgePosMap.get(dronePosition.getDroneY())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
-                            if (dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY()+2)[0] && dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY()+2)[1]){
+                            if (dronePosition.getDroneX() >= edgePosMap.get(dronePosition.getDroneY()+2)[0] && dronePosition.getDroneX() >= edgePosMap.get(dronePosition.getDroneY()+2)[1]){
                                 return true;
                             }
                         }
                     }
                     else{
-                        if (dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY())[0] && dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY())[1]){
+                        if (dronePosition.getDroneX() <= edgePosMap.get(dronePosition.getDroneY())[0] && dronePosition.getDroneX() <= edgePosMap.get(dronePosition.getDroneY())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
-                            if (dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY()+2)[0] && dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY()+2)[1]){
+                            if (dronePosition.getDroneX() <= edgePosMap.get(dronePosition.getDroneY()+2)[0] && dronePosition.getDroneX() <= edgePosMap.get(dronePosition.getDroneY()+2)[1]){
                                 return true;
                             }
                         }
@@ -330,22 +304,18 @@ public class AreaScanInterlaced implements Phase {
 
             }
             case S -> {
-                if (hashMap.get(dronePosition.getDroneX()) != null && hashMap.get(dronePosition.getDroneX()-2) != null){
+                if (edgePosMap.get(dronePosition.getDroneX()) != null && edgePosMap.get(dronePosition.getDroneX()-2) != null){
                     if (goingUpOrRight){
                         //If passed both edge points
-                        if (dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX())[1]){
+                        if (dronePosition.getDroneY() <= edgePosMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() <= edgePosMap.get(dronePosition.getDroneX())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
-                            if (dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX()-2)[0] && dronePosition.getDroneY() <= hashMap.get(dronePosition.getDroneX()-2)[1]){
-                                return true;
-                            }
+                            return dronePosition.getDroneY() <= edgePosMap.get(dronePosition.getDroneX() - 2)[0] && dronePosition.getDroneY() <= edgePosMap.get(dronePosition.getDroneX() - 2)[1];
                         }
                     }
                     else{
-                        if (dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX())[1]){
+                        if (dronePosition.getDroneY() >= edgePosMap.get(dronePosition.getDroneX())[0] && dronePosition.getDroneY() >= edgePosMap.get(dronePosition.getDroneX())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
-                            if (dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX()-2)[0] && dronePosition.getDroneY() >= hashMap.get(dronePosition.getDroneX()-2)[1]){
-                                return true;
-                            }
+                            return dronePosition.getDroneY() >= edgePosMap.get(dronePosition.getDroneX() - 2)[0] && dronePosition.getDroneY() >= edgePosMap.get(dronePosition.getDroneX() - 2)[1];
                         }
                     }
                 }
@@ -354,22 +324,18 @@ public class AreaScanInterlaced implements Phase {
 
             }
             case W -> {
-                if (hashMap.get(dronePosition.getDroneY()) != null && hashMap.get(dronePosition.getDroneY()-2) != null){
+                if (edgePosMap.get(dronePosition.getDroneY()) != null && edgePosMap.get(dronePosition.getDroneY()-2) != null){
                     if (goingUpOrRight){
                         //If passed both edge points
-                        if (dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY())[0] && dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY())[1]){
+                        if (dronePosition.getDroneX() >= edgePosMap.get(dronePosition.getDroneY())[0] && dronePosition.getDroneX() >= edgePosMap.get(dronePosition.getDroneY())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
-                            if (dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY()-2)[0] && dronePosition.getDroneX() >= hashMap.get(dronePosition.getDroneY()-2)[1]){
-                                return true;
-                            }
+                            return dronePosition.getDroneX() >= edgePosMap.get(dronePosition.getDroneY() - 2)[0] && dronePosition.getDroneX() >= edgePosMap.get(dronePosition.getDroneY() - 2)[1];
                         }
                     }
                     else{
-                        if (dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY())[0] && dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY())[1]){
+                        if (dronePosition.getDroneX() <= edgePosMap.get(dronePosition.getDroneY())[0] && dronePosition.getDroneX() <= edgePosMap.get(dronePosition.getDroneY())[1]){
                             //Checks if a column 2 blocks to the right exists, then checks that current y position is above both checkpoints of that column
-                            if (dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY()-2)[0] && dronePosition.getDroneX() <= hashMap.get(dronePosition.getDroneY()-2)[1]){
-                                return true;
-                            }
+                            return dronePosition.getDroneX() <= edgePosMap.get(dronePosition.getDroneY() - 2)[0] && dronePosition.getDroneX() <= edgePosMap.get(dronePosition.getDroneY() - 2)[1];
                         }
                     }
                 }
