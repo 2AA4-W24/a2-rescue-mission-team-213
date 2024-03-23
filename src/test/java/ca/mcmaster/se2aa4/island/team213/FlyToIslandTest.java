@@ -5,8 +5,6 @@ import ca.mcmaster.se2aa4.island.team213.dronePhases.flyToIsland.LocateIsland;
 import ca.mcmaster.se2aa4.island.team213.dronePhases.flyToIsland.TravelToIsland;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
 import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,6 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 
 public class FlyToIslandTest {
-    private final Logger logger = LogManager.getLogger();
     private Drone droneA;
 
     private LocateIsland phaseA;
@@ -43,10 +40,8 @@ public class FlyToIslandTest {
         assertEquals(droneA.getDirection(), Direction.N);
 
         assertFalse(phaseA.isFinished());
-        assertFalse(phaseA.lastPhase());
 
         assertFalse(phaseB.isFinished());
-        assertFalse(phaseB.lastPhase());
     }
 
     @Test

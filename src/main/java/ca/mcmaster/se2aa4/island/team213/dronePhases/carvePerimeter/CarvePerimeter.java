@@ -50,11 +50,6 @@ public class CarvePerimeter implements Phase {
     }
 
     @Override
-    public boolean lastPhase() {
-        return false;
-    }
-
-    @Override
     public boolean isFinished() {
         return this.isFinished;
     }

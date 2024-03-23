@@ -22,10 +22,6 @@ public class TravelToIsland implements Phase {
     // Phase is finished if taskQueue is complete, but also true at precondition, this variable ensures isFinished() isn't true at beginning
     private boolean actionDone = false;
 
-    @Override
-    public boolean lastPhase(){
-        return false;
-    }
 
     @Override
     public JSONObject createDecision(Drone drone) {

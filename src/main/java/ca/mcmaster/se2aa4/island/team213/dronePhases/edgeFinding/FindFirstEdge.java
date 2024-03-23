@@ -44,11 +44,6 @@ public class FindFirstEdge implements Phase {
             this.islandY = 1;
         }
     }
-    
-    @Override
-    public boolean lastPhase() {
-        return false;
-    }
 
     @Override
     public boolean isFinished() {

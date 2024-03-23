@@ -5,8 +5,6 @@ import org.json.JSONObject;
 
 public interface Phase {
 
-    boolean lastPhase();
-
     boolean isFinished();
 
     JSONObject createDecision(Drone drone);

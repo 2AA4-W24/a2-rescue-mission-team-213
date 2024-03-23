@@ -8,11 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 public class AreaScanTest {
-    private final Logger logger = LogManager.getLogger();
+
     private Drone dE;
     private AreaScanInterlaced areaScanNorth;
     private DronePosition dronePosition;

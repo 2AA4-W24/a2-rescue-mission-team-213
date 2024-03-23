@@ -7,11 +7,6 @@ public class EndPhase implements Phase {
     boolean isFinished = false;
 
     @Override
-    public boolean lastPhase() {
-        return true;
-    }
-
-    @Override
     public boolean isFinished() {
         return this.isFinished;
     }

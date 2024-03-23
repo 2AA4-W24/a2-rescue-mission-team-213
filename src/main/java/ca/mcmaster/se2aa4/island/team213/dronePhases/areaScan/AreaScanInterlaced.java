@@ -91,11 +91,6 @@ public class AreaScanInterlaced implements Phase {
     }
 
     @Override
-    public boolean lastPhase() {
-        return true;
-    }
-
-    @Override
     public boolean isFinished() {
         if (turnedAround && reachedEdge() && (turns == turnsBeforeReturn-1 || earlyReturnInterlaced())){
             logger.info("earlyturnyes: " + earlyturnyes);
