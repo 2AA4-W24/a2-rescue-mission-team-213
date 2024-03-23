@@ -11,7 +11,6 @@ public enum Direction {
             case W -> N;
         };
     }
-
     public Direction leftTurn(){
         return switch (this) {
             case N -> W;
@@ -20,7 +19,6 @@ public enum Direction {
             case W -> S;
         };
     }
-
     public String toString(){
         return switch (this) {
             case N -> "N";

@@ -3,18 +3,16 @@ package ca.mcmaster.se2aa4.island.team213.dronePhases.edgeFinding;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import ca.mcmaster.se2aa4.island.team213.*;
+import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
+import ca.mcmaster.se2aa4.island.team213.enums.Action;
+import ca.mcmaster.se2aa4.island.team213.enums.Biome;
+import ca.mcmaster.se2aa4.island.team213.enums.Direction;
+import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import ca.mcmaster.se2aa4.island.team213.enums.Biome;
-import ca.mcmaster.se2aa4.island.team213.Drone;
-import ca.mcmaster.se2aa4.island.team213.dronePhases.Phase;
-import ca.mcmaster.se2aa4.island.team213.enums.Action;
-import ca.mcmaster.se2aa4.island.team213.enums.Direction;
-import ca.mcmaster.se2aa4.island.team213.enums.EchoResult;
-
 
 public class FindFirstEdge implements Phase {
     private boolean isFinished;
@@ -24,17 +22,17 @@ public class FindFirstEdge implements Phase {
 
     private final Logger logger = LogManager.getLogger();
 
-    public FindFirstEdge(Direction direction) {
-        logger.info("** FindFirstEdge created, starting with drone facing " + direction.toString());
+    public FindFirstEdge(Direction droneDirection) {
+        logger.info("** FindFirstEdge created, starting with drone facing " + droneDirection.toString());
         this.isFinished = false;
         this.decisionQueue = new LinkedList<Action>();
 
-        parseStartingDirection(direction);
+        parseStartingDirection(droneDirection);
         loadDecisionQueue();
     }
 
-    private void parseStartingDirection(Direction direction) {
-        if(direction.equals(Direction.N) || direction.equals(Direction.S)) {
+    private void parseStartingDirection(Direction droneDirection) {
+        if(droneDirection.equals(Direction.N) || droneDirection.equals(Direction.S)) {
             this.increaseX = false;
             this.islandX = 1;
             this.islandY = 0;
@@ -46,17 +44,22 @@ public class FindFirstEdge implements Phase {
     }
 
     @Override
+    public boolean lastPhase() {
+        return false;
+    }
+
+    @Override
     public boolean isFinished() {
         return this.isFinished;
     }
 
     @Override
     public JSONObject createDecision(Drone drone) {
-        JSONObject decision = new JSONObject();
+        JSONObject decision;
         Action nextAction = this.decisionQueue.peek();
-        
+
         decision = nextAction.toJSON(drone.getDirection());
-        if(this.decisionQueue.peek().equals(Action.TURN_RIGHT)) {
+        if(nextAction.equals(Action.TURN_RIGHT)) {
             this.isFinished = true;
         }
         this.decisionQueue.remove();
@@ -80,14 +83,14 @@ public class FindFirstEdge implements Phase {
     private void checkScanAndEchoes(Drone drone) {
         JSONArray biomes = drone.getScanInfoBiomes();
         Biome firstBiome = Biome.valueOf(biomes.getString(0));
-        
+
         if(biomes.length() == 1 && firstBiome.equals(Biome.OCEAN) && drone.getEchoLeft().equals(EchoResult.OUT_OF_RANGE) && drone.getEchoRight().equals(EchoResult.OUT_OF_RANGE)) {
             increaseXorY();
             this.decisionQueue.add(Action.TURN_RIGHT);
         }
         loadDecisionQueue();
     }
-    
+
     private void loadDecisionQueue() {
         this.decisionQueue.add(Action.FLY);
         this.decisionQueue.add(Action.SCAN);
@@ -95,10 +98,10 @@ public class FindFirstEdge implements Phase {
         this.decisionQueue.add(Action.ECHO_RIGHT);
     }
 
-    private void increaseXorY() { 
+    private void increaseXorY() {
         if(this.increaseX) {
             this.islandX += 1;
-        } 
+        }
         else {
             this.islandY += 1;
         }
@@ -107,7 +110,7 @@ public class FindFirstEdge implements Phase {
     public boolean getIncreaseX() {
         return this.increaseX;
     }
-    
+
     public Action getNextDecision() {
         return this.decisionQueue.peek();
     }
