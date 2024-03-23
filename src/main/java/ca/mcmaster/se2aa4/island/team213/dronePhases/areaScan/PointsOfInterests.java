@@ -4,23 +4,16 @@ import java.util.ArrayList;
 
 import ca.mcmaster.se2aa4.island.team213.dronePhases.carvePerimeter.DronePosition;
 import ca.mcmaster.se2aa4.island.team213.enums.Direction;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 
 public class PointsOfInterests {
-    private final Logger logger = LogManager.getLogger();
     private CreekCandidate closestCreek;
-    public final ArrayList<PointOfInterest> creeks;
+    private final ArrayList<PointOfInterest> creeks;
     private final ArrayList<PointOfInterest> sites;
-    private int maxCoordX;
-    private int maxCoordY;
-
-    private boolean havePair = false;
+    private boolean hasSiteCreekPair = false;
     public PointsOfInterests(){
         this.creeks = new ArrayList<>();
         this.sites = new ArrayList<>();
-
     }
 
     public void computeClosestSite(){
@@ -30,7 +23,7 @@ public class PointsOfInterests {
                     double distance = Math.sqrt(Math.pow((site.getX()-creek.getX()),2)+Math.pow((site.getY()- creek.getY()),2));
                     if (getClosestCreek() == null || distance < closestCreek.distanceFromCreek()){
                         closestCreek = new CreekCandidate(creek, distance);
-                        havePair = true;
+                        hasSiteCreekPair = true;
                     }
                 }
             }
@@ -53,7 +46,7 @@ public class PointsOfInterests {
      * Returns true if a site and creek pair exist
      */
     public boolean checkIfPair(){
-        return havePair;
+        return hasSiteCreekPair;
     }
 
     /*
