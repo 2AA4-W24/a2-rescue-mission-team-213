@@ -29,7 +29,7 @@ public class AreaScanInterlaced implements Phase {
     private final BooleanMap booleanMap;
     private final DronePosition dronePosition;
     private final Queue<JSONObject> taskQueue = new LinkedList<>();
-    HashMap<Integer, int[]> edgePosMap;
+    private final HashMap<Integer, int[]> edgePosMap;
 
     public AreaScanInterlaced(DronePosition dronePosition, BooleanMap mapOfCheckedTiles, Direction droneDirection){
         this.dronePosition = dronePosition;
@@ -209,7 +209,6 @@ public class AreaScanInterlaced implements Phase {
     public Phase nextPhase() {
         return new EndPhase();
     }
-
 
     private boolean earlyReturnInterlaced(){
         if (pointsOfInterest.checkIfPair()){
