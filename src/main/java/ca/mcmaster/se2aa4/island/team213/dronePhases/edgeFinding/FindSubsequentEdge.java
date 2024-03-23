@@ -37,11 +37,6 @@ public class FindSubsequentEdge implements Phase {
     }
 
     @Override
-    public boolean lastPhase() {
-        return false;
-    }
-
-    @Override
     public boolean isFinished() {
         return this.isFinished;
     }
