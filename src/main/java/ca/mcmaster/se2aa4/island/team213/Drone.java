@@ -27,26 +27,21 @@ public class Drone {
 
     public void updateStatus(JSONObject response) {
         this.battery -= response.getInt("cost");
-        //logger.info("new battery level: " + this.battery);
         JSONObject extraInfo = response.getJSONObject("extras");
 
         if(previousDecision.equals(Action.ECHO_RIGHT)) {
-            //logger.info("STORING ECHO RIGHT INFO: " + extraInfo.getString("found"));
             this.echo.echoRight = EchoResult.valueOf(extraInfo.getString("found"));
             this.echo.rangeRight = extraInfo.getInt("range");
         } 
         else if(previousDecision.equals(Action.ECHO_LEFT)) {
-            //logger.info("STORING ECHO LEFT INFO: " + extraInfo.getString("found"));
             this.echo.echoLeft = EchoResult.valueOf(extraInfo.getString("found"));
             this.echo.rangeLeft = extraInfo.getInt("range");
         } 
         else if(previousDecision.equals(Action.ECHO_AHEAD)) {
-            //logger.info("STORING ECHO AHEAD INFO: " + extraInfo.getString("found"));
             this.echo.echoAhead = EchoResult.valueOf(extraInfo.getString("found"));
             this.echo.rangeAhead = extraInfo.getInt("range");
         }
         else if(previousDecision.equals(Action.SCAN)) {
-            //logger.info("STORING SCAN INFO:");
             this.scanInfo = new ScanStatus(extraInfo);
         } else if (previousDecision.equals(Action.FLY)){
             if (!Objects.isNull(this.echo.rangeAhead)){
@@ -60,14 +55,10 @@ public class Drone {
             JSONObject parameter = decision.getJSONObject("parameters");
             this.echo = new EchoStatus();
             if(this.direction.rightTurn().toString().equals(parameter.get("direction").toString())) {
-//                logger.info("DRONE RECEIVED COMMAND FOR RIGHT HEADING");
-//                logger.info("PREVIOUS DIRECION: " + this.direction.toString());
                 this.direction = this.direction.rightTurn();
-                //logger.info("NEW DIRECION: " + this.direction.toString());
                 this.previousDecision = Action.TURN_RIGHT;
             }
             else if(this.direction.leftTurn().toString().equals(parameter.get("direction").toString())) {
-//                logger.info("DRONE RECEIVED COMMAND FOR LEFT HEADING");
                 this.direction = this.direction.leftTurn();
                 this.previousDecision = Action.TURN_LEFT;
             }
@@ -75,28 +66,22 @@ public class Drone {
         else if(decision.getString("action").equals("echo")) {
             JSONObject parameter = decision.getJSONObject("parameters");
             if(this.direction.toString().equals(parameter.getString("direction"))) {
-//                logger.info("DRONE RECEIVED COMMAND FOR ECHO AHEAD");
                 this.previousDecision = Action.ECHO_AHEAD;
             }
             else if(this.direction.rightTurn().toString().equals(parameter.get("direction"))) {
-//                logger.info("DRONE RECEIVED COMMAND FOR ECHO RIGHT");
                 this.previousDecision = Action.ECHO_RIGHT;
             }
             else if(this.direction.leftTurn().toString().equals(parameter.get("direction"))) {
-//                logger.info("DRONE RECEIVED COMMAND FOR ECHO LEFT");
                 this.previousDecision = Action.ECHO_LEFT;
             }
         }
         else if(decision.getString("action").equals("scan")) {
-//            logger.info("DRONE RECEIVED COMMAND FOR SCAN");
             this.previousDecision = Action.SCAN;
         }
         else if(decision.getString("action").equals("fly")) {
-//            logger.info("DRONE RECEIVED COMMAND FOR FLY");
             this.previousDecision = Action.FLY;
         } 
         else if (decision.getString("action").equals("stop")) {
-//            logger.info("DRONE RECEIVED COMMAND FOR STOP");
             this.previousDecision = Action.STOP;
         }
     }

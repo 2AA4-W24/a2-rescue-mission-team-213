@@ -17,13 +17,12 @@ public class PointsOfInterests {
         this.creeks = new ArrayList<>();
         this.sites = new ArrayList<>();
     }
-
     public void computeClosestSite(){
         if (!sites.isEmpty() && !creeks.isEmpty()){
             for (PointOfInterest site: sites){
                 for (PointOfInterest creek: creeks){
                     double distance = Math.sqrt(Math.pow(site.getX()-creek.getX(),2)+Math.pow(site.getY()- creek.getY(),2));
-                    if (getClosestCreek() == null || distance < closestCreek.distanceFromCreek()){
+                    if (getClosestCreek() == null || distance < closestCreek.distanceFromSite()){
                         closestCreek = new CreekCandidate(creek, distance);
                         hasSiteCreekPair = true;
                     }
@@ -85,20 +84,24 @@ public class PointsOfInterests {
         }
     }
 
+    /*
+     * Determines the maximum coordinates that is worth searching
+     * based on current distance between a site-creek pair
+     */
     public int maxCoord(Direction startDirection){
         if (this.checkIfPair()){
             switch (startDirection){
                 case N -> {
-                    return sites.get(0).getX() + (int)closestCreek.distanceFromCreek();
+                    return sites.get(0).getX() + (int)closestCreek.distanceFromSite();
                 }
                 case E -> {
-                    return sites.get(0).getY() + (int)closestCreek.distanceFromCreek();
+                    return sites.get(0).getY() + (int)closestCreek.distanceFromSite();
                 }
                 case S -> {
-                    return sites.get(0).getX() - (int)closestCreek.distanceFromCreek();
+                    return sites.get(0).getX() - (int)closestCreek.distanceFromSite();
                 }
                 case W -> {
-                    return sites.get(0).getY() - (int)closestCreek.distanceFromCreek();
+                    return sites.get(0).getY() - (int)closestCreek.distanceFromSite();
                 }
             }
         }

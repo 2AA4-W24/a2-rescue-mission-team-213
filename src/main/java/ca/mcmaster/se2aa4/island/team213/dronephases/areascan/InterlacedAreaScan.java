@@ -29,7 +29,7 @@ public class InterlacedAreaScan implements Phase {
     private final BooleanMap booleanMap;
     private final DronePosition dronePosition;
     private final Queue<JSONObject> taskQueue = new LinkedList<>();
-    Map<Integer, int[]> edgePosMap;
+    private final Map<Integer, int[]> edgePosMap;
 
     public InterlacedAreaScan(DronePosition dronePosition, BooleanMap mapOfCheckedTiles, Direction droneDirection){
         this.dronePosition = dronePosition;
@@ -45,7 +45,11 @@ public class InterlacedAreaScan implements Phase {
 
         switch (droneDirection){
             case E, W -> {
-                //Even length width will result in an extra column that needs to be covered at the end
+                /*
+                 * Even length width will result in an extra column
+                 * that needs to be covered at the second iteration
+                 * of interlaced scan
+                 */
                 if (islandY % 2 == 0){
                     this.turnsBeforeReturn = islandY /2 - 1;
                 }
@@ -62,6 +66,10 @@ public class InterlacedAreaScan implements Phase {
                 }
             }
         }
+        /*
+         * Finds coordinates of the edge positions for the
+         * drone to reference when determining when to turn
+         */
         switch (droneDirection){
             case N -> {
                 this.goingUpOrRight = true;
@@ -93,6 +101,11 @@ public class InterlacedAreaScan implements Phase {
             return taskQueue.remove();
         }
 
+        /*
+         * If in the first iteration of the interlaced scan,
+         * checks if drone can return back to 2nd row/ column
+         * to start second iteration
+         */
         if (!turnedAround && (turns == turnsBeforeReturn || earlyReturnInterlaced()) && reachedEdge()){
             turnedAround = true;
             goingUpOrRight = !goingUpOrRight;
@@ -137,6 +150,11 @@ public class InterlacedAreaScan implements Phase {
             movesSinceTurn = 0;
 
         }
+
+        /*
+         * Checks if the drone reached the edge of the perimeter
+         * or can do an early turn doing a 180-degree turn if so
+         */
         else if (reachedEdge() || earlyTurn()){
             goingUpOrRight = !goingUpOrRight;
             /*
@@ -167,6 +185,10 @@ public class InterlacedAreaScan implements Phase {
             blocksMovedSideways += 2;
             turns++;
         }
+        /*
+         * If drone is neither doing 180-turn nor flying to the beginning
+         * to start second iteration of area scan, drone performs a fly forward
+         */
         else{
             taskQueue.add(Action.FLY.toJSON(direction));
             dronePosition.updatePositionAfterDecision(Action.FLY, direction);
@@ -210,7 +232,10 @@ public class InterlacedAreaScan implements Phase {
         return new EndPhase();
     }
 
-
+    /*
+     * Determines if a premature start of the second interlaced iteration
+     * or premature isFinished condition can be made
+     */
     private boolean earlyReturnInterlaced(){
         if (pointsOfInterest.checkIfPair()){
             switch (startDirection){
@@ -253,6 +278,13 @@ public class InterlacedAreaScan implements Phase {
         return false;
     }
 
+    /*
+     * Determines if an early 180 turn of the drone can be made
+     * (i.e. the drone is at the edge of the island)
+     * The drone must not only consider the current row/column to determine
+     * if it can do a 180 turn, but also the row/column that it will turn to,
+     * ensuring that no blocks are missed
+     */
     private boolean earlyTurn(){
         switch (startDirection){
             case N -> {
